@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:istoreto/featured/product/cashed_network_image.dart';
 
 class CategorySection extends StatelessWidget {
   const CategorySection({super.key});
@@ -68,25 +69,11 @@ class CategorySection extends StatelessWidget {
                 margin: const EdgeInsets.only(right: 16),
                 child: Column(
                   children: [
-                    Container(
+                    CustomCaChedNetworkImage(
                       width: 60,
                       height: 60,
-                      decoration: BoxDecoration(
-                        color: Colors.grey.shade200,
-                        borderRadius: BorderRadius.circular(30),
-                        image: DecorationImage(
-                          image: NetworkImage(
-                            'https://via.placeholder.com/60x60/FF6B6B/FFFFFF?text=${categories[index]['name']}',
-                          ),
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(30),
-                          color: Colors.black.withValues(alpha: 0.1),
-                        ),
-                      ),
+                      raduis: BorderRadius.circular(100),
+                      url: categories[index]['image'] as String,
                     ),
                     const SizedBox(height: 8),
                     Text(

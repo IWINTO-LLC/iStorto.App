@@ -288,3 +288,9 @@ await controller.moveSelectedProductsToCategory(category);
 
 
 
+
+
+
+
+
+

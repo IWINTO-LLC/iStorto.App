@@ -773,5 +773,29 @@ class En {
     'importDataFromExcel': 'Import Data From Excel',
     'sale_precentage_should_be_less_than_100':
         'Sale precentage should be less than 100',
+
+    // Major Categories
+    'all_categories': 'All Categories',
+    'category_selected': 'Category Selected',
+    'navigating_to_products': 'Navigating to Products',
+    'view_products': 'View Products',
+    'browse': 'Browse',
+    'status': 'Status',
+    'featured': 'Featured',
+    'parent_category': 'Parent Category',
+    'has_parent': 'Has Parent',
+    'created_at': 'Created At',
+    'active': 'Active',
+    'pending': 'Pending',
+    'inactive': 'Inactive',
+    'unknown': 'Unknown',
+
+    'all': 'All',
+    'set_active': 'Set Active',
+    'set_pending': 'Set Pending',
+    'set_inactive': 'Set Inactive',
+    'clear_filters': 'Clear Filters',
+    'search_categories': 'Search Categories',
+    'search_hint': 'Try searching with different words',
   };
 }

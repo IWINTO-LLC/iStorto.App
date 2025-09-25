@@ -469,5 +469,29 @@ class Ar {
     'importDataFromExcel': 'استيراد البيانات من Excel',
     'sale_precentage_should_be_less_than_100':
         'نسبة الادخال الصحيقة اقل من 100',
+
+    // Major Categories
+    'all_categories': 'جميع الفئات',
+    'category_selected': 'تم اختيار الفئة',
+    'navigating_to_products': 'الانتقال للمنتجات',
+    'view_products': 'عرض المنتجات',
+    'browse': 'تصفح',
+    'status': 'الحالة',
+    'featured': 'مميز',
+    'parent_category': 'الفئة الرئيسية',
+    'has_parent': 'لها فئة رئيسية',
+    'created_at': 'تاريخ الإنشاء',
+    'active': 'نشط',
+    'pending': 'معلق',
+    'inactive': 'غير نشط',
+    'unknown': 'غير معروف',
+
+    'all': 'الكل',
+    'set_active': 'تعيين كنشط',
+    'set_pending': 'تعيين كمعلق',
+    'set_inactive': 'تعيين كغير نشط',
+    'clear_filters': 'مسح المرشحات',
+    'search_categories': 'البحث في الفئات',
+    'search_hint': 'جرب البحث بكلمات مختلفة',
   };
 }

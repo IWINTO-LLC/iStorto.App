@@ -4,6 +4,7 @@ import 'package:istoreto/controllers/translation_controller.dart';
 import 'package:istoreto/featured/home-page/views/widgets/banner_section.dart';
 import 'package:istoreto/featured/home-page/views/widgets/category_section.dart';
 import 'package:istoreto/featured/home-page/views/widgets/just_foryou_section.dart';
+import 'package:istoreto/featured/home-page/views/widgets/major_category_section.dart';
 import 'package:istoreto/featured/home-page/views/widgets/most_popular_section.dart';
 import 'package:istoreto/featured/home-page/views/widgets/topseller_section.dart';
 import 'package:istoreto/utils/constants/color.dart';
@@ -70,7 +71,7 @@ class HomePage extends StatelessWidget {
           const SizedBox(height: TSizes.spaceBtWsections),
 
           // Categories Section
-          const CategorySection(),
+          const MajorCategorySection(),
 
           const SizedBox(height: TSizes.spaceBtWsections),
 
@@ -246,27 +247,37 @@ class PopularProduct extends StatelessWidget {
                     width: 32,
                     height: 32,
                     decoration: BoxDecoration(
-                      color: Colors.grey.shade200,
+                      color: Colors.black,
                       shape: BoxShape.circle,
                     ),
-                    child: Icon(
-                      Icons.arrow_back_ios,
-                      color: Colors.grey.shade600,
-                      size: 16,
+                    child: Center(
+                      child: Padding(
+                        padding: const EdgeInsets.all(5.0),
+                        child: Icon(
+                          Icons.arrow_back_ios,
+                          color: Colors.white,
+                          size: 14,
+                        ),
+                      ),
                     ),
                   ),
                   const SizedBox(width: 8),
                   Container(
-                    width: 32,
-                    height: 32,
+                    width: 40,
+                    height: 40,
                     decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.primary,
+                      color: Colors.black,
                       shape: BoxShape.circle,
                     ),
-                    child: const Icon(
-                      Icons.arrow_forward_ios,
-                      color: Colors.white,
-                      size: 16,
+                    child: Center(
+                      child: Padding(
+                        padding: const EdgeInsets.all(5.0),
+                        child: const Icon(
+                          Icons.arrow_forward_ios,
+                          color: Colors.white,
+                          size: 14,
+                        ),
+                      ),
                     ),
                   ),
                 ],
