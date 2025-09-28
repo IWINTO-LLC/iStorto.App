@@ -28,38 +28,53 @@ class CreateCategoryController extends GetxController {
   final formKey = GlobalKey<FormState>();
 
   Future<void> pickImage() async {
-    var pickedFile = (await ImagePicker().pickImage(
-      source: ImageSource.gallery,
-    ));
+    try {
+      var pickedFile = (await ImagePicker().pickImage(
+        source: ImageSource.gallery,
+      ));
 
-    if (pickedFile != null) {
-      final croppedFile = await ImageCropper().cropImage(
-        sourcePath: pickedFile.path,
-        compressFormat: ImageCompressFormat.jpg,
-        compressQuality: 100,
-        aspectRatio: CropAspectRatio(ratioX: 600, ratioY: 600),
-        uiSettings: [
-          AndroidUiSettings(
-            toolbarTitle: 'Edit Category Image',
-            toolbarColor: Colors.white,
-            toolbarWidgetColor: Colors.black,
-            initAspectRatio:
-                CropAspectRatioPreset.original, // Ensures a 1:1 crop
-            lockAspectRatio: true,
-            cropStyle: CropStyle.circle,
-            hideBottomControls: true,
-          ),
-          IOSUiSettings(
-            title: 'Edit Category Image',
-            cropStyle: CropStyle.circle,
+      if (pickedFile != null) {
+        final croppedFile = await ImageCropper().cropImage(
+          sourcePath: pickedFile.path,
+          compressFormat: ImageCompressFormat.jpg,
+          compressQuality: 100,
+          aspectRatio: CropAspectRatio(ratioX: 600, ratioY: 600),
+          uiSettings: [
+            AndroidUiSettings(
+              toolbarTitle: 'Edit Category Image',
+              toolbarColor: Colors.white,
+              toolbarWidgetColor: Colors.black,
+              initAspectRatio:
+                  CropAspectRatioPreset.original, // Ensures a 1:1 crop
+              lockAspectRatio: true,
+              cropStyle: CropStyle.circle,
+              hideBottomControls: true,
+            ),
+            IOSUiSettings(
+              title: 'Edit Category Image',
+              cropStyle: CropStyle.circle,
+              // Locks aspect ratio
+            ),
+          ],
+        );
 
-            // Locks aspect ratio
-          ),
-        ],
+        if (croppedFile != null) {
+          File img = File(croppedFile.path);
+          localImage.value = img.path;
+        } else {
+          // User cancelled cropping, use original image
+          localImage.value = pickedFile.path;
+        }
+      }
+    } catch (e) {
+      print('Error picking/cropping image: $e');
+      Get.snackbar(
+        'Error',
+        'Failed to pick image: ${e.toString()}',
+        snackPosition: SnackPosition.TOP,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
       );
-      File img = File(croppedFile!.path);
-
-      localImage.value = img.path;
     }
   }
 

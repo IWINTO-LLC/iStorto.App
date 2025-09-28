@@ -1,8 +1,7 @@
 // lib/featured/home-page/views/widgets/major_category_section.dart
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:istoreto/examples/test_categories_widget.dart';
-import 'package:istoreto/examples/test_categories_widget_v2.dart';
+import 'package:istoreto/featured/home-page/views/widgets/category_section.dart';
 
 import '../../../../../controllers/major_category_controller.dart';
 import '../../../../../data/models/major_category_model.dart';
@@ -14,6 +13,9 @@ class MajorCategorySection extends StatelessWidget {
   Widget build(BuildContext context) {
     // Initialize controller
     final controller = Get.put(MajorCategoryController());
+
+    // Load active categories for all users
+    controller.loadActiveCategories();
 
     return Column(
       children: [
@@ -30,7 +32,7 @@ class MajorCategorySection extends StatelessWidget {
                 ),
               ),
               GestureDetector(
-                onTap: () => Get.to(() => const TestCategoriesWidgetV2()),
+                onTap: () => Get.to(() => const CategorySection()),
                 child: Row(
                   children: [
                     Text(
@@ -69,10 +71,8 @@ class MajorCategorySection extends StatelessWidget {
             );
           }
 
-          final categories =
-              controller.featuredCategories.isNotEmpty
-                  ? controller.featuredCategories.take(4).toList()
-                  : controller.rootCategories.take(4).toList();
+          // Show all active categories for all users
+          final categories = controller.activeCategories.take(8).toList();
 
           if (categories.isEmpty) {
             return SizedBox(
@@ -87,7 +87,7 @@ class MajorCategorySection extends StatelessWidget {
           }
 
           return SizedBox(
-            height: 120,
+            height: 140, // Increased height to accommodate status chips
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
               padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -110,30 +110,30 @@ class MajorCategorySection extends StatelessWidget {
     }
 
     return Container(
-      width: 80,
-      margin: const EdgeInsets.only(right: 16),
+      width: 90, // Slightly wider for better text display
+      margin: const EdgeInsets.only(right: 12),
       child: Column(
         children: [
           GestureDetector(
             onTap: () => _onCategoryTap(category),
             child: Container(
-              width: 60,
-              height: 60,
+              width: 70, // Slightly larger for better visibility
+              height: 70,
               decoration: BoxDecoration(
                 color: Colors.grey.shade200,
-                borderRadius: BorderRadius.circular(30),
+                borderRadius: BorderRadius.circular(35),
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black.withOpacity(0.1),
-                    blurRadius: 4,
-                    offset: const Offset(0, 2),
+                    blurRadius: 6,
+                    offset: const Offset(0, 3),
                   ),
                 ],
               ),
               child:
-                  category.image != null
+                  category.image != null && category.image!.isNotEmpty
                       ? ClipRRect(
-                        borderRadius: BorderRadius.circular(30),
+                        borderRadius: BorderRadius.circular(35),
                         child: Image.network(
                           category.image!,
                           fit: BoxFit.cover,
@@ -152,31 +152,33 @@ class MajorCategorySection extends StatelessWidget {
           const SizedBox(height: 8),
           Text(
             category.displayName,
-            style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
+            style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
             textAlign: TextAlign.center,
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
           ),
           const SizedBox(height: 4),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-            decoration: BoxDecoration(
-              color: _getStatusColor(category.status).withOpacity(0.1),
-              borderRadius: BorderRadius.circular(10),
-              border: Border.all(
-                color: _getStatusColor(category.status).withOpacity(0.3),
-                width: 1,
+          // Only show status for non-active categories
+          if (category.status != 1)
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+              decoration: BoxDecoration(
+                color: _getStatusColor(category.status).withOpacity(0.1),
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(
+                  color: _getStatusColor(category.status).withOpacity(0.3),
+                  width: 1,
+                ),
+              ),
+              child: Text(
+                _getStatusText(category.status),
+                style: TextStyle(
+                  fontSize: 9,
+                  color: _getStatusColor(category.status),
+                  fontWeight: FontWeight.w500,
+                ),
               ),
             ),
-            child: Text(
-              _getStatusText(category.status),
-              style: TextStyle(
-                fontSize: 10,
-                color: _getStatusColor(category.status),
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ),
         ],
       ),
     );
@@ -184,78 +186,25 @@ class MajorCategorySection extends StatelessWidget {
 
   Widget _buildCategoryIcon(MajorCategoryModel category) {
     final categoryName = category.name.isNotEmpty ? category.name : 'Unknown';
+    final controller = Get.find<MajorCategoryController>();
     return Container(
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(30),
+        borderRadius: BorderRadius.circular(35),
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            _getCategoryColor(categoryName),
-            _getCategoryColor(categoryName).withOpacity(0.7),
+            controller.getCategoryColor(categoryName),
+            controller.getCategoryColor(categoryName).withOpacity(0.7),
           ],
         ),
       ),
       child: Icon(
-        _getCategoryIcon(categoryName),
+        controller.getCategoryIcon(categoryName),
         color: Colors.white,
         size: 24,
       ),
     );
-  }
-
-  IconData _getCategoryIcon(String categoryName) {
-    final name = categoryName.toLowerCase();
-    if (name.contains('clothing') || name.contains('clothes')) {
-      return Icons.checkroom;
-    } else if (name.contains('shoes') || name.contains('footwear')) {
-      return Icons.shopping_bag;
-    } else if (name.contains('bags') || name.contains('handbag')) {
-      return Icons.shopping_basket;
-    } else if (name.contains('accessories') || name.contains('watch')) {
-      return Icons.watch;
-    } else if (name.contains('electronics') || name.contains('phone')) {
-      return Icons.phone_android;
-    } else if (name.contains('home') || name.contains('furniture')) {
-      return Icons.home;
-    } else if (name.contains('beauty') || name.contains('cosmetics')) {
-      return Icons.face;
-    } else if (name.contains('sports') || name.contains('fitness')) {
-      return Icons.sports;
-    } else if (name.contains('books') || name.contains('education')) {
-      return Icons.book;
-    } else if (name.contains('toys') || name.contains('games')) {
-      return Icons.toys;
-    } else {
-      return Icons.category;
-    }
-  }
-
-  Color _getCategoryColor(String categoryName) {
-    final name = categoryName.toLowerCase();
-    if (name.contains('clothing') || name.contains('clothes')) {
-      return Colors.pink;
-    } else if (name.contains('shoes') || name.contains('footwear')) {
-      return Colors.brown;
-    } else if (name.contains('bags') || name.contains('handbag')) {
-      return Colors.purple;
-    } else if (name.contains('accessories') || name.contains('watch')) {
-      return Colors.blue;
-    } else if (name.contains('electronics') || name.contains('phone')) {
-      return Colors.blueGrey;
-    } else if (name.contains('home') || name.contains('furniture')) {
-      return Colors.green;
-    } else if (name.contains('beauty') || name.contains('cosmetics')) {
-      return Colors.pinkAccent;
-    } else if (name.contains('sports') || name.contains('fitness')) {
-      return Colors.orange;
-    } else if (name.contains('books') || name.contains('education')) {
-      return Colors.indigo;
-    } else if (name.contains('toys') || name.contains('games')) {
-      return Colors.red;
-    } else {
-      return Colors.grey;
-    }
   }
 
   Color _getStatusColor(int status) {

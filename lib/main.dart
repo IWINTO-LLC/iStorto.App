@@ -8,7 +8,9 @@ import 'package:istoreto/views/register_page.dart';
 import 'package:istoreto/views/email_verification_page.dart';
 import 'package:sizer/sizer.dart';
 import 'controllers/translation_controller.dart';
+import 'controllers/auth_controller.dart';
 import 'services/supabase_service.dart';
+import 'services/storage_service.dart';
 import 'translations/translations.dart';
 import 'views/cart_page.dart';
 import 'views/favorites_page.dart';
@@ -22,6 +24,9 @@ void main() async {
   // Initialize Supabase
   await SupabaseService.initialize();
 
+  // Initialize Storage Service
+  await StorageService.instance.init();
+
   runApp(const MyApp());
 }
 
@@ -32,6 +37,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     // Initialize Controllers
     final translationController = Get.put(TranslationController());
+    Get.put(AuthController());
 
     return Sizer(
       builder: (context, orientation, deviceType) {

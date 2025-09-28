@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:istoreto/services/supabase_service.dart';
+import 'package:istoreto/services/storage_service.dart';
 import 'package:istoreto/repositories/user_repository.dart';
 import 'package:istoreto/models/user_model.dart';
 
@@ -28,12 +28,14 @@ class AuthController extends GetxController {
   final RxBool isLoading = false.obs;
   final RxBool isPasswordHidden = true.obs;
   final RxBool isLoginPasswordHidden = true.obs;
+  final RxBool rememberMe = false.obs;
   final Rx<UserModel?> currentUser = Rx<UserModel?>(null);
 
   @override
   void onInit() {
     super.onInit();
     _loadCurrentUser();
+    _loadSavedCredentials();
   }
 
   @override
@@ -47,12 +49,74 @@ class AuthController extends GetxController {
     super.onClose();
   }
 
+  // Load saved credentials
+  Future<void> _loadSavedCredentials() async {
+    try {
+      final credentials = await StorageService.instance.getLoginCredentials();
+      if (credentials['rememberMe'] == true) {
+        loginEmailController.text = credentials['email'];
+        loginPasswordController.text = credentials['password'];
+        rememberMe.value = true;
+      }
+    } catch (e) {
+      print('Error loading saved credentials: $e');
+    }
+  }
+
+  // Check for auto-login
+  Future<bool> checkAutoLogin() async {
+    try {
+      // Check if user is already logged in via Supabase
+      final authUser = _supabaseService.currentUser;
+      if (authUser != null) {
+        await _loadCurrentUser();
+        return true;
+      }
+
+      // Check if user has valid saved credentials
+      final hasValidCredentials =
+          await StorageService.instance.hasValidCredentials();
+      if (hasValidCredentials) {
+        final credentials = await StorageService.instance.getLoginCredentials();
+
+        // Try to login with saved credentials
+        final result = await _supabaseService.signInWithEmail(
+          email: credentials['email'],
+          password: credentials['password'],
+        );
+
+        if (result['success']) {
+          await _loadCurrentUser();
+
+          // Update session
+          if (currentUser.value != null) {
+            await StorageService.instance.saveUserSession(
+              userId: currentUser.value!.id,
+              email: currentUser.value!.email ?? '',
+              isLoggedIn: true,
+            );
+          }
+
+          return true;
+        } else {
+          // Clear invalid credentials
+          await StorageService.instance.clearLoginCredentials();
+        }
+      }
+
+      return false;
+    } catch (e) {
+      print('Error checking auto-login: $e');
+      return false;
+    }
+  }
+
   // Load current user from Supabase Auth
   Future<void> _loadCurrentUser() async {
     final authUser = _supabaseService.currentUser;
     if (authUser != null) {
       try {
-        final user = await _userRepository.getUserByUserId(authUser.id);
+        final user = await _userRepository.getUserById(authUser.id);
         if (user != null) {
           currentUser.value = user;
         } else {
@@ -170,8 +234,8 @@ class AuthController extends GetxController {
       );
 
       if (result['success']) {
-        // Store email before clearing form
-        final userEmail = emailController.text.trim();
+        // Load user data
+        await _loadCurrentUser();
 
         Get.snackbar(
           'success'.tr,
@@ -188,8 +252,8 @@ class AuthController extends GetxController {
         phoneController.clear();
         nameController.clear();
 
-        // Navigate to email verification page
-        Get.offAllNamed('/email-verification', arguments: {'email': userEmail});
+        // Navigate directly to home page
+        Get.offAllNamed('/home');
       } else {
         Get.snackbar(
           'error'.tr,
@@ -232,24 +296,20 @@ class AuthController extends GetxController {
         // Load user data
         await _loadCurrentUser();
 
-        // Check if email is verified in our database
-        final user = currentUser.value;
-        if (user != null && !user.emailVerified) {
-          // Email not verified, redirect to verification page
-          Get.snackbar(
-            'email_not_verified'.tr,
-            'please_verify_email_first'.tr,
-            snackPosition: SnackPosition.TOP,
-            backgroundColor: Colors.orange,
-            colorText: Colors.white,
-            duration: const Duration(seconds: 3),
-          );
+        // Save login credentials if remember me is checked
+        await StorageService.instance.saveLoginCredentials(
+          email: loginEmailController.text.trim(),
+          password: loginPasswordController.text,
+          rememberMe: rememberMe.value,
+        );
 
-          Get.offAllNamed(
-            '/email-verification',
-            arguments: {'email': loginEmailController.text.trim()},
+        // Save user session
+        if (currentUser.value != null) {
+          await StorageService.instance.saveUserSession(
+            userId: currentUser.value!.id,
+            email: currentUser.value!.email ?? '',
+            isLoggedIn: true,
           );
-          return;
         }
 
         Get.snackbar(
@@ -261,9 +321,11 @@ class AuthController extends GetxController {
           duration: const Duration(seconds: 3),
         );
 
-        // Clear form
-        loginEmailController.clear();
-        loginPasswordController.clear();
+        // Clear form only if remember me is not checked
+        if (!rememberMe.value) {
+          loginEmailController.clear();
+          loginPasswordController.clear();
+        }
 
         // Navigate to home
         Get.offAllNamed('/home');
@@ -505,8 +567,8 @@ class AuthController extends GetxController {
       if (defaultCurrency != null)
         updates['default_currency'] = defaultCurrency;
 
-      final updatedUser = await _userRepository.updateUserByUserId(
-        currentUser.value!.userId,
+      final updatedUser = await _userRepository.updateUser(
+        currentUser.value!.id,
         updates,
       );
 
@@ -543,7 +605,7 @@ class AuthController extends GetxController {
       isLoading.value = true;
 
       final updatedUser = await _userRepository.updateProfileImage(
-        currentUser.value!.userId,
+        currentUser.value!.id,
         imageUrl,
       );
 
@@ -580,7 +642,7 @@ class AuthController extends GetxController {
       isLoading.value = true;
 
       final updatedUser = await _userRepository.updateDefaultCurrency(
-        currentUser.value!.userId,
+        currentUser.value!.id,
         currency,
       );
 
@@ -614,6 +676,15 @@ class AuthController extends GetxController {
     try {
       await _supabaseService.signOut();
       currentUser.value = null;
+
+      // Clear user session but keep credentials if remember me is checked
+      await StorageService.instance.clearUserSession();
+
+      // Clear form fields
+      loginEmailController.clear();
+      loginPasswordController.clear();
+      rememberMe.value = false;
+
       Get.offAllNamed('/login');
     } catch (e) {
       Get.snackbar(
@@ -630,6 +701,12 @@ class AuthController extends GetxController {
   // Guest Login
   Future<void> guestLogin() async {
     try {
+      isLoading.value = true;
+
+      // Test database connection by trying to load some data
+      final productsResult = await _supabaseService.getProductsForGuest();
+      final categoriesResult = await _supabaseService.getCategoriesForGuest();
+
       // Create a guest user profile
       final guestUser = UserModel(
         id: 'guest_${DateTime.now().millisecondsSinceEpoch}',
@@ -650,26 +727,103 @@ class AuthController extends GetxController {
       // Set as current user
       currentUser.value = guestUser;
 
-      // Get.snackbar(
-      //   'success'.tr,
-      //   'welcome_guest'.tr,
-      //   snackPosition: SnackPosition.BOTTOM,
-      //   backgroundColor: Colors.green,
-      //   colorText: Colors.white,
-      //   duration: const Duration(seconds: 3),
-      // );
+      // Show success message with database status
+      String message = 'welcome_guest'.tr;
+      if (productsResult['success'] && categoriesResult['success']) {
+        message += ' - Database connected successfully';
+      } else {
+        message += ' - Database connection issues detected';
+      }
+
+      Get.snackbar(
+        'success'.tr,
+        message,
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.green,
+        colorText: Colors.white,
+        duration: const Duration(seconds: 3),
+      );
 
       // Navigate to home
       Get.offAllNamed('/home');
     } catch (e) {
+      print('Guest login error: $e');
       Get.snackbar(
         'error'.tr,
-        'guest_login_failed'.tr,
+        'guest_login_failed'.tr + ': ${e.toString()}',
         snackPosition: SnackPosition.TOP,
         backgroundColor: Colors.red,
         colorText: Colors.white,
         duration: const Duration(seconds: 3),
       );
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  // Send verification email for unverified users
+  Future<void> sendVerificationForUnverifiedUser(String email) async {
+    try {
+      isLoading.value = true;
+
+      // Validate email first
+      if (email.trim().isEmpty) {
+        Get.snackbar(
+          'error'.tr,
+          'email_required'.tr,
+          snackPosition: SnackPosition.TOP,
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+          duration: const Duration(seconds: 3),
+        );
+        return;
+      }
+
+      if (!GetUtils.isEmail(email.trim())) {
+        Get.snackbar(
+          'error'.tr,
+          'email_invalid'.tr,
+          snackPosition: SnackPosition.TOP,
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+          duration: const Duration(seconds: 3),
+        );
+        return;
+      }
+
+      final result = await resendVerificationEmail(email.trim());
+
+      if (result['success']) {
+        Get.snackbar(
+          'success'.tr,
+          'verification_email_sent'.tr,
+          snackPosition: SnackPosition.TOP,
+          backgroundColor: Colors.green,
+          colorText: Colors.white,
+          duration: const Duration(seconds: 3),
+        );
+      } else {
+        Get.snackbar(
+          'error'.tr,
+          result['message'] ?? 'failed_to_send_email'.tr,
+          snackPosition: SnackPosition.TOP,
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+          duration: const Duration(seconds: 3),
+        );
+      }
+    } catch (e) {
+      print('Send verification error: $e');
+      Get.snackbar(
+        'error'.tr,
+        'something_went_wrong'.tr,
+        snackPosition: SnackPosition.TOP,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+        duration: const Duration(seconds: 3),
+      );
+    } finally {
+      isLoading.value = false;
     }
   }
 
@@ -678,7 +832,35 @@ class AuthController extends GetxController {
     try {
       isLoading.value = true;
 
-      await SupabaseService.client.auth.resetPasswordForEmail(email);
+      // Validate email first
+      if (email.trim().isEmpty) {
+        Get.snackbar(
+          'error'.tr,
+          'email_required'.tr,
+          snackPosition: SnackPosition.TOP,
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+          duration: const Duration(seconds: 3),
+        );
+        return;
+      }
+
+      if (!GetUtils.isEmail(email.trim())) {
+        Get.snackbar(
+          'error'.tr,
+          'email_invalid'.tr,
+          snackPosition: SnackPosition.TOP,
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+          duration: const Duration(seconds: 3),
+        );
+        return;
+      }
+
+      await SupabaseService.client.auth.resetPasswordForEmail(
+        email.trim(),
+        redirectTo: 'io.supabase.flutterquickstart://reset-password',
+      );
 
       Get.snackbar(
         'success'.tr,
@@ -689,9 +871,20 @@ class AuthController extends GetxController {
         duration: const Duration(seconds: 3),
       );
     } catch (e) {
+      print('Forgot password error: $e');
+      String errorMessage = 'failed_to_send_reset_email'.tr;
+
+      if (e.toString().contains('Invalid email')) {
+        errorMessage = 'email_not_found'.tr;
+      } else if (e.toString().contains('rate limit')) {
+        errorMessage = 'too_many_requests'.tr;
+      } else if (e.toString().contains('network')) {
+        errorMessage = 'network_error'.tr;
+      }
+
       Get.snackbar(
         'error'.tr,
-        'failed_to_send_reset_email'.tr,
+        errorMessage,
         snackPosition: SnackPosition.TOP,
         backgroundColor: Colors.red,
         colorText: Colors.white,
@@ -729,63 +922,21 @@ class AuthController extends GetxController {
     return 'USD';
   }
 
-  // Resend verification email
+  // Resend verification email (disabled - no email verification required)
   Future<Map<String, dynamic>> resendVerificationEmail(String email) async {
-    try {
-      await SupabaseService.client.auth.resend(
-        type: OtpType.signup,
-        email: email,
-      );
-
-      return {
-        'success': true,
-        'message': 'Verification email sent successfully',
-      };
-    } catch (e) {
-      return {'success': false, 'message': e.toString()};
-    }
+    // Email verification is disabled, return success
+    return {'success': true, 'message': 'Email verification is not required'};
   }
 
-  // Check email verification status
+  // Check email verification status (disabled - no verification required)
   Future<void> checkEmailVerification() async {
-    final authUser = _supabaseService.currentUser;
-    if (authUser != null) {
-      // Refresh user data
-      await _loadCurrentUser();
-
-      if (currentUser.value?.emailVerified == true) {
-        Get.snackbar(
-          'success'.tr,
-          'email_verified_successfully'.tr,
-          snackPosition: SnackPosition.TOP,
-          backgroundColor: Colors.green,
-          colorText: Colors.white,
-          duration: const Duration(seconds: 3),
-        );
-        Get.offAllNamed('/home');
-      }
-    }
+    // Email verification is disabled, always redirect to home
+    Get.offAllNamed('/home');
   }
 
-  // Verify email with token
+  // Verify email with token (disabled - no verification required)
   Future<Map<String, dynamic>> verifyEmailWithToken(String token) async {
-    try {
-      final response = await SupabaseService.client.auth.verifyOTP(
-        token: token,
-        type: OtpType.email,
-      );
-
-      if (response.user != null) {
-        // Update user verification status
-        await _userRepository.verifyEmail(response.user!.id);
-        await _loadCurrentUser();
-
-        return {'success': true, 'message': 'Email verified successfully'};
-      } else {
-        return {'success': false, 'message': 'Invalid verification token'};
-      }
-    } catch (e) {
-      return {'success': false, 'message': e.toString()};
-    }
+    // Email verification is disabled, return success
+    return {'success': true, 'message': 'Email verification is not required'};
   }
 }

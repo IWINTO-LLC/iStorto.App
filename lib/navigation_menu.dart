@@ -1,10 +1,10 @@
 import "package:flutter/material.dart";
 import 'package:get/get.dart';
+import 'package:google_nav_bar/google_nav_bar.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:istoreto/featured/home-page/views/home_page.dart';
-import 'package:istoreto/utils/constants/color.dart';
 import 'package:istoreto/views/cart_page.dart';
 import 'package:istoreto/views/favorites_page.dart';
-import 'package:istoreto/views/orders_page.dart';
 import 'package:istoreto/views/profile_page.dart';
 
 class NavigationMenu extends StatelessWidget {
@@ -13,8 +13,6 @@ class NavigationMenu extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final iconColor = TColors.dark;
-    final selectedIconColor = TColors.primary;
     // Get.put(LaterListController());
     // Get.put(CartController());
     final controller = Get.put(NavigationController());
@@ -36,90 +34,44 @@ class NavigationMenu extends StatelessWidget {
           ),
 
           bottomNavigationBar: Obx(
-            () => NavigationBar(
-              animationDuration: Duration(milliseconds: 1000),
-              elevation: 0,
-              height: 80,
-              backgroundColor: TColors.white,
-              indicatorColor: Colors.transparent,
-
-              // indicatorShape: LinearBorder.bottom(
-              //   side: BorderSide(color: TColors.primary),
-              //   size: 0.2,
-              //   alignment: BorderSide.strokeAlignCenter,
-              // ),
-              selectedIndex: controller.selectedIndex.value,
-
-              onDestinationSelected:
-                  (index) => controller.selectedIndex.value = index,
-              destinations: [
-                NavigationDestination(
-                  selectedIcon: Icon(
-                    Icons.home,
-                    color: selectedIconColor,
-                    size: 30,
+            () => Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                boxShadow: [
+                  BoxShadow(
+                    blurRadius: 20,
+                    color: Colors.black.withOpacity(.1),
                   ),
-                  icon: Icon(Icons.home_outlined, size: 30, color: iconColor),
-                  label: '',
+                ],
+              ),
+              child: SafeArea(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 15.0,
+                    vertical: 8,
+                  ),
+                  child: GNav(
+                    rippleColor: Colors.grey[300]!,
+                    hoverColor: Colors.grey[100]!,
+                    gap: 8,
+                    activeColor: Colors.black,
+                    iconSize: 24,
+                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                    duration: Duration(milliseconds: 400),
+                    tabBackgroundColor: Colors.grey[100]!,
+                    color: Colors.black,
+                    tabs: [
+                      GButton(icon: FontAwesomeIcons.house, text: 'Home'),
+                      GButton(icon: FontAwesomeIcons.heart, text: 'Likes'),
+                      GButton(icon: Icons.shopping_bag_outlined, text: 'Cart'),
+                      GButton(icon: FontAwesomeIcons.user, text: 'Profile'),
+                    ],
+                    selectedIndex: controller.selectedIndex.value,
+                    onTabChange:
+                        (index) => controller.selectedIndex.value = index,
+                  ),
                 ),
-                NavigationDestination(
-                  selectedIcon: Icon(
-                    Icons.favorite,
-                    color: selectedIconColor,
-                    size: 30,
-                  ),
-                  icon: Icon(
-                    Icons.favorite_outline,
-                    size: 30,
-                    color: iconColor,
-                  ),
-                  label: '',
-                ),
-                NavigationDestination(
-                  selectedIcon: Icon(
-                    Icons.receipt_long,
-                    color: selectedIconColor,
-                    size: 30,
-                  ),
-                  icon: Icon(
-                    Icons.receipt_long_outlined,
-                    size: 30,
-                    color: iconColor,
-                  ),
-                  label: '',
-                ),
-                NavigationDestination(
-                  selectedIcon: Icon(
-                    Icons.shopping_bag,
-                    color: selectedIconColor,
-                    size: 30,
-                  ),
-                  icon: Icon(
-                    Icons.shopping_bag_outlined,
-                    color: iconColor,
-                    size: 30,
-                  ),
-                  label: '', //myCart'.tr,
-                ),
-                NavigationDestination(
-                  selectedIcon: Icon(
-                    Icons.person_2,
-                    color: selectedIconColor,
-                    size: 26,
-                  ),
-                  icon: Icon(Icons.person_outline, size: 30, color: iconColor),
-                  label: '', //'Profile'.tr,
-                ),
-                NavigationDestination(
-                  selectedIcon: Icon(
-                    Icons.store,
-                    color: selectedIconColor,
-                    size: 26,
-                  ),
-                  icon: Icon(Icons.store_outlined, size: 30, color: iconColor),
-                  label: '', //'Profile'.tr,
-                ),
-              ],
+              ),
             ),
           ),
         ),
@@ -168,11 +120,9 @@ class NavigationController extends GetxController {
   }
 
   final screens = [
-    const HomePage(),
-    const FavoritesPage(),
-    const OrdersPage(),
-    const CartPage(),
-    const ProfilePage(),
-    const ProfilePage(),
+    const HomePage(), // Get page
+    const FavoritesPage(), // Likes page
+    const CartPage(), // Search page
+    const ProfilePage(), // Profile page
   ];
 }

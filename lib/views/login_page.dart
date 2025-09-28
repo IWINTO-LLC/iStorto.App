@@ -105,18 +105,43 @@ class LoginPage extends StatelessWidget {
 
                     const SizedBox(height: 20),
 
-                    // Forgot Password
-                    Align(
-                      alignment: Alignment.centerRight,
-                      child: TextButton(
-                        onPressed:
-                            () =>
-                                _showForgotPasswordDialog(context, controller),
-                        child: Text(
-                          'forgot_password'.tr,
-                          style: Theme.of(context).textTheme.labelMedium,
+                    // Remember Me & Forgot Password Row
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        // Remember Me Checkbox
+                        Obx(
+                          () => Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Checkbox(
+                                value: controller.rememberMe.value,
+                                onChanged: (value) {
+                                  controller.rememberMe.value = value ?? false;
+                                },
+                                activeColor: TColors.primary,
+                              ),
+                              Text(
+                                'remember_me'.tr,
+                                style: Theme.of(context).textTheme.bodyMedium,
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
+
+                        // Forgot Password
+                        TextButton(
+                          onPressed:
+                              () => _showForgotPasswordDialog(
+                                context,
+                                controller,
+                              ),
+                          child: Text(
+                            'forgot_password'.tr,
+                            style: Theme.of(context).textTheme.labelMedium,
+                          ),
+                        ),
+                      ],
                     ),
 
                     const SizedBox(height: 30),

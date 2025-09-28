@@ -6,9 +6,9 @@ class TIconButtonTheme {
   // Icon Button - دائري أسود مع أيقونة بيضاء (مثل الزر مع السهم)
   static final lightIconButtonTheme = IconButtonThemeData(
     style: IconButton.styleFrom(
-      elevation: 0,
-      foregroundColor: Colors.white,
-      backgroundColor: Colors.black,
+      elevation: 1,
+      backgroundColor: Colors.white,
+      foregroundColor: Colors.black,
       disabledForegroundColor: Colors.grey[400],
       disabledBackgroundColor: Colors.grey[300],
       padding: const EdgeInsets.all(12),
@@ -23,8 +23,8 @@ class TIconButtonTheme {
   static final darkIconButtonTheme = IconButtonThemeData(
     style: IconButton.styleFrom(
       elevation: 0,
-      foregroundColor: Colors.black,
-      backgroundColor: Colors.white,
+      foregroundColor: Colors.white,
+      backgroundColor: Colors.black,
       disabledForegroundColor: Colors.grey[600],
       disabledBackgroundColor: Colors.grey[700],
       padding: const EdgeInsets.all(12),

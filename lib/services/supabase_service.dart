@@ -1,3 +1,4 @@
+import 'dart:typed_data';
 import 'package:istoreto/utils/constants/constant.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -17,49 +18,60 @@ class SupabaseService {
     required String name,
   }) async {
     try {
-      // Create user with Supabase Auth
+      // Create user with Supabase Auth (without email verification)
       final AuthResponse response = await client.auth.signUp(
         email: email,
         password: password,
       );
 
       if (response.user != null) {
-        // Create user data
-        final userData = {
-          'user_id': response.user!.id,
+        // Create user profile data
+        final userProfileData = {
+          'id': response.user!.id,
+          'user_id': response.user!.id, // إضافة user_id
           'email': email,
           'phone_number': phoneNumber,
           'name': name,
           'username': email.split('@')[0],
           'is_active': true,
-          'email_verified': false,
+          'email_verified': true, // Set to true to skip verification
           'phone_verified': false,
+          'created_at': DateTime.now().toIso8601String(),
+          'updated_at': DateTime.now().toIso8601String(),
         };
 
-        // Try to insert user data with error handling
+        // Try to insert user profile data
         try {
           final result =
-              await client.from('users').insert(userData).select().single();
+              await client
+                  .from('user_profiles')
+                  .insert(userProfileData)
+                  .select()
+                  .single();
+
+          // Skip verification email - user is automatically verified
+          print(
+            'User registered successfully without email verification: $email',
+          );
 
           return {
             'success': true,
             'user': result,
-            'message': 'User registered successfully',
+            'message': 'User registered successfully.',
           };
         } catch (insertError) {
-          // If RLS error, return success but note that profile needs to be created manually
-          print('RLS Error: $insertError');
+          print('Error creating user profile: $insertError');
           return {
-            'success': true,
-            'user': userData,
+            'success': false,
             'message':
-                'User registered successfully. Profile will be created automatically.',
+                'Failed to create user profile: ${insertError.toString()}',
           };
         }
       } else {
         return {'success': false, 'message': 'Failed to create user account'};
       }
     } catch (e) {
+      print('Registration error: $e');
       return {'success': false, 'message': e.toString()};
     }
   }
@@ -76,23 +88,64 @@ class SupabaseService {
       );
 
       if (response.user != null) {
-        // Get user data from custom users table
-        final userData =
-            await client
-                .from('users')
-                .select()
-                .eq('user_id', response.user!.id)
-                .single();
+        // Get user data from user_profiles table
+        try {
+          final userData =
+              await client
+                  .from('user_profiles')
+                  .select()
+                  .eq('id', response.user!.id)
+                  .single();
 
-        return {
-          'success': true,
-          'user': userData,
-          'message': 'Login successful',
-        };
+          return {
+            'success': true,
+            'user': userData,
+            'message': 'Login successful',
+          };
+        } catch (e) {
+          // If user profile doesn't exist, create it
+          print('User profile not found, creating one: $e');
+
+          final userProfileData = {
+            'id': response.user!.id,
+            'user_id': response.user!.id,
+            'email': email,
+            'name': email.split('@')[0],
+            'username': email.split('@')[0],
+            'is_active': true,
+            'email_verified': true, // Skip email verification
+            'phone_verified': false,
+            'created_at': DateTime.now().toIso8601String(),
+            'updated_at': DateTime.now().toIso8601String(),
+          };
+
+          try {
+            final result =
+                await client
+                    .from('user_profiles')
+                    .insert(userProfileData)
+                    .select()
+                    .single();
+
+            return {
+              'success': true,
+              'user': result,
+              'message': 'Login successful',
+            };
+          } catch (insertError) {
+            print('Error creating user profile: $insertError');
+            return {
+              'success': true,
+              'user': userProfileData,
+              'message': 'Login successful (profile creation failed)',
+            };
+          }
+        }
       } else {
         return {'success': false, 'message': 'Invalid credentials'};
       }
     } catch (e) {
+      print('Sign in error: $e');
       return {'success': false, 'message': e.toString()};
     }
   }
@@ -100,144 +153,209 @@ class SupabaseService {
   // Sign In with Google
   Future<Map<String, dynamic>> signInWithGoogle() async {
     try {
-      await client.auth.signInWithOAuth(
+      final bool success = await client.auth.signInWithOAuth(
         OAuthProvider.google,
-        redirectTo: 'com.istoreto.app://login-callback/',
+        redirectTo: 'io.supabase.flutterquickstart://login-callback',
       );
 
-      // Wait for auth state change
-      final user = client.auth.currentUser;
+      if (success) {
+        // Wait a moment for auth state to update
+        await Future.delayed(const Duration(seconds: 2));
+        final user = client.auth.currentUser;
+        if (user != null) {
+          // Check if user exists in custom users table
+          final existingUser =
+              await client
+                  .from('user_profiles')
+                  .select()
+                  .eq('id', user.id)
+                  .maybeSingle();
 
-      if (user != null) {
-        // Check if user exists in custom users table
-        final existingUser =
-            await client
-                .from('users')
-                .select()
-                .eq('user_id', user.id)
-                .maybeSingle();
+          if (existingUser == null) {
+            // Create user in custom table if not exists
+            final userProfileData = {
+              'id': user.id,
+              'user_id': user.id, // إضافة user_id
+              'email': user.email,
+              'name':
+                  user.userMetadata?['full_name'] ??
+                  user.email?.split('@')[0] ??
+                  'User',
+              'username': user.email?.split('@')[0] ?? '',
+              'profile_image': user.userMetadata?['avatar_url'] ?? '',
+              'is_active': true,
+              'email_verified': true,
+              'phone_verified': false,
+              'created_at': DateTime.now().toIso8601String(),
+              'updated_at': DateTime.now().toIso8601String(),
+            };
 
-        if (existingUser == null) {
-          // Create user in custom table if not exists
-          final userData = {
-            'user_id': user.id,
-            'email': user.email,
-            'name': user.userMetadata?['full_name'] ?? '',
-            'username': user.email?.split('@')[0] ?? '',
-            'profile_image': user.userMetadata?['avatar_url'] ?? '',
-            'is_active': true,
-            'email_verified': true,
+            await client.from('user_profiles').insert(userProfileData);
+          }
+
+          return {
+            'success': true,
+            'user': existingUser ?? user,
+            'message': 'Google login successful',
           };
-
-          await client.from('users').insert(userData);
+        } else {
+          return {
+            'success': false,
+            'message': 'Google login failed - no user returned',
+          };
         }
-
-        return {
-          'success': true,
-          'user': user,
-          'message': 'Google login successful',
-        };
       } else {
-        return {'success': false, 'message': 'Google login failed'};
+        return {
+          'success': false,
+          'message': 'Google login failed - no user returned',
+        };
       }
     } catch (e) {
-      return {'success': false, 'message': e.toString()};
+      print('Google login error: $e');
+      return {
+        'success': false,
+        'message': 'Google login failed: ${e.toString()}',
+      };
     }
   }
 
   // Sign In with Facebook
   Future<Map<String, dynamic>> signInWithFacebook() async {
     try {
-      await client.auth.signInWithOAuth(
+      final bool success = await client.auth.signInWithOAuth(
         OAuthProvider.facebook,
-        redirectTo: 'io.supabase.flutterquickstart://login-callback/',
+        redirectTo: 'io.supabase.flutterquickstart://login-callback',
       );
 
-      // Wait for auth state change
-      final user = client.auth.currentUser;
+      if (success) {
+        // Wait a moment for auth state to update
+        await Future.delayed(const Duration(seconds: 2));
+        final user = client.auth.currentUser;
 
-      if (user != null) {
-        // Check if user exists in custom users table
-        final existingUser =
-            await client
-                .from('users')
-                .select()
-                .eq('user_id', user.id)
-                .maybeSingle();
+        if (user != null) {
+          // Check if user exists in custom users table
+          final existingUser =
+              await client
+                  .from('user_profiles')
+                  .select()
+                  .eq('id', user.id)
+                  .maybeSingle();
 
-        if (existingUser == null) {
-          // Create user in custom table if not exists
-          final userData = {
-            'user_id': user.id,
-            'email': user.email,
-            'name': user.userMetadata?['full_name'] ?? '',
-            'username': user.email?.split('@')[0] ?? '',
-            'profile_image': user.userMetadata?['avatar_url'] ?? '',
-            'is_active': true,
-            'email_verified': true,
+          if (existingUser == null) {
+            // Create user in custom table if not exists
+            final userProfileData = {
+              'id': user.id,
+              'user_id': user.id, // إضافة user_id
+              'email': user.email,
+              'name':
+                  user.userMetadata?['full_name'] ??
+                  user.email?.split('@')[0] ??
+                  'User',
+              'username': user.email?.split('@')[0] ?? '',
+              'profile_image': user.userMetadata?['avatar_url'] ?? '',
+              'is_active': true,
+              'email_verified': true,
+              'phone_verified': false,
+              'created_at': DateTime.now().toIso8601String(),
+              'updated_at': DateTime.now().toIso8601String(),
+            };
+
+            await client.from('user_profiles').insert(userProfileData);
+          }
+
+          return {
+            'success': true,
+            'user': existingUser ?? user,
+            'message': 'Facebook login successful',
           };
-
-          await client.from('users').insert(userData);
+        } else {
+          return {
+            'success': false,
+            'message': 'Facebook login failed - no user returned',
+          };
         }
-
-        return {
-          'success': true,
-          'user': user,
-          'message': 'Facebook login successful',
-        };
       } else {
-        return {'success': false, 'message': 'Facebook login failed'};
+        return {
+          'success': false,
+          'message': 'Facebook login failed - OAuth failed',
+        };
       }
     } catch (e) {
-      return {'success': false, 'message': e.toString()};
+      print('Facebook login error: $e');
+      return {
+        'success': false,
+        'message': 'Facebook login failed: ${e.toString()}',
+      };
     }
   }
 
   // Sign In with Apple
   Future<Map<String, dynamic>> signInWithApple() async {
     try {
-      await client.auth.signInWithOAuth(
+      final bool success = await client.auth.signInWithOAuth(
         OAuthProvider.apple,
-        redirectTo: 'io.supabase.flutterquickstart://login-callback/',
+        redirectTo: 'io.supabase.flutterquickstart://login-callback',
       );
 
-      // Wait for auth state change
-      final user = client.auth.currentUser;
+      if (success) {
+        // Wait a moment for auth state to update
+        await Future.delayed(const Duration(seconds: 2));
+        final user = client.auth.currentUser;
 
-      if (user != null) {
-        // Check if user exists in custom users table
-        final existingUser =
-            await client
-                .from('users')
-                .select()
-                .eq('user_id', user.id)
-                .maybeSingle();
+        if (user != null) {
+          // Check if user exists in custom users table
+          final existingUser =
+              await client
+                  .from('user_profiles')
+                  .select()
+                  .eq('id', user.id)
+                  .maybeSingle();
 
-        if (existingUser == null) {
-          // Create user in custom table if not exists
-          final userData = {
-            'user_id': user.id,
-            'email': user.email,
-            'name': user.userMetadata?['full_name'] ?? '',
-            'username': user.email?.split('@')[0] ?? '',
-            'profile_image': user.userMetadata?['avatar_url'] ?? '',
-            'is_active': true,
-            'email_verified': true,
+          if (existingUser == null) {
+            // Create user in custom table if not exists
+            final userProfileData = {
+              'id': user.id,
+              'user_id': user.id, // إضافة user_id
+              'email': user.email,
+              'name':
+                  user.userMetadata?['full_name'] ??
+                  user.email?.split('@')[0] ??
+                  'User',
+              'username': user.email?.split('@')[0] ?? '',
+              'profile_image': user.userMetadata?['avatar_url'] ?? '',
+              'is_active': true,
+              'email_verified': true,
+              'phone_verified': false,
+              'created_at': DateTime.now().toIso8601String(),
+              'updated_at': DateTime.now().toIso8601String(),
+            };
+
+            await client.from('user_profiles').insert(userProfileData);
+          }
+
+          return {
+            'success': true,
+            'user': existingUser ?? user,
+            'message': 'Apple login successful',
           };
-
-          await client.from('users').insert(userData);
+        } else {
+          return {
+            'success': false,
+            'message': 'Apple login failed - no user returned',
+          };
         }
-
-        return {
-          'success': true,
-          'user': user,
-          'message': 'Apple login successful',
-        };
       } else {
-        return {'success': false, 'message': 'Apple login failed'};
+        return {
+          'success': false,
+          'message': 'Apple login failed - OAuth failed',
+        };
       }
     } catch (e) {
-      return {'success': false, 'message': e.toString()};
+      print('Apple login error: $e');
+      return {
+        'success': false,
+        'message': 'Apple login failed: ${e.toString()}',
+      };
     }
   }
 
@@ -251,4 +369,170 @@ class SupabaseService {
 
   // Check if user is logged in
   bool get isLoggedIn => currentUser != null;
+
+  // Get products for guest users
+  Future<Map<String, dynamic>> getProductsForGuest() async {
+    try {
+      final response = await client
+          .from('products')
+          .select('*')
+          .eq('is_active', true)
+          .order('created_at', ascending: false)
+          .limit(20);
+
+      return {
+        'success': true,
+        'data': response,
+        'message': 'Products loaded successfully',
+      };
+    } catch (e) {
+      print('Error loading products for guest: $e');
+      return {
+        'success': false,
+        'data': [],
+        'message': 'Failed to load products: ${e.toString()}',
+      };
+    }
+  }
+
+  // Get categories for guest users
+  Future<Map<String, dynamic>> getCategoriesForGuest() async {
+    try {
+      final response = await client
+          .from('categories')
+          .select('*')
+          .eq('is_active', true)
+          .order('name');
+
+      return {
+        'success': true,
+        'data': response,
+        'message': 'Categories loaded successfully',
+      };
+    } catch (e) {
+      print('Error loading categories for guest: $e');
+      return {
+        'success': false,
+        'data': [],
+        'message': 'Failed to load categories: ${e.toString()}',
+      };
+    }
+  }
+
+  // Create vendor account
+  Future<Map<String, dynamic>> createVendor(
+    Map<String, dynamic> vendorData,
+  ) async {
+    try {
+      final result =
+          await client.from('vendors').insert(vendorData).select().single();
+
+      return {
+        'success': true,
+        'data': result,
+        'message': 'Vendor created successfully',
+      };
+    } catch (e) {
+      print('Error creating vendor: $e');
+      return {'success': false, 'message': e.toString()};
+    }
+  }
+
+  // Update user account type
+  Future<Map<String, dynamic>> updateUserAccountType(
+    String userId,
+    int accountType,
+  ) async {
+    try {
+      final result =
+          await client
+              .from('user_profiles')
+              .update({'account_type': accountType})
+              .eq('id', userId)
+              .select()
+              .single();
+
+      return {
+        'success': true,
+        'data': result,
+        'message': 'Account type updated successfully',
+      };
+    } catch (e) {
+      print('Error updating account type: $e');
+      return {'success': false, 'message': e.toString()};
+    }
+  }
+
+  // Get vendor by user ID
+  Future<Map<String, dynamic>> getVendorByUserId(String userId) async {
+    try {
+      final result =
+          await client.from('vendors').select().eq('user_id', userId).single();
+
+      return {
+        'success': true,
+        'data': result,
+        'message': 'Vendor fetched successfully',
+      };
+    } catch (e) {
+      print('Error fetching vendor: $e');
+      return {'success': false, 'message': e.toString()};
+    }
+  }
+
+  // Upload image to Supabase Storage
+  Future<Map<String, dynamic>> uploadImageToStorage(
+    List<int> bytes,
+    String path,
+  ) async {
+    try {
+      final result = await client.storage
+          .from('images')
+          .uploadBinary(path, Uint8List.fromList(bytes));
+
+      // Get public URL
+      final url = client.storage.from('images').getPublicUrl(path);
+
+      return {
+        'success': true,
+        'url': url,
+        'path': result,
+        'message': 'Image uploaded successfully',
+      };
+    } catch (e) {
+      print('Error uploading image: $e');
+      return {'success': false, 'message': e.toString()};
+    }
+  }
+
+  // Delete image from Supabase Storage
+  Future<Map<String, dynamic>> deleteImageFromStorage(String path) async {
+    try {
+      await client.storage.from('images').remove([path]);
+
+      return {'success': true, 'message': 'Image deleted successfully'};
+    } catch (e) {
+      print('Error deleting image: $e');
+      return {'success': false, 'message': e.toString()};
+    }
+  }
+
+  // Update vendor with selected major categories
+  Future<void> updateVendorCategories(
+    String vendorId,
+    String selectedCategories,
+  ) async {
+    try {
+      await client
+          .from('vendors')
+          .update({
+            'selected_major_categories': selectedCategories,
+            'updated_at': DateTime.now().toIso8601String(),
+          })
+          .eq('id', vendorId);
+    } catch (e) {
+      print('Error updating vendor categories: $e');
+      throw e;
+    }
+  }
 }

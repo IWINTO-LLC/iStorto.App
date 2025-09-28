@@ -50,9 +50,12 @@ class _SplashScreenState extends State<SplashScreen>
     await Future.delayed(const Duration(seconds: 3));
 
     // Check if user is logged in
-    final authController = Get.put(AuthController());
+    final authController = Get.find<AuthController>();
 
-    if (authController.isLoggedIn) {
+    // Check for auto-login
+    final isLoggedIn = await authController.checkAutoLogin();
+
+    if (isLoggedIn) {
       Get.off(() => const NavigationMenu());
     } else {
       Get.off(() => const LoginPage());

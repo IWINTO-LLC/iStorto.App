@@ -1,4 +1,5 @@
 // lib/controllers/major_category_controller.dart
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../data/models/major_category_model.dart';
 import '../data/repositories/major_category_repository.dart';
@@ -182,7 +183,7 @@ class MajorCategoryController extends GetxController {
     try {
       _isCreating.value = true;
       final newCategory = await MajorCategoryRepository.createCategory(
-        category,
+        category.toJson(),
       );
       _allCategories.insert(0, newCategory);
 
@@ -220,7 +221,8 @@ class MajorCategoryController extends GetxController {
     try {
       _isUpdating.value = true;
       final updatedCategory = await MajorCategoryRepository.updateCategory(
-        category,
+        category.id!,
+        category.toJson(),
       );
 
       // Update in all lists
@@ -488,5 +490,83 @@ class MajorCategoryController extends GetxController {
       loadFeaturedCategories(),
       loadActiveCategories(),
     ]);
+  }
+
+  // Get category icon based on name
+  IconData getCategoryIcon(String categoryName) {
+    final name = categoryName.toLowerCase();
+    if (name.contains('clothing') || name.contains('fashion')) {
+      return Icons.checkroom;
+    } else if (name.contains('shoes') || name.contains('footwear')) {
+      return Icons.shopping_bag;
+    } else if (name.contains('bags') || name.contains('handbag')) {
+      return Icons.shopping_basket;
+    } else if (name.contains('accessories') || name.contains('watch')) {
+      return Icons.watch;
+    } else if (name.contains('electronics') || name.contains('phone')) {
+      return Icons.phone_android;
+    } else if (name.contains('home') || name.contains('furniture')) {
+      return Icons.home;
+    } else if (name.contains('beauty') || name.contains('cosmetics')) {
+      return Icons.face;
+    } else if (name.contains('sports') || name.contains('fitness')) {
+      return Icons.sports;
+    } else if (name.contains('books') || name.contains('education')) {
+      return Icons.book; //Office
+    } else if (name.contains('toys') || name.contains('games')) {
+      return Icons.toys;
+    } else if (name.contains('food') || name.contains('restaurant')) {
+      return Icons.restaurant;
+    } else if (name.contains('office') || name.contains('library')) {
+      return Icons.engineering;
+    } else if (name.contains('health') || name.contains('medical')) {
+      return Icons.medical_services;
+    } else if (name.contains('automotive') || name.contains('car')) {
+      return Icons.directions_car;
+    } else if (name.contains('garden') || name.contains('outdoor')) {
+      return Icons.local_florist;
+    } else if (name.contains('jewelry') || name.contains('diamond')) {
+      return Icons.diamond;
+    } else {
+      return Icons.category;
+    }
+  }
+
+  // Get category color based on name
+  Color getCategoryColor(String categoryName) {
+    final name = categoryName.toLowerCase();
+    if (name.contains('clothing') || name.contains('clothes')) {
+      return Colors.pink;
+    } else if (name.contains('shoes') || name.contains('footwear')) {
+      return Colors.brown;
+    } else if (name.contains('bags') || name.contains('handbag')) {
+      return Colors.purple;
+    } else if (name.contains('accessories') || name.contains('watch')) {
+      return Colors.blue;
+    } else if (name.contains('electronics') || name.contains('phone')) {
+      return Colors.blueGrey;
+    } else if (name.contains('home') || name.contains('furniture')) {
+      return Colors.green;
+    } else if (name.contains('beauty') || name.contains('cosmetics')) {
+      return Colors.pinkAccent;
+    } else if (name.contains('sports') || name.contains('fitness')) {
+      return Colors.orange;
+    } else if (name.contains('books') || name.contains('education')) {
+      return Colors.indigo;
+    } else if (name.contains('toys') || name.contains('games')) {
+      return Colors.red;
+    } else if (name.contains('food') || name.contains('restaurant')) {
+      return Colors.amber;
+    } else if (name.contains('health') || name.contains('medical')) {
+      return Colors.teal;
+    } else if (name.contains('automotive') || name.contains('car')) {
+      return Colors.deepOrange;
+    } else if (name.contains('garden') || name.contains('outdoor')) {
+      return Colors.lightGreen;
+    } else if (name.contains('jewelry') || name.contains('diamond')) {
+      return Colors.cyan;
+    } else {
+      return Colors.grey;
+    }
   }
 }

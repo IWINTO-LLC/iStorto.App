@@ -21,6 +21,7 @@ class VendorModel {
   final bool organizationDeleted;
   final bool organizationActivated;
   final String defaultCurrency;
+  final String? selectedMajorCategories; // الفئات العامة المختارة
   final DateTime? createdAt;
   final DateTime? updatedAt;
   final SocialLink? socialLink;
@@ -46,6 +47,7 @@ class VendorModel {
     this.organizationDeleted = false,
     this.organizationActivated = true,
     this.defaultCurrency = 'USD',
+    this.selectedMajorCategories,
     this.socialLink,
     this.createdAt,
     this.updatedAt,
@@ -73,6 +75,7 @@ class VendorModel {
       organizationDeleted: json['organization_deleted'] ?? false,
       organizationActivated: json['organization_activated'] ?? true,
       defaultCurrency: json['default_currency'] ?? 'USD',
+      selectedMajorCategories: json['selected_major_categories'],
       createdAt:
           json['created_at'] != null
               ? DateTime.parse(json['created_at'])
@@ -85,8 +88,7 @@ class VendorModel {
   }
 
   Map<String, dynamic> toJson() {
-    return {
-      'id': id,
+    final Map<String, dynamic> json = {
       'user_id': userId,
       'organization_name': organizationName,
       'organization_bio': organizationBio,
@@ -106,9 +108,17 @@ class VendorModel {
       'organization_deleted': organizationDeleted,
       'organization_activated': organizationActivated,
       'default_currency': defaultCurrency,
+      'selected_major_categories': selectedMajorCategories,
       'created_at': createdAt?.toIso8601String(),
       'updated_at': updatedAt?.toIso8601String(),
     };
+
+    // Only include id if it's not null
+    if (id != null) {
+      json['id'] = id;
+    }
+
+    return json;
   }
 
   // Create empty profile

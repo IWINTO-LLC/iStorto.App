@@ -124,7 +124,9 @@ class _MarketPlaceViewState extends State<MarketPlaceView> {
                 ),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    return MarketWaitingPage(vendorId: widget.vendorId);
+                    return Center(
+                      child: CircularProgressIndicator(),
+                    ); //MarketWaitingPage(vendorId: widget.vendorId);
                   } else {
                     return _buildBody();
                   }

@@ -9,6 +9,7 @@ class UserModel {
   final String bio;
   final String brief;
   final String defaultCurrency;
+  final int accountType; // 0: regular, 1: commercial
   final bool isActive;
   final bool emailVerified;
   final bool phoneVerified;
@@ -26,6 +27,7 @@ class UserModel {
     this.bio = '',
     this.brief = '',
     this.defaultCurrency = 'USD',
+    this.accountType = 0, // Default to regular account
     this.isActive = true,
     this.emailVerified = false,
     this.phoneVerified = false,
@@ -46,6 +48,7 @@ class UserModel {
       bio: json['bio'] as String? ?? '',
       brief: json['brief'] as String? ?? '',
       defaultCurrency: json['default_currency'] as String? ?? 'USD',
+      accountType: json['account_type'] as int? ?? 0,
       isActive: json['is_active'] as bool? ?? true,
       emailVerified: json['email_verified'] as bool? ?? false,
       phoneVerified: json['phone_verified'] as bool? ?? false,
@@ -67,6 +70,7 @@ class UserModel {
       'bio': bio,
       'brief': brief,
       'default_currency': defaultCurrency,
+      'account_type': accountType,
       'is_active': isActive,
       'email_verified': emailVerified,
       'phone_verified': phoneVerified,
@@ -82,6 +86,7 @@ class UserModel {
     String? phoneNumber,
     String? name,
     String? username,
+    int accountType = 0, // Default to regular account
   }) {
     final now = DateTime.now();
     return UserModel(
@@ -94,6 +99,8 @@ class UserModel {
       profileImage: '',
       bio: '',
       brief: '',
+      defaultCurrency: 'USD',
+      accountType: accountType,
       isActive: true,
       emailVerified: false,
       phoneVerified: false,
@@ -109,6 +116,7 @@ class UserModel {
     String? name,
     String? profileImage,
     String? username,
+    int accountType = 0, // Default to regular account
   }) {
     final now = DateTime.now();
     return UserModel(
@@ -121,6 +129,8 @@ class UserModel {
       profileImage: profileImage ?? '',
       bio: '',
       brief: '',
+      defaultCurrency: 'USD',
+      accountType: accountType,
       isActive: true,
       emailVerified: true,
       phoneVerified: false,
@@ -141,6 +151,7 @@ class UserModel {
     String? bio,
     String? brief,
     String? defaultCurrency,
+    int? accountType,
     bool? isActive,
     bool? emailVerified,
     bool? phoneVerified,
@@ -158,6 +169,7 @@ class UserModel {
       bio: bio ?? this.bio,
       brief: brief ?? this.brief,
       defaultCurrency: defaultCurrency ?? this.defaultCurrency,
+      accountType: accountType ?? this.accountType,
       isActive: isActive ?? this.isActive,
       emailVerified: emailVerified ?? this.emailVerified,
       phoneVerified: phoneVerified ?? this.phoneVerified,
@@ -204,6 +216,38 @@ class UserModel {
       return email![0].toUpperCase();
     }
     return 'U';
+  }
+
+  // Check if account is commercial
+  bool get isCommercialAccount {
+    return accountType == 1;
+  }
+
+  // Check if account is regular
+  bool get isRegularAccount {
+    return accountType == 0;
+  }
+
+  // Get account type display name
+  String get accountTypeDisplayName {
+    switch (accountType) {
+      case 1:
+        return 'Commercial';
+      case 0:
+      default:
+        return 'Regular';
+    }
+  }
+
+  // Get account type display name in Arabic
+  String get accountTypeDisplayNameAr {
+    switch (accountType) {
+      case 1:
+        return 'تجاري';
+      case 0:
+      default:
+        return 'عادي';
+    }
   }
 
   @override
