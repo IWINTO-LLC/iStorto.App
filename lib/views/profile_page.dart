@@ -4,6 +4,7 @@ import 'package:istoreto/controllers/auth_controller.dart';
 import 'package:istoreto/featured/shop/view/market_place_view.dart';
 import 'package:istoreto/views/initial_commercial_page.dart';
 import 'package:istoreto/views/admin/admin_zone_page.dart';
+import 'package:istoreto/views/settings_page.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
@@ -24,8 +25,8 @@ class ProfilePage extends StatelessWidget {
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                   colors: [
-                    Colors.purple.shade300,
-                    Colors.purple.shade400,
+                    Colors.blue.shade300,
+                    Colors.blue.shade400,
                     Colors.white,
                   ],
                   stops: [0.0, 0.7, 1.0],
@@ -438,40 +439,203 @@ class ProfilePage extends StatelessWidget {
     );
   }
 
+  // Edit Functions
+  void _editCoverPhoto() {
+    Get.snackbar(
+      'Edit Cover Photo',
+      'Cover photo editing feature coming soon!',
+      snackPosition: SnackPosition.BOTTOM,
+      backgroundColor: Colors.blue.shade100,
+      colorText: Colors.blue.shade800,
+      duration: Duration(seconds: 2),
+    );
+  }
+
+  void _editProfilePhoto() {
+    Get.snackbar(
+      'Edit Profile Photo',
+      'Profile photo editing feature coming soon!',
+      snackPosition: SnackPosition.BOTTOM,
+      backgroundColor: Colors.blue.shade100,
+      colorText: Colors.blue.shade800,
+      duration: Duration(seconds: 2),
+    );
+  }
+
+  void _editPersonalInfo() {
+    Get.snackbar(
+      'Edit Personal Info',
+      'Personal information editing feature coming soon!',
+      snackPosition: SnackPosition.BOTTOM,
+      backgroundColor: Colors.blue.shade100,
+      colorText: Colors.blue.shade800,
+      duration: Duration(seconds: 2),
+    );
+  }
+
+  void _editBio() {
+    Get.snackbar(
+      'Edit Bio',
+      'Bio editing feature coming soon!',
+      snackPosition: SnackPosition.BOTTOM,
+      backgroundColor: Colors.blue.shade100,
+      colorText: Colors.blue.shade800,
+      duration: Duration(seconds: 2),
+    );
+  }
+
+  void _editBrief() {
+    Get.snackbar(
+      'Edit Brief',
+      'Brief editing feature coming soon!',
+      snackPosition: SnackPosition.BOTTOM,
+      backgroundColor: Colors.blue.shade100,
+      colorText: Colors.blue.shade800,
+      duration: Duration(seconds: 2),
+    );
+  }
+
   void _showEditProfileDialog(BuildContext context) {
-    showDialog(
+    showModalBottomSheet(
       context: context,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
       builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Edit Profile'),
-          content: Text('Profile editing feature coming soon!'),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: Text('OK'),
-            ),
-          ],
+        return Container(
+          padding: EdgeInsets.all(20),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Handle bar
+              Container(
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade300,
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              SizedBox(height: 20),
+              
+              // Title
+              Text(
+                'Edit Profile',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.grey.shade800,
+                ),
+              ),
+              SizedBox(height: 20),
+              
+              // Edit Options
+              _buildEditOption(
+                icon: Icons.photo_camera,
+                title: 'Edit Cover Photo',
+                subtitle: 'Change your cover image',
+                onTap: () {
+                  Navigator.pop(context);
+                  _editCoverPhoto();
+                },
+              ),
+              _buildEditOption(
+                icon: Icons.person,
+                title: 'Edit Profile Photo',
+                subtitle: 'Change your profile picture',
+                onTap: () {
+                  Navigator.pop(context);
+                  _editProfilePhoto();
+                },
+              ),
+              _buildEditOption(
+                icon: Icons.info,
+                title: 'Edit Personal Info',
+                subtitle: 'Update your personal details',
+                onTap: () {
+                  Navigator.pop(context);
+                  _editPersonalInfo();
+                },
+              ),
+              _buildEditOption(
+                icon: Icons.description,
+                title: 'Edit Bio',
+                subtitle: 'Update your biography',
+                onTap: () {
+                  Navigator.pop(context);
+                  _editBio();
+                },
+              ),
+              _buildEditOption(
+                icon: Icons.short_text,
+                title: 'Edit Brief',
+                subtitle: 'Update your brief description',
+                onTap: () {
+                  Navigator.pop(context);
+                  _editBrief();
+                },
+              ),
+              
+              SizedBox(height: 20),
+            ],
+          ),
         );
       },
     );
   }
 
-  void _showSettingsDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Settings'),
-          content: Text('Settings feature coming soon!'),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: Text('OK'),
-            ),
-          ],
-        );
-      },
+  Widget _buildEditOption({
+    required IconData icon,
+    required String title,
+    required String subtitle,
+    required VoidCallback onTap,
+  }) {
+    return Container(
+      margin: EdgeInsets.only(bottom: 12),
+      decoration: BoxDecoration(
+        color: Colors.grey.shade50,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.grey.shade200),
+      ),
+      child: ListTile(
+        leading: Container(
+          padding: EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            color: Colors.blue.withOpacity(0.1),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Icon(
+            icon,
+            color: Colors.blue,
+            size: 20,
+          ),
+        ),
+        title: Text(
+          title,
+          style: TextStyle(
+            fontWeight: FontWeight.w600,
+            color: Colors.grey.shade800,
+          ),
+        ),
+        subtitle: Text(
+          subtitle,
+          style: TextStyle(
+            fontSize: 12,
+            color: Colors.grey.shade600,
+          ),
+        ),
+        trailing: Icon(
+          Icons.arrow_forward_ios,
+          color: Colors.grey.shade400,
+          size: 16,
+        ),
+        onTap: onTap,
+      ),
     );
+  }
+
+  void _showSettingsDialog(BuildContext context) {
+    Get.to(() => SettingsPage());
   }
 
   void _showHelpDialog(BuildContext context) {

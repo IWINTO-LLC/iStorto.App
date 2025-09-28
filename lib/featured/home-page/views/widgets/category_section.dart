@@ -16,11 +16,7 @@ class CategorySection extends StatelessWidget {
     controller.loadActiveCategories();
 
     return Scaffold(
-      appBar: CustomAppBar(
-        title: 'categories'.tr,
-        centerTitle: true,
-       
-      ),
+      appBar: CustomAppBar(title: 'categories'.tr, centerTitle: true),
       body: Container(
         color: Colors.grey.shade50,
         child: SafeArea(
@@ -165,7 +161,6 @@ class CategorySection extends StatelessWidget {
     );
   }
 
-
   Widget _buildCategoryIcon(
     MajorCategoryModel category,
     MajorCategoryController controller,
@@ -217,7 +212,10 @@ class CategorySection extends StatelessWidget {
     }
   }
 
-  Widget _buildCategoryCard(MajorCategoryModel category, MajorCategoryController controller) {
+  Widget _buildCategoryCard(
+    MajorCategoryModel category,
+    MajorCategoryController controller,
+  ) {
     // Add null safety checks
     if (category.name.isEmpty) {
       return const SizedBox.shrink();
@@ -255,26 +253,27 @@ class CategorySection extends StatelessWidget {
                   ),
                 ],
               ),
-              child: category.image != null && category.image!.isNotEmpty
-                  ? ClipRRect(
-                      borderRadius: BorderRadius.circular(30),
-                      child: Image.network(
-                        category.image!,
-                        fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) {
-                          return _buildCategoryIcon(category, controller);
-                        },
-                        loadingBuilder: (context, child, loadingProgress) {
-                          if (loadingProgress == null) return child;
-                          return _buildCategoryIcon(category, controller);
-                        },
-                      ),
-                    )
-                  : _buildCategoryIcon(category, controller),
+              child:
+                  category.image != null && category.image!.isNotEmpty
+                      ? ClipRRect(
+                        borderRadius: BorderRadius.circular(30),
+                        child: Image.network(
+                          category.image!,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) {
+                            return _buildCategoryIcon(category, controller);
+                          },
+                          loadingBuilder: (context, child, loadingProgress) {
+                            if (loadingProgress == null) return child;
+                            return _buildCategoryIcon(category, controller);
+                          },
+                        ),
+                      )
+                      : _buildCategoryIcon(category, controller),
             ),
-            
+
             const SizedBox(height: 12),
-            
+
             // Category Name
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8),
@@ -290,9 +289,9 @@ class CategorySection extends StatelessWidget {
                 overflow: TextOverflow.ellipsis,
               ),
             ),
-            
+
             const SizedBox(height: 8),
-            
+
             // Status Badge (only for non-active categories)
             if (category.status != 1)
               Container(
