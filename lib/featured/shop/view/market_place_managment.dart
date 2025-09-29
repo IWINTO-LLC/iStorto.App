@@ -53,7 +53,7 @@ class NestedScrollViewForHome extends GetView<VendorController> {
                             : SingleChildScrollView(
                               child: Column(
                                 children: [
-                                  //  marketHeaderSection(vendorId, editMode, true),
+                                  marketHeaderSection(vendorId, editMode, true),
                                   Padding(
                                     padding: const EdgeInsets.only(top: 28.0),
                                     child: AllTab(

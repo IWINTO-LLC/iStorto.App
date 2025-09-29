@@ -71,6 +71,7 @@ class _MarketPlaceViewState extends State<MarketPlaceView> {
 
   @override
   Widget build(BuildContext context) {
+    Get.put(SectorController(widget.vendorId));
     // Show loading while initializing
     if (!_isInitialized) {
       return Scaffold(
@@ -157,161 +158,161 @@ class _MarketPlaceViewState extends State<MarketPlaceView> {
     });
   }
 
-  Widget _buildStorueDeletedCard() {
-    return Padding(
-      padding: const EdgeInsets.all(25.0),
-      child: TRoundedContainer(
-        radius: BorderRadius.circular(15),
-        enableShadow: true,
-        showBorder: true,
-        padding: const EdgeInsets.all(24.0),
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(Icons.store, size: 80, color: Colors.grey[400]),
-              const SizedBox(height: 24),
-              Text(
-                'store_activation.store_deleted_title'.tr,
-                style: titilliumBold.copyWith(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.red[700],
-                ),
-              ),
-              const SizedBox(height: 16),
-              Text(
-                'store_activation.store_deleted_desc'.tr,
-                textAlign: TextAlign.center,
-                style: titilliumBold.copyWith(
-                  fontSize: 16,
-                  color: Colors.grey[600],
-                ),
-              ),
-              // الرسالة الاختيارية بتصميم البطاقة
-              if ((VendorController.instance.profileData.value.storeMessage)
-                  .isNotEmpty)
-                Padding(
-                  padding: const EdgeInsets.only(top: 18.0, bottom: 8.0),
-                  child: Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 12,
-                      horizontal: 16,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.orange.withOpacity(0.08),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Text(
-                      VendorController.instance.profileData.value.storeMessage!,
-                      textAlign: TextAlign.center,
-                      style: titilliumBold.copyWith(
-                        fontSize: 16,
-                        color: Colors.orange[800],
-                        fontWeight: FontWeight.w500,
-                        height: 1.5,
-                      ),
-                    ),
-                  ),
-                ),
-              const SizedBox(height: 32),
-              ElevatedButton(
-                onPressed: () => Navigator.pop(context),
-                child: Text(
-                  'store_activation.back'.tr,
-                  style: titilliumBold.copyWith(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
+  // Widget _buildStorueDeletedCard() {
+  //   return Padding(
+  //     padding: const EdgeInsets.all(25.0),
+  //     child: TRoundedContainer(
+  //       radius: BorderRadius.circular(15),
+  //       enableShadow: true,
+  //       showBorder: true,
+  //       padding: const EdgeInsets.all(24.0),
+  //       child: Center(
+  //         child: Column(
+  //           mainAxisAlignment: MainAxisAlignment.center,
+  //           children: [
+  //             Icon(Icons.store, size: 80, color: Colors.grey[400]),
+  //             const SizedBox(height: 24),
+  //             Text(
+  //               'store_activation.store_deleted_title'.tr,
+  //               style: titilliumBold.copyWith(
+  //                 fontSize: 24,
+  //                 fontWeight: FontWeight.bold,
+  //                 color: Colors.red[700],
+  //               ),
+  //             ),
+  //             const SizedBox(height: 16),
+  //             Text(
+  //               'store_activation.store_deleted_desc'.tr,
+  //               textAlign: TextAlign.center,
+  //               style: titilliumBold.copyWith(
+  //                 fontSize: 16,
+  //                 color: Colors.grey[600],
+  //               ),
+  //             ),
+  //             // الرسالة الاختيارية بتصميم البطاقة
+  //             if ((VendorController.instance.profileData.value.storeMessage)
+  //                 .isNotEmpty)
+  //               Padding(
+  //                 padding: const EdgeInsets.only(top: 18.0, bottom: 8.0),
+  //                 child: Container(
+  //                   width: double.infinity,
+  //                   padding: const EdgeInsets.symmetric(
+  //                     vertical: 12,
+  //                     horizontal: 16,
+  //                   ),
+  //                   decoration: BoxDecoration(
+  //                     color: Colors.orange.withOpacity(0.08),
+  //                     borderRadius: BorderRadius.circular(12),
+  //                   ),
+  //                   child: Text(
+  //                     VendorController.instance.profileData.value.storeMessage!,
+  //                     textAlign: TextAlign.center,
+  //                     style: titilliumBold.copyWith(
+  //                       fontSize: 16,
+  //                       color: Colors.orange[800],
+  //                       fontWeight: FontWeight.w500,
+  //                       height: 1.5,
+  //                     ),
+  //                   ),
+  //                 ),
+  //               ),
+  //             const SizedBox(height: 32),
+  //             ElevatedButton(
+  //               onPressed: () => Navigator.pop(context),
+  //               child: Text(
+  //                 'store_activation.back'.tr,
+  //                 style: titilliumBold.copyWith(
+  //                   fontSize: 16,
+  //                   fontWeight: FontWeight.bold,
+  //                 ),
+  //               ),
+  //             ),
+  //           ],
+  //         ),
+  //       ),
+  //     ),
+  //   );
+  // }
 
-  Widget _buildStoreSuspendedCard() {
-    return Padding(
-      padding: const EdgeInsets.all(25.0),
-      child: TRoundedContainer(
-        radius: BorderRadius.circular(15),
-        enableShadow: true,
-        showBorder: true,
-        padding: const EdgeInsets.all(24.0),
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(
-                Icons.pause_circle_outline,
-                size: 80,
-                color: Colors.orange[400],
-              ),
-              const SizedBox(height: 24),
-              Text(
-                'store_activation.store_suspended_title'.tr,
-                style: titilliumBold.copyWith(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.orange[700],
-                ),
-              ),
-              const SizedBox(height: 16),
-              Text(
-                'store_activation.store_suspended_desc'.tr,
-                textAlign: TextAlign.center,
-                style: titilliumBold.copyWith(
-                  fontSize: 16,
-                  color: Colors.grey[600],
-                ),
-              ),
-              // الرسالة الاختيارية بتصميم البطاقة
-              if ((VendorController.instance.profileData.value.storeMessage)
-                  .isNotEmpty)
-                Padding(
-                  padding: const EdgeInsets.only(top: 18.0, bottom: 8.0),
-                  child: Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 12,
-                      horizontal: 16,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.orange.withOpacity(0.08),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Text(
-                      VendorController.instance.profileData.value.storeMessage,
-                      textAlign: TextAlign.center,
-                      style: titilliumBold.copyWith(
-                        fontSize: 16,
-                        color: Colors.orange[800],
-                        fontWeight: FontWeight.w500,
-                        height: 1.5,
-                      ),
-                    ),
-                  ),
-                ),
-              const SizedBox(height: 32),
-              ElevatedButton(
-                onPressed: () => Navigator.pop(context),
-                child: Text(
-                  'store_activation.back'.tr,
-                  style: titilliumBold.copyWith(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
+  // Widget _buildStoreSuspendedCard() {
+  //   return Padding(
+  //     padding: const EdgeInsets.all(25.0),
+  //     child: TRoundedContainer(
+  //       radius: BorderRadius.circular(15),
+  //       enableShadow: true,
+  //       showBorder: true,
+  //       padding: const EdgeInsets.all(24.0),
+  //       child: Center(
+  //         child: Column(
+  //           mainAxisAlignment: MainAxisAlignment.center,
+  //           children: [
+  //             Icon(
+  //               Icons.pause_circle_outline,
+  //               size: 80,
+  //               color: Colors.orange[400],
+  //             ),
+  //             const SizedBox(height: 24),
+  //             Text(
+  //               'store_activation.store_suspended_title'.tr,
+  //               style: titilliumBold.copyWith(
+  //                 fontSize: 24,
+  //                 fontWeight: FontWeight.bold,
+  //                 color: Colors.orange[700],
+  //               ),
+  //             ),
+  //             const SizedBox(height: 16),
+  //             Text(
+  //               'store_activation.store_suspended_desc'.tr,
+  //               textAlign: TextAlign.center,
+  //               style: titilliumBold.copyWith(
+  //                 fontSize: 16,
+  //                 color: Colors.grey[600],
+  //               ),
+  //             ),
+  //             // الرسالة الاختيارية بتصميم البطاقة
+  //             if ((VendorController.instance.profileData.value.storeMessage)
+  //                 .isNotEmpty)
+  //               Padding(
+  //                 padding: const EdgeInsets.only(top: 18.0, bottom: 8.0),
+  //                 child: Container(
+  //                   width: double.infinity,
+  //                   padding: const EdgeInsets.symmetric(
+  //                     vertical: 12,
+  //                     horizontal: 16,
+  //                   ),
+  //                   decoration: BoxDecoration(
+  //                     color: Colors.orange.withOpacity(0.08),
+  //                     borderRadius: BorderRadius.circular(12),
+  //                   ),
+  //                   child: Text(
+  //                     VendorController.instance.profileData.value.storeMessage,
+  //                     textAlign: TextAlign.center,
+  //                     style: titilliumBold.copyWith(
+  //                       fontSize: 16,
+  //                       color: Colors.orange[800],
+  //                       fontWeight: FontWeight.w500,
+  //                       height: 1.5,
+  //                     ),
+  //                   ),
+  //                 ),
+  //               ),
+  //             const SizedBox(height: 32),
+  //             ElevatedButton(
+  //               onPressed: () => Navigator.pop(context),
+  //               child: Text(
+  //                 'store_activation.back'.tr,
+  //                 style: titilliumBold.copyWith(
+  //                   fontSize: 16,
+  //                   fontWeight: FontWeight.bold,
+  //                 ),
+  //               ),
+  //             ),
+  //           ],
+  //         ),
+  //       ),
+  //     ),
+  //   );
+  // }
 
   /// Build shimmer effect for header section
   Widget _buildHeaderShimmer() {
@@ -323,17 +324,17 @@ class _MarketPlaceViewState extends State<MarketPlaceView> {
           const Row(
             children: [
               // Store logo shimmer
-              const TShimmerEffect(
+              TShimmerEffect(
                 width: 80,
                 height: 80,
                 raduis: BorderRadius.all(Radius.circular(40)),
               ),
-              const SizedBox(width: 16),
+              SizedBox(width: 16),
               // Store info shimmer
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: const [
+                  children: [
                     TShimmerEffect(width: 150, height: 20),
                     SizedBox(height: 8),
                     TShimmerEffect(width: 100, height: 16),

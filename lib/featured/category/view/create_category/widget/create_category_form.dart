@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:istoreto/controllers/translation_controller.dart';
+import 'package:istoreto/featured/shop/controller/vendor_controller.dart';
 import 'package:simple_loading_dialog/simple_loading_dialog.dart';
 import 'package:istoreto/controllers/create_category_controller.dart';
 import 'package:istoreto/featured/category/view/all_category/widgets/category_grid_item.dart';
@@ -109,7 +110,9 @@ class CreateCategoryForm extends StatelessWidget {
                   await showSimpleLoadingDialog<String>(
                     context: context,
                     future: () async {
-                      await createController.createCategory();
+                      await createController.createCategory(
+                        VendorController.instance.profileData.value.id!,
+                      );
                       return "add category done";
                     },
                     // Custom dialog

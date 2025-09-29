@@ -309,6 +309,54 @@ class ProductRepository extends GetxController {
     }
   }
 
+  // Get products by type using vendor_categories (for market place view)
+  Future<List<ProductModel>> getProductsByTypeForVendor(
+    String vendorId,
+    String type,
+  ) async {
+    try {
+      if (vendorId.isEmpty || type.isEmpty) {
+        throw 'Vendor ID and Product Type are required';
+      }
+
+      final response = await _client
+          .from('products')
+          .select('''
+            *,
+            category:vendor_categories!vendor_category_id(
+              id,
+              title,
+              icon,
+              color,
+              is_active,
+              created_at,
+              updated_at
+            )
+          ''')
+          .eq('vendor_id', vendorId)
+          .eq('product_type', type)
+          .eq('is_deleted', false)
+          .order('created_at', ascending: false);
+
+      final resultList =
+          (response as List)
+              .map((data) => ProductModel.fromJson(data))
+              .toList();
+
+      if (kDebugMode) {
+        print("=======Products by Type for Vendor==============");
+        print("Vendor ID: $vendorId, Type: $type, Count: ${resultList.length}");
+      }
+
+      return resultList;
+    } catch (e) {
+      if (kDebugMode) {
+        print("Error getting products by type for vendor: $e");
+      }
+      throw 'Failed to get products by type for vendor: ${e.toString()}';
+    }
+  }
+
   // Create new product
   Future<ProductModel> createProduct(ProductModel product) async {
     try {

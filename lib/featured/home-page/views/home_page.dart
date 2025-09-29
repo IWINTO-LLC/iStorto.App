@@ -1,25 +1,77 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:istoreto/controllers/category_controller.dart';
+import 'package:istoreto/controllers/edit_category_controller.dart';
+import 'package:istoreto/controllers/translate_controller.dart';
 import 'package:istoreto/controllers/translation_controller.dart';
+import 'package:istoreto/data/repositories/category_repository.dart';
+import 'package:istoreto/featured/album/controller/album_controller.dart';
+import 'package:istoreto/featured/album/controller/photo_controller.dart';
+import 'package:istoreto/featured/album/data/album_repository.dart';
+import 'package:istoreto/featured/album/data/photo_repository.dart';
+import 'package:istoreto/featured/banner/controller/banner_controller.dart';
+import 'package:istoreto/featured/cart/controller/cart_controller.dart';
+import 'package:istoreto/featured/cart/controller/save_for_later.dart';
+import 'package:istoreto/featured/cart/controller/saved_controller.dart';
 import 'package:istoreto/featured/home-page/views/widgets/banner_section.dart';
 import 'package:istoreto/featured/home-page/views/widgets/category_section.dart';
 import 'package:istoreto/featured/home-page/views/widgets/just_foryou_section.dart';
 import 'package:istoreto/featured/home-page/views/widgets/major_category_section.dart';
 import 'package:istoreto/featured/home-page/views/widgets/most_popular_section.dart';
 import 'package:istoreto/featured/home-page/views/widgets/topseller_section.dart';
+import 'package:istoreto/featured/payment/controller/order_controller.dart';
+import 'package:istoreto/featured/payment/services/address_service.dart';
+import 'package:istoreto/featured/product/controllers/edit_product_controller.dart';
+import 'package:istoreto/featured/product/controllers/favorite_product_controller.dart';
+import 'package:istoreto/featured/product/controllers/product_controller.dart';
+import 'package:istoreto/featured/sector/controller/sector_controller.dart';
+import 'package:istoreto/featured/shop/controller/vendor_controller.dart';
+import 'package:istoreto/featured/shop/data/vendor_repository.dart';
+import 'package:istoreto/featured/shop/follow/controller/follow_controller.dart';
+import 'package:istoreto/utils/bindings/general_binding.dart';
 import 'package:istoreto/utils/constants/color.dart';
 import 'package:istoreto/utils/constants/constant.dart';
 import 'package:istoreto/utils/constants/sizes.dart';
+import 'package:istoreto/utils/http/network.dart';
 import 'package:istoreto/widgets/language_switcher.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    if (kDebugMode) {
+      print("this user is ${Supabase.instance.client.auth.currentUser?.email}");
+      print("this user id is ${Supabase.instance.client.auth.currentUser?.id}");
+    }
     // Get translation controller to trigger rebuild on language change
     Get.find<TranslationController>();
+    Get.put(GeneralBindings());
+    Get.put(VendorRepository());
+    Get.put(VendorController());
+    Get.put(CategoryController());
+    Get.put(NetworkManager());
+    Get.put(CategoryRepository());
+    Get.put(SavedController());
+    Get.put(BannerController());
+    Get.put(SaveForLaterController());
+    Get.put(FavoriteProductsController());
+    Get.put(ProductController());
+    Get.put(OrderController());
+    Get.put(EditProductController());
+    Get.put(AlbumRepository());
+    Get.put(PhotoRepository());
+    Get.put(PhotoController());
+    Get.put(FollowController());
+    Get.put(AlbumController());
+    Get.put(CartController());
+    Get.put(AddressService());
+    Get.put(EditCategoryController());
+    Get.put(TranslateController());
 
+    Get.put(FollowController());
     return SingleChildScrollView(
       child: Column(
         children: [
@@ -297,12 +349,12 @@ class PopularProduct extends StatelessWidget {
                 {
                   'name': 'Short jacket in long-pile faux fur',
                   'price': '\$218.00',
-                  'image': 'assets/images/jacket.png',
+                  'image': 'assets/images/product_12.jpg',
                 },
                 {
                   'name': 'Women\'s walking shoes ten',
                   'price': '\$54.99',
-                  'image': 'assets/images/shoes.png',
+                  'image': 'assets/images/product_2.png',
                 },
               ];
 

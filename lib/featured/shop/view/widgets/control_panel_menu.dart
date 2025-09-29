@@ -24,6 +24,7 @@ class ControlPanelMenu extends StatelessWidget {
   final String vendorId;
   @override
   Widget build(BuildContext context) {
+    final items = getVisitorMenuItems(context, vendorId);
     return Theme(
       data: Theme.of(context).copyWith(
         popupMenuTheme: PopupMenuThemeData(
@@ -32,39 +33,36 @@ class ControlPanelMenu extends StatelessWidget {
           ),
         ),
       ),
-      child: Obx(() {
-        final items = getVisitorMenuItems(context, vendorId);
-        return PopupMenuButton<int>(
-          icon: const Icon(Icons.more_vert, color: Colors.black),
-          iconSize: 25,
-          borderRadius: BorderRadius.circular(50),
-          padding: const EdgeInsetsDirectional.all(2),
-          itemBuilder:
-              (context) => List.generate(items.length, (index) {
-                final item = items[index];
-                return PopupMenuItem<int>(
-                  value: index,
-                  child: Row(
-                    children: [
-                      Icon(item.icon, color: Colors.black),
-                      const SizedBox(width: 10),
-                      Text(
-                        item.title,
-                        style: titilliumBold.copyWith(
-                          color: Colors.black,
-                          fontSize: 16,
-                        ),
+      child: PopupMenuButton<int>(
+        icon: const Icon(Icons.more_vert, color: Colors.black),
+        iconSize: 25,
+        borderRadius: BorderRadius.circular(50),
+        padding: const EdgeInsetsDirectional.all(2),
+        itemBuilder:
+            (context) => List.generate(items.length, (index) {
+              final item = items[index];
+              return PopupMenuItem<int>(
+                value: index,
+                child: Row(
+                  children: [
+                    Icon(item.icon, color: Colors.black),
+                    const SizedBox(width: 10),
+                    Text(
+                      item.title,
+                      style: titilliumBold.copyWith(
+                        color: Colors.black,
+                        fontSize: 16,
                       ),
-                    ],
-                  ),
-                );
-              }),
-          onSelected: (index) {
-            HapticFeedback.lightImpact();
-            items[index].onTap();
-          },
-        );
-      }),
+                    ),
+                  ],
+                ),
+              );
+            }),
+        onSelected: (index) {
+          HapticFeedback.lightImpact();
+          items[index].onTap();
+        },
+      ),
     );
   }
 

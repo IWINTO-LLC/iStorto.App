@@ -6,9 +6,8 @@ import 'package:get/get.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:istoreto/controllers/category_controller.dart';
-import 'package:istoreto/data/models/upload_result.dart';
-import 'package:istoreto/utils/constants/constant.dart';
-import 'package:istoreto/utils/upload.dart';
+import 'package:istoreto/featured/shop/controller/vendor_controller.dart';
+import 'package:istoreto/services/image_upload_service.dart';
 import '../data/models/category_model.dart';
 import '../data/repositories/category_repository.dart';
 
@@ -81,32 +80,45 @@ class CreateCategoryController extends GetxController {
   Future<void> uploadImage() async {
     message.value = "uploading img";
     if (localImage.value == "") return;
-    File img = File(localImage.value);
-    if (kDebugMode) {
-      print("================= befor ==upload category=======");
-      print(img.path);
+
+    isUploading.value = true;
+    try {
+      File img = File(localImage.value);
+
+      // استخدام ImageUploadService
+      final result = await ImageUploadService.instance.uploadImage(
+        imageFile: img,
+        folderName: 'categories',
+      );
+
+      if (result['success'] == true) {
+        imageUrl.value = result['url'] ?? '';
+        if (kDebugMode) {
+          print("Upload successful! URL: ${imageUrl.value}");
+          message.value = "Image uploaded successfully";
+        }
+      } else {
+        throw Exception(result['error'] ?? 'Upload failed');
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print("Upload error: $e");
+      }
+      message.value = "Upload failed: ${e.toString()}";
+      imageUrl.value = '';
+    } finally {
+      isUploading.value = false;
     }
-    // Resolve UploadResult name conflict by using a prefix or hiding one import.
-    // Assuming we use 'upload' as a prefix for 'package:istoreto/utils/upload.dart'
-    UploadResult uploadResult = await UploadService.instance
-        .uploadMediaToServer(img);
-    var s = uploadResult.fileUrl;
-    imageUrl.value = "$mediaPath$s";
-    if (kDebugMode) {
-      print("uploading url===${imageUrl.value}");
-      message.value = "uploading url====${imageUrl.value} ";
-    }
-    return;
   }
 
   RxList<CategoryModel> tempItems = <CategoryModel>[].obs;
-  Future<void> createCategory() async {
+  Future<void> createCategory(String vendorId) async {
     message.value = "uploading_photo".tr;
     await uploadImage();
     final newCat = CategoryModel(
       title: name.text.trim(),
       icon: imageUrl.value,
-
+      vendorId: vendorId,
       createdAt: DateTime.now(),
 
       isActive: true,

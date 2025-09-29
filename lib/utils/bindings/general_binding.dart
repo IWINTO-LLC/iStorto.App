@@ -18,6 +18,7 @@ import 'package:istoreto/featured/product/controllers/product_controller.dart';
 import 'package:istoreto/featured/shop/controller/vendor_controller.dart';
 import 'package:istoreto/featured/shop/data/vendor_repository.dart';
 import 'package:istoreto/featured/shop/follow/controller/follow_controller.dart';
+import 'package:istoreto/services/image_upload_service.dart';
 import 'package:istoreto/utils/http/network.dart';
 import 'package:istoreto/utils/logging/logger.dart';
 import 'package:istoreto/utils/upload.dart';
@@ -30,8 +31,9 @@ class GeneralBindings extends Bindings {
     TLoggerHelper.info("SectorController initialize");
     Get.put(CurrencyController());
     Get.put(TranslateController());
-
+    Get.put(VendorController());
     Get.put(UploadService());
+    Get.put(ImageUploadService());
 
     try {
       Get.put(ProductController());

@@ -12,6 +12,7 @@ import 'controllers/auth_controller.dart';
 import 'services/supabase_service.dart';
 import 'services/storage_service.dart';
 import 'translations/translations.dart';
+import 'utils/bindings/general_binding.dart';
 import 'views/cart_page.dart';
 import 'views/favorites_page.dart';
 import 'views/orders_page.dart';
@@ -38,6 +39,9 @@ class MyApp extends StatelessWidget {
     // Initialize Controllers
     final translationController = Get.put(TranslationController());
     Get.put(AuthController());
+
+    // Initialize General Bindings (all other controllers)
+    Get.put(GeneralBindings());
 
     return Sizer(
       builder: (context, orientation, deviceType) {

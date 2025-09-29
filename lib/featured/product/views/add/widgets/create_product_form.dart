@@ -351,25 +351,37 @@ class CreateProductForm extends StatelessWidget {
                                           ),
                                         ),
                                       );
-                                final selected =
-                                    (CategoryController
-                                            .instance
-                                            .allItems
-                                            .isEmpty)
-                                        ? null
-                                        : CategoryController.instance.allItems
-                                            .firstWhereOrNull(
-                                              (cat) =>
-                                                  cat.id ==
-                                                  controller.category.id,
-                                            );
+                                // إزالة العناصر المكررة والتأكد من وجود القيمة المحددة
+                                final uniqueItems = items.toSet().toList();
+
+                                // البحث عن القيمة المحددة في العناصر الفريدة
+                                CategoryModel? selected;
+                                if (CategoryController
+                                    .instance
+                                    .allItems
+                                    .isNotEmpty) {
+                                  try {
+                                    final selectedItem = uniqueItems.firstWhere(
+                                      (item) =>
+                                          item.value?.id ==
+                                          controller.category.id,
+                                    );
+                                    selected = selectedItem.value;
+                                  } catch (e) {
+                                    // إذا لم توجد القيمة، اختر العنصر الأول
+                                    selected =
+                                        uniqueItems.isNotEmpty
+                                            ? uniqueItems.first.value
+                                            : null;
+                                  }
+                                }
                                 return DropdownButtonFormField<CategoryModel>(
                                   borderRadius: BorderRadius.circular(15),
                                   iconSize: 40,
 
                                   itemHeight: 60,
                                   value: selected,
-                                  items: items,
+                                  items: uniqueItems,
                                   onChanged: (newValue) {
                                     if (newValue == addCat) {
                                       Navigator.push(

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:istoreto/featured/sector/model/sector_model.dart';
 
-const String appName = 'iStoreto';
+const String appName = 'iStorto';
 String mediaPath = 'https://iwinto.cloud/uploads/';
 const String supabaseUrl = 'https://jfveosdooutphhjyvcis.supabase.co';
 const String supabaseAnonKey =

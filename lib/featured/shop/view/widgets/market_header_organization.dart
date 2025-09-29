@@ -10,7 +10,6 @@ import 'package:istoreto/controllers/auth_controller.dart';
 import 'package:istoreto/featured/shop/controller/vendor_controller.dart';
 import 'package:istoreto/featured/shop/data/vendor_model.dart';
 import 'package:istoreto/featured/shop/view/widgets/control_panel_menu.dart';
-import 'package:istoreto/navigation_menu.dart';
 import 'package:istoreto/utils/loader/loader_widget.dart';
 import 'package:sizer/sizer.dart';
 import 'package:istoreto/controllers/category_controller.dart';
@@ -25,12 +24,10 @@ import 'package:istoreto/featured/shop/follow/screens/widgets/follow_heart.dart'
 import 'package:istoreto/featured/shop/follow/screens/widgets/follower_number.dart';
 import 'package:istoreto/featured/shop/view/market_place_managment.dart';
 import 'package:istoreto/featured/shop/view/widgets/control_panel_menu_visitor.dart';
-import 'package:istoreto/featured/shop/view/widgets/control_panel_popupMenu.dart';
 import 'package:istoreto/featured/shop/view/widgets/share_vendor_widget.dart';
 import 'package:istoreto/featured/shop/view/widgets/vendor_social_bar.dart';
 import 'package:istoreto/utils/common/styles/styles.dart';
 import 'package:istoreto/utils/common/widgets/custom_shapes/containers/rounded_container.dart';
-import 'package:istoreto/utils/common/widgets/custom_widgets.dart';
 import 'package:istoreto/utils/common/widgets/display_image_full.dart';
 import 'package:istoreto/utils/common/widgets/shimmers/shimmer.dart';
 import 'package:istoreto/utils/constants/color.dart';
@@ -62,461 +59,453 @@ Widget marketHeaderSection(String userId, bool editMode, bool isVendor) {
                 height: 33.h + 10,
                 color: Colors.transparent,
               ),
-              if (userMap.bannerImage != 'loading')
-                userMap.bannerImage == ''
-                    ? Container(
-                      width: 100.w,
-                      height: 33.h + 10,
-                      color: Colors.grey,
-                    )
-                    : Stack(
-                      children: [
-                        Container(
-                          color: Colors.transparent,
-                          height: 37.5.h,
-                          child: Align(
-                            alignment: Alignment.topCenter,
-                            child: GestureDetector(
-                              onTap: () async {
-                                if (editMode) {
-                                  // await uploadorganizationBannerImageAndSaveToFirestore(
-                                  //   context,
-                                  //   userId,
-                                  // );
-                                  // uploadOrgnizationBannerImageAndSaveToFirestore(
-                                  //     context, ref);
-                                  // Navigator.push(
-                                  //     context,
-                                  //     MaterialPageRoute(
-                                  //         builder: (context) =>
-                                  //             MarketPlaceManagment(
-                                  //                 vendorId: userId,
-                                  //                 editMode: true)));
-                                } else {
-                                  // Navigator.push(
-                                  //   context,
-                                  //   MaterialPageRoute(
-                                  //     builder:
-                                  //         (
-                                  //           context,
-                                  //         ) => NetworkImageFullScreen(
-                                  //           userMap!['organizationCover'] ??
-                                  //               userMap['bannerImage'] ??
-                                  //               '',
-                                  //         ),
-                                  //   ),
-                                  // );
-                                }
-                              },
-                              child: SizedBox(
-                                width: 100.w,
-                                height: 33.h,
-                                child:
-                                    userMap.organizationCover == 'loading'
-                                        ? TShimmerEffect(
-                                          baseColor: TColors.lightgrey,
-                                          width: 100.w,
-                                          height: 28.h,
-                                        )
-                                        : ClipRRect(
-                                          borderRadius: const BorderRadius.only(
-                                            bottomLeft: Radius.circular(0),
-                                            bottomRight: Radius.circular(0),
-                                          ),
-                                          child: CachedNetworkImage(
-                                            imageUrl: userMap.organizationCover,
-                                            imageBuilder:
-                                                (context, imageProvider) =>
-                                                    Container(
-                                                      decoration: BoxDecoration(
-                                                        image: DecorationImage(
-                                                          image: imageProvider,
-                                                          fit: BoxFit.cover,
-                                                        ),
+              Stack(
+                children: [
+                  Container(
+                    color: Colors.transparent,
+                    height: 37.5.h,
+                    child: Align(
+                      alignment: Alignment.topCenter,
+                      child: Stack(
+                        children: [
+                          GestureDetector(
+                            onTap: () async {
+                              if (editMode) {
+                                // TODO: Implement cover image edit functionality
+                                print('Edit cover image');
+                              } else {
+                                Get.to(
+                                  () => NetworkImageFullScreen(
+                                    userMap.organizationCover,
+                                  ),
+                                );
+                              }
+                            },
+                            child: SizedBox(
+                              width: 100.w,
+                              height: 33.h,
+                              child:
+                                  userMap.organizationCover == 'loading'
+                                      ? TShimmerEffect(
+                                        baseColor: TColors.lightgrey,
+                                        width: 100.w,
+                                        height: 28.h,
+                                      )
+                                      : userMap.organizationCover.isEmpty
+                                      ? Container(
+                                        width: 100.w,
+                                        height: 33.h,
+                                        color: Colors.grey,
+                                      )
+                                      : ClipRRect(
+                                        borderRadius: const BorderRadius.only(
+                                          bottomLeft: Radius.circular(0),
+                                          bottomRight: Radius.circular(0),
+                                        ),
+                                        child: CachedNetworkImage(
+                                          imageUrl: userMap.organizationCover,
+                                          imageBuilder:
+                                              (context, imageProvider) =>
+                                                  Container(
+                                                    decoration: BoxDecoration(
+                                                      image: DecorationImage(
+                                                        image: imageProvider,
+                                                        fit: BoxFit.cover,
                                                       ),
                                                     ),
-                                            placeholder:
-                                                (context, url) =>
-                                                    TShimmerEffect(
-                                                      width: 100.w,
-                                                      height: 33.h,
-                                                      baseColor:
-                                                          TColors.lightgrey,
-                                                    ),
-                                            errorWidget:
-                                                (context, url, error) =>
-                                                    Container(
-                                                      width: 100.w,
-                                                      height: 33.h,
-                                                      color: Colors.grey,
-                                                    ),
-                                          ),
-                                        ),
-                              ),
-                            ),
-                          ),
-                        ),
-
-                        //
-                        Positioned(
-                          top: 0,
-                          right: 0,
-                          child: Padding(
-                            padding: const EdgeInsets.only(
-                              left: 4.0,
-                              right: 4,
-                              top: 2,
-                              bottom: 10,
-                            ),
-                            child: Directionality(
-                              textDirection: TextDirection.rtl,
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  GestureDetector(
-                                    onTap: () => Get.to(() => CartScreen()),
-
-                                    child: const Padding(
-                                      padding: EdgeInsets.symmetric(
-                                        vertical: 8.0,
-                                      ),
-                                      child: CartWidget(),
-                                    ),
-                                  ),
-                                  Visibility(
-                                    visible: isVendor && !editMode,
-                                    child: GestureDetector(
-                                      onTap: () {},
-                                      child: Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 4.0,
-                                        ),
-                                        child: GestureDetector(
-                                          onTap:
-                                              () => Get.to(
-                                                () => MarketPlaceManagment(
-                                                  vendorId: userId,
-                                                  editMode: true,
+                                                  ),
+                                          placeholder:
+                                              (context, url) => TShimmerEffect(
+                                                width: 100.w,
+                                                height: 33.h,
+                                                baseColor: TColors.lightgrey,
+                                              ),
+                                          errorWidget:
+                                              (
+                                                context,
+                                                url,
+                                                error,
+                                              ) => Container(
+                                                width: 100.w,
+                                                height: 33.h,
+                                                color: Colors.grey,
+                                                child: const Center(
+                                                  child: Icon(
+                                                    Icons.image_not_supported,
+                                                    color: Colors.white,
+                                                    size: 50,
+                                                  ),
                                                 ),
                                               ),
-                                          child: Padding(
-                                            padding: const EdgeInsets.symmetric(
-                                              vertical: 10.0,
-                                            ),
-                                            child: TRoundedContainer(
-                                              radius: BorderRadius.circular(
-                                                100,
-                                              ),
-                                              width: 35,
-                                              height: 35,
-                                              backgroundColor: TColors.primary,
-                                              child: const Icon(
-                                                Icons.settings,
-                                                size: 20,
-                                                color: Colors.white,
-                                              ),
-                                            ),
-                                          ),
                                         ),
                                       ),
-                                    ),
-                                  ),
-                                ],
-                              ),
                             ),
                           ),
-                        ),
+                        ],
+                      ),
+                    ),
+                  ),
 
-                        Positioned(
-                          top: 10,
-                          left: 0,
-                          child: Column(
-                            // mainAxisAlignment: MainAxisAlignment.start,
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              GestureDetector(
+                  // Edit cover icon - only visible in edit mode
+                  if (editMode)
+                    Positioned(
+                      top: 10,
+                      right: 10,
+                      child: GestureDetector(
+                        onTap: () {
+                          // TODO: Implement cover image edit functionality
+                          print('Edit cover image');
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: Colors.black.withOpacity(0.6),
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: const Icon(
+                            Icons.edit,
+                            color: Colors.white,
+                            size: 20,
+                          ),
+                        ),
+                      ),
+                    ),
+
+                  // Edit cover icon - only visible in edit mode
+                  if (editMode)
+                    Positioned(
+                      top: 10,
+                      right: 10,
+                      child: GestureDetector(
+                        onTap: () {
+                          // TODO: Implement cover image edit functionality
+                          print('Edit cover image');
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: Colors.black.withOpacity(0.6),
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: const Icon(
+                            Icons.edit,
+                            color: Colors.white,
+                            size: 20,
+                          ),
+                        ),
+                      ),
+                    ),
+
+                  //
+                  Positioned(
+                    top: 0,
+                    right: 0,
+                    child: Padding(
+                      padding: const EdgeInsets.only(
+                        left: 4.0,
+                        right: 4,
+                        top: 2,
+                        bottom: 10,
+                      ),
+                      child: Directionality(
+                        textDirection: TextDirection.rtl,
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            GestureDetector(
+                              onTap: () => Get.to(() => CartScreen()),
+
+                              child: const Padding(
+                                padding: EdgeInsets.symmetric(vertical: 8.0),
+                                child: CartWidget(),
+                              ),
+                            ),
+                            Visibility(
+                              visible: isVendor && !editMode,
+                              child: GestureDetector(
                                 onTap: () {},
                                 child: Padding(
-                                  padding: const EdgeInsets.only(top: 10),
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 4.0,
+                                  ),
                                   child: GestureDetector(
                                     onTap:
-                                        () =>
-                                            editMode
-                                                ? Get.to(() => NavigationMenu())
-                                                : Get.to(
-                                                  () => NavigationMenu(),
-                                                ),
+                                        () => Get.to(
+                                          () => MarketPlaceManagment(
+                                            vendorId: userId,
+                                            editMode: true,
+                                          ),
+                                        ),
                                     child: Padding(
-                                      padding: const EdgeInsets.only(
-                                        left: 8,
-                                        right: 8,
+                                      padding: const EdgeInsets.symmetric(
+                                        vertical: 10.0,
                                       ),
                                       child: TRoundedContainer(
-                                        width: 30,
-                                        height: 30,
-                                        backgroundColor: Colors.black
-                                            .withValues(alpha: .5),
-                                        //  enableShadow: true,
                                         radius: BorderRadius.circular(100),
-                                        child: const Center(
-                                          child: Icon(
-                                            Icons.arrow_back,
-                                            color: Colors.white,
-                                            textDirection: TextDirection.ltr,
-                                            size: 23,
-                                          ),
+                                        width: 35,
+                                        height: 35,
+                                        backgroundColor: TColors.primary,
+                                        child: const Icon(
+                                          Icons.settings,
+                                          size: 20,
+                                          color: Colors.white,
                                         ),
                                       ),
                                     ),
                                   ),
                                 ),
                               ),
-                              const SizedBox(height: 8),
-                              Padding(
-                                padding: const EdgeInsets.only(
-                                  left: 8.0,
-                                  right: 8,
-                                ),
-                                child: ShareVendorButton(
-                                  size: 25,
-                                  vendorId: userId, // تمرير vendorId
-                                ),
-                              ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
-                        Positioned(
-                          bottom: 26,
-                          right: 70,
-                          child: itemCount(userId, Get.context!),
-                        ),
-                        Positioned(
-                          right: 14,
-                          bottom: 0,
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Visibility(
-                                visible: //true,
-                                    (userMap.isSubscriber) && (userMap.isRoyal),
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    boxShadow: TColors.tboxShadow,
-                                    gradient: const LinearGradient(
-                                      colors: [
-                                        Color.fromARGB(
-                                          255,
-                                          208,
-                                          183,
-                                          132,
-                                        ), // Satin Sheen Gold
-                                        TColors.gold, // Sunray
-                                      ],
-                                      begin: Alignment.topCenter,
-                                      end: Alignment.bottomCenter,
-                                    ),
-                                    borderRadius: BorderRadius.circular(100),
-                                    border: Border.all(
-                                      color: Colors.white,
-                                      width: 1.5,
-                                    ),
-                                  ),
-                                  width: 40,
-                                  height: 40,
-                                  child: Center(
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(3.0),
+                      ),
+                    ),
+                  ),
 
-                                      child: Icon(FontAwesomeIcons.crown),
-                                      // child: SvgPicture.asset(
-                                      //   width: 25,
-                                      //   height: 25,
-                                      //   color: Colors.white,
-                                      //   'assets/images/ecommerce/icons/royal.svg',
-                                      // ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-
-                              // Visibility(
-                              //     visible: //true,
-                              //         (userMap["isSubscriber"] ??
-                              //                 false == true) &&
-                              //             (userMap["isRoyal"] ??
-                              //                 false == true),
-                              //     child: const SizedBox(
-                              //       height: 0,
-                              //     )),
-
-                              // if (!isVendor &&
-                              //     (userMap['inExclusive']) == true)
-                              if (!isVendor && userMap.inExclusive)
-                                Visibility(
-                                  visible: !editMode,
-                                  child: const SizedBox(height: 10),
-                                ),
-
-                              if (!isVendor && userMap.inExclusive)
-                                Visibility(
-                                  visible: !editMode,
-                                  child: GestureDetector(
-                                    onTap: () async {
-                                      if (fetchingExclusive) return;
-                                      fetchingExclusive = true;
-                                      try {
-                                        HapticFeedback.lightImpact;
-                                        // Here we need to go to exclusive
-                                        log('Attempting to view offer');
-                                      } finally {
-                                        fetchingExclusive = false;
-                                      }
-                                    },
-                                    child: TRoundedContainer(
-                                      width: 35,
-                                      height: 35,
-                                      radius: BorderRadius.circular(300),
-                                      backgroundColor: TColors.white,
-                                      child: const Center(
-                                        child: Icon(
-                                          CupertinoIcons.star_fill,
-                                          color: Colors.black,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-
-                              if (!isVendor && userMap.inExclusive)
-                                Visibility(
-                                  visible: !editMode,
-                                  child: const SizedBox(height: 10),
-                                ),
-                              const SizedBox(height: 10),
-                              GestureDetector(
-                                onTap: () {
-                                  HapticFeedback.lightImpact;
-                                },
-                                child: TRoundedContainer(
-                                  radius: BorderRadius.circular(50),
-                                  width: 37,
-                                  height: 37,
-                                  showBorder: true,
-                                  borderColor: Colors.white,
-                                  borderWidth: 2, //profileImage
-                                  // backgroundColor: Colors.transparent,
-                                  child: FreeCaChedNetworkImage(
-                                    url: userMap.organizationLogo,
-                                    raduis: BorderRadius.circular(100),
-                                  ),
-                                  // const Padding(
-                                  //   padding: EdgeInsets.all(2.0),
-                                  //   child: Image(
-                                  //     image: AssetImage(
-                                  //         'assets/images/logo.png'),
-                                  //     width: 20,
-                                  //     height: 20,
-                                  //   ),
-                                  // )
-                                ),
-                              ),
-                              const SizedBox(height: 10),
-                              Visibility(
-                                visible: !editMode,
-                                child: TRoundedContainer(
-                                  width: 35,
-                                  radius: BorderRadius.circular(300),
-                                  height: 35,
-                                  backgroundColor: TColors.white,
-                                  showBorder: true,
-                                  child: ControlPanelMenuVisitor(
-                                    vendorId: userId,
-                                    editMode: isVendor,
-                                  ),
-                                ),
-                              ),
-
-                              Visibility(
-                                visible: editMode,
-                                child: TRoundedContainer(
-                                  width: 35,
-                                  height: 35,
-                                  radius: BorderRadius.circular(300),
-                                  backgroundColor: Colors.white,
-                                  showBorder: true,
-                                  child: Center(
-                                    child: ControlPanelMenu(
-                                      vendorId: userId,
-                                      editMode: editMode,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(height: 10),
-                              isVendor
-                                  ? Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    crossAxisAlignment: CrossAxisAlignment.end,
-                                    children: [
-                                      GestureDetector(
-                                        onTap:
-                                            () => Navigator.push(
-                                              Get.context!,
-                                              MaterialPageRoute(
-                                                builder:
-                                                    (context) =>
-                                                        FollowersScreen(
-                                                          vendorId: userId,
-                                                        ),
-                                              ),
-                                            ), //   FollowersScreen(vendorId: userId)),
-                                        child: TRoundedContainer(
-                                          width: 35,
-                                          height: 35,
-                                          radius: BorderRadius.circular(300),
-                                          showBorder: true,
-                                          child: const Center(
-                                            child: Icon(
-                                              CupertinoIcons.heart,
-                                              color: Colors.black,
-                                              size: 24,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  )
-                                  : FollowHeart(
-                                    myId:
-                                        AuthController
-                                            .instance
-                                            .currentUser
-                                            .value!
-                                            .id,
-                                    orgId: userMap.id ?? '',
-                                  ),
-                              // SizedBox(
-                              //   height: 4,
-                              // ),
-                              Visibility(
-                                visible: isVendor,
-                                child: FollowNumber(vendorId: userId),
-                              ),
-                              Visibility(
-                                visible: !isVendor,
-                                child: const SizedBox(height: 27),
-                              ),
-                            ],
+                  Positioned(
+                    top: 10,
+                    left: 0,
+                    child: Column(
+                      // mainAxisAlignment: MainAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const SizedBox(height: 8),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 8.0, right: 8),
+                          child: ShareVendorButton(
+                            size: 25,
+                            vendorId: userId, // تمرير vendorId
                           ),
                         ),
                       ],
                     ),
-              if (userMap.bannerImage == 'loading')
+                  ),
+                  Positioned(
+                    bottom: 26,
+                    right: 70,
+                    child: itemCount(userId, Get.context!),
+                  ),
+                  Positioned(
+                    right: 14,
+                    bottom: 0,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Visibility(
+                          visible: true, //true,
+                          //  (userMap.isSubscriber) && (userMap.isRoyal),
+                          child: Container(
+                            decoration: BoxDecoration(
+                              boxShadow: TColors.tboxShadow,
+                              gradient: const LinearGradient(
+                                colors: [
+                                  Color.fromARGB(
+                                    255,
+                                    208,
+                                    183,
+                                    132,
+                                  ), // Satin Sheen Gold
+                                  TColors.gold, // Sunray
+                                ],
+                                begin: Alignment.topCenter,
+                                end: Alignment.bottomCenter,
+                              ),
+                              borderRadius: BorderRadius.circular(100),
+                              border: Border.all(
+                                color: Colors.white,
+                                width: 1.5,
+                              ),
+                            ),
+                            width: 40,
+                            height: 40,
+                            child: Center(
+                              child: Padding(
+                                padding: const EdgeInsets.all(3.0),
+
+                                child: Icon(FontAwesomeIcons.crown),
+                                // child: SvgPicture.asset(
+                                //   width: 25,
+                                //   height: 25,
+                                //   color: Colors.white,
+                                //   'assets/images/ecommerce/icons/royal.svg',
+                                // ),
+                              ),
+                            ),
+                          ),
+                        ),
+
+                        // Visibility(
+                        //     visible: //true,
+                        //         (userMap["isSubscriber"] ??
+                        //                 false == true) &&
+                        //             (userMap["isRoyal"] ??
+                        //                 false == true),
+                        //     child: const SizedBox(
+                        //       height: 0,
+                        //     )),
+
+                        // if (!isVendor &&
+                        //     (userMap['inExclusive']) == true)
+                        if (!isVendor && userMap.inExclusive)
+                          Visibility(
+                            visible: !editMode,
+                            child: const SizedBox(height: 10),
+                          ),
+
+                        if (!isVendor && userMap.inExclusive)
+                          Visibility(
+                            visible: !editMode,
+                            child: GestureDetector(
+                              onTap: () async {
+                                if (fetchingExclusive) return;
+                                fetchingExclusive = true;
+                                try {
+                                  HapticFeedback.lightImpact;
+                                  // Here we need to go to exclusive
+                                  log('Attempting to view offer');
+                                } finally {
+                                  fetchingExclusive = false;
+                                }
+                              },
+                              child: TRoundedContainer(
+                                width: 35,
+                                height: 35,
+                                radius: BorderRadius.circular(300),
+                                backgroundColor: TColors.white,
+                                child: const Center(
+                                  child: Icon(
+                                    CupertinoIcons.star_fill,
+                                    color: Colors.black,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+
+                        if (!isVendor && userMap.inExclusive)
+                          Visibility(
+                            visible: !editMode,
+                            child: const SizedBox(height: 10),
+                          ),
+                        const SizedBox(height: 10),
+                        GestureDetector(
+                          onTap: () {
+                            HapticFeedback.lightImpact;
+                          },
+                          child: TRoundedContainer(
+                            radius: BorderRadius.circular(50),
+                            width: 37,
+                            height: 37,
+                            showBorder: true,
+                            borderColor: Colors.white,
+                            borderWidth: 2, //profileImage
+                            // backgroundColor: Colors.transparent,
+                            child: FreeCaChedNetworkImage(
+                              url: userMap.organizationLogo,
+                              raduis: BorderRadius.circular(100),
+                            ),
+                            // const Padding(
+                            //   padding: EdgeInsets.all(2.0),
+                            //   child: Image(
+                            //     image: AssetImage(
+                            //         'assets/images/logo.png'),
+                            //     width: 20,
+                            //     height: 20,
+                            //   ),
+                            // )
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                        // Control Panel Menu for non-edit mode
+                        if (!editMode)
+                          TRoundedContainer(
+                            width: 35,
+                            radius: BorderRadius.circular(300),
+                            height: 35,
+                            backgroundColor: TColors.white,
+                            showBorder: true,
+                            child: ControlPanelMenuVisitor(
+                              vendorId: userId,
+                              editMode: isVendor,
+                            ),
+                          ),
+
+                        // Control Panel Menu for edit mode
+                        if (editMode)
+                          TRoundedContainer(
+                            width: 35,
+                            height: 35,
+                            radius: BorderRadius.circular(300),
+                            backgroundColor: Colors.white,
+                            showBorder: true,
+                            child: Center(
+                              child: ControlPanelMenu(
+                                vendorId: userId,
+                                editMode: editMode,
+                              ),
+                            ),
+                          ),
+                        const SizedBox(height: 10),
+                        isVendor
+                            ? Row(
+                              mainAxisSize: MainAxisSize.min,
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [
+                                GestureDetector(
+                                  onTap:
+                                      () => Navigator.push(
+                                        Get.context!,
+                                        MaterialPageRoute(
+                                          builder:
+                                              (context) => FollowersScreen(
+                                                vendorId: userId,
+                                              ),
+                                        ),
+                                      ), //   FollowersScreen(vendorId: userId)),
+                                  child: TRoundedContainer(
+                                    width: 35,
+                                    height: 35,
+                                    radius: BorderRadius.circular(300),
+                                    showBorder: true,
+                                    child: const Center(
+                                      child: Icon(
+                                        CupertinoIcons.heart,
+                                        color: Colors.black,
+                                        size: 24,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            )
+                            : FollowHeart(
+                              myId:
+                                  AuthController.instance.currentUser.value!.id,
+                              orgId: userMap.id ?? '',
+                            ),
+                        // SizedBox(
+                        //   height: 4,
+                        // ),
+                        Visibility(
+                          visible: isVendor,
+                          child: FollowNumber(vendorId: userId),
+                        ),
+                        Visibility(
+                          visible: !isVendor,
+                          child: const SizedBox(height: 27),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              if (userMap.bannerImage == 'loading' ||
+                  userMap.organizationCover == 'loading')
                 TShimmerEffect(
                   width: 100.w,
                   baseColor: TColors.lightgrey,
-                  height: 60.h,
-                  raduis: BorderRadius.circular(50),
+                  height: 33.h + 10,
+                  raduis: BorderRadius.circular(0),
                   color: Colors.grey,
                 ),
               Positioned(
@@ -531,11 +520,7 @@ Widget marketHeaderSection(String userId, bool editMode, bool isVendor) {
                       // );
                     } else {
                       Get.to(
-                        () => NetworkImageFullScreen(
-                          userMap.organizationCover ??
-                              userMap.bannerImage ??
-                              '',
-                        ),
+                        () => NetworkImageFullScreen(userMap.organizationCover),
                       );
                     }
                   },
@@ -603,13 +588,53 @@ Widget marketHeaderSection(String userId, bool editMode, bool isVendor) {
                                             }
                                           },
 
-                                          child: ClipOval(
-                                            child: CachedNetworkImage(
-                                              imageUrl:
-                                                  userMap.organizationLogo, //
-                                              width: 130,
-                                              height: 130,
-                                            ),
+                                          child: Stack(
+                                            children: [
+                                              ClipOval(
+                                                child: CachedNetworkImage(
+                                                  imageUrl:
+                                                      userMap
+                                                          .organizationLogo, //
+                                                  width: 130,
+                                                  height: 130,
+                                                ),
+                                              ),
+                                              // Edit logo icon - only visible in edit mode
+                                              if (editMode)
+                                                Positioned(
+                                                  bottom: 0,
+                                                  right: 0,
+                                                  child: GestureDetector(
+                                                    onTap: () {
+                                                      // TODO: Implement logo edit functionality
+                                                      print('Edit logo');
+                                                    },
+                                                    child: Container(
+                                                      padding:
+                                                          const EdgeInsets.all(
+                                                            6,
+                                                          ),
+                                                      decoration: BoxDecoration(
+                                                        color: Colors.black
+                                                            .withOpacity(0.7),
+                                                        borderRadius:
+                                                            BorderRadius.circular(
+                                                              15,
+                                                            ),
+                                                        border: Border.all(
+                                                          color: Colors.white,
+                                                          width: 2,
+                                                        ),
+                                                      ),
+                                                      child: const Icon(
+                                                        Icons.edit,
+                                                        color: Colors.white,
+                                                        size: 16,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                            ],
                                           ),
                                         ),
                               ),
@@ -622,7 +647,7 @@ Widget marketHeaderSection(String userId, bool editMode, bool isVendor) {
                 ),
               ),
               Visibility(
-                visible: (userMap.isVerified ?? false) == true,
+                visible: userMap.isVerified == true,
                 child: Positioned(
                   bottom: -10,
                   left: 60,
@@ -672,9 +697,7 @@ Widget marketHeaderSection(String userId, bool editMode, bool isVendor) {
                               SizedBox(
                                 width: editMode ? 80.w : 95.w,
                                 child: Obx(() {
-                                  final orgName =
-                                      (userMap.organizationName ??
-                                          userMap.organizationName);
+                                  final orgName = userMap.organizationName;
                                   return TranslateController
                                           .instance
                                           .enableTranslateProductDetails

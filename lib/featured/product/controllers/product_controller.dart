@@ -6,16 +6,14 @@ import 'package:get/get.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 
-import 'package:istoreto/utils/upload.dart';
+import 'package:istoreto/services/image_upload_service.dart';
 import 'package:istoreto/controllers/category_controller.dart';
-import 'package:istoreto/controllers/translation_controller.dart';
 import 'package:istoreto/data/models/category_model.dart';
 import 'package:istoreto/featured/product/data/product_model.dart';
 import 'package:istoreto/featured/product/data/product_repository.dart';
 import 'package:istoreto/utils/common/styles/styles.dart';
 import 'package:istoreto/utils/constants/color.dart';
 import 'package:istoreto/utils/constants/constant.dart';
-import 'package:istoreto/utils/formatters/formatter.dart';
 import 'package:istoreto/utils/loader/loaders.dart';
 
 class ProductController extends GetxController {
@@ -309,7 +307,7 @@ class ProductController extends GetxController {
 
   Future<List<ProductModel>> fetchListData(String vendorId, String type) async {
     try {
-      var fetchedItem = await productRepository.getProductsByType(
+      var fetchedItem = await productRepository.getProductsByTypeForVendor(
         vendorId,
         type,
       );
@@ -530,35 +528,61 @@ class ProductController extends GetxController {
       print("================= befor ==upload category=======");
       print(img.path);
     }
-    var s = await UploadService.instance.uploadMediaToServer(img);
-    thumbnailUrl.value = "$mediaPath$s";
-    if (kDebugMode) {
-      print("uploading url===${thumbnailUrl.value}");
-      message.value = "uploading url====${thumbnailUrl.value}";
+
+    try {
+      final result = await ImageUploadService.instance.uploadImage(
+        imageFile: img,
+        folderName: 'products',
+      );
+
+      if (result['success'] == true) {
+        thumbnailUrl.value = result['url'] ?? '';
+        if (kDebugMode) {
+          print("uploading url===${thumbnailUrl.value}");
+          message.value = "uploading url====${thumbnailUrl.value}";
+        }
+      } else {
+        if (kDebugMode) {
+          print("Upload failed: ${result['error']}");
+        }
+        message.value = "Upload failed: ${result['error']}";
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print("Upload error: $e");
+      }
+      message.value = "Upload error: $e";
     }
     return;
   }
 
   Future<List<String>> uploadImages(List<XFile> localImages) async {
     try {
-      List<String> s3 = [];
-      if (localImages == []) return s3;
+      List<String> uploadedUrls = [];
+      if (localImages.isEmpty) return uploadedUrls;
+
       for (var image in localImages) {
         File img = File(image.path);
 
-        var uploadResult = await UploadService.instance.uploadMediaToServer(
-          img,
+        final result = await ImageUploadService.instance.uploadImage(
+          imageFile: img,
+          folderName: 'products',
         );
-        var s = uploadResult.fileUrl;
-        s3.add("$mediaPath$s");
-        if (kDebugMode) {
-          print(
-            "================= uploaded= compressed ========== $mediaPath$s",
-          );
+
+        if (result['success'] == true) {
+          final url = result['url'] ?? '';
+          uploadedUrls.add(url);
+          if (kDebugMode) {
+            print("================= uploaded to Supabase ========== $url");
+          }
+        } else {
+          if (kDebugMode) {
+            print("Upload failed for image: ${result['error']}");
+          }
         }
       }
 
-      return s3;
+      return uploadedUrls;
     } catch (e) {
       if (kDebugMode) {
         print("=========Exception while upload $e");

@@ -19,7 +19,6 @@ class SectorModel {
 
   Map<String, dynamic> toJson() {
     return {
-      'vendor_id': vendorId,
       'name': name,
       'english_name': englishName,
       if (createdAt != null) 'created_at': createdAt!.toIso8601String(),

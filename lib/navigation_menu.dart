@@ -1,11 +1,17 @@
+import 'package:flutter/cupertino.dart';
 import "package:flutter/material.dart";
 import 'package:get/get.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:istoreto/controllers/auth_controller.dart';
 import 'package:istoreto/featured/home-page/views/home_page.dart';
+import 'package:istoreto/featured/shop/view/market_place_managment.dart';
+import 'package:istoreto/featured/shop/view/market_place_view.dart';
 import 'package:istoreto/views/cart_page.dart';
+import 'package:istoreto/test_market_header_page.dart';
 import 'package:istoreto/views/favorites_page.dart';
 import 'package:istoreto/views/profile_page.dart';
+import 'package:line_icons/line_icons.dart';
 
 class NavigationMenu extends StatelessWidget {
   const NavigationMenu({super.key, this.isGust});
@@ -37,6 +43,7 @@ class NavigationMenu extends StatelessWidget {
             () => Container(
               decoration: BoxDecoration(
                 color: Colors.white,
+                borderRadius: BorderRadius.circular(25),
                 boxShadow: [
                   BoxShadow(
                     blurRadius: 20,
@@ -53,18 +60,21 @@ class NavigationMenu extends StatelessWidget {
                   child: GNav(
                     rippleColor: Colors.grey[300]!,
                     hoverColor: Colors.grey[100]!,
+
                     gap: 8,
                     activeColor: Colors.black,
                     iconSize: 24,
-                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                    padding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
                     duration: Duration(milliseconds: 400),
                     tabBackgroundColor: Colors.grey[100]!,
                     color: Colors.black,
                     tabs: [
-                      GButton(icon: FontAwesomeIcons.house, text: 'Home'),
-                      GButton(icon: FontAwesomeIcons.heart, text: 'Likes'),
-                      GButton(icon: Icons.shopping_bag_outlined, text: 'Cart'),
-                      GButton(icon: FontAwesomeIcons.user, text: 'Profile'),
+                      GButton(icon: LineIcons.home, text: 'Home'),
+                      GButton(icon: LineIcons.heart, text: 'Likes'),
+                      GButton(icon: LineIcons.shoppingBag, text: 'Cart'),
+                      GButton(icon: LineIcons.user, text: 'Profile'),
+                      if (AuthController.instance.isVendorAcount.value)
+                        GButton(icon: LineIcons.store, text: 'Business'),
                     ],
                     selectedIndex: controller.selectedIndex.value,
                     onTabChange:
@@ -105,9 +115,9 @@ class NavigationController extends GetxController {
         backgroundColor: Colors.black,
         colorText: Colors.white,
         duration: const Duration(seconds: 2),
-        margin: const EdgeInsets.symmetric(horizontal: 40, vertical: 20),
+        margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
         borderRadius: 20,
-        padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 12),
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
         maxWidth: 200,
 
         isDismissible: false,
@@ -123,6 +133,11 @@ class NavigationController extends GetxController {
     const HomePage(), // Get page
     const FavoritesPage(), // Likes page
     const CartPage(), // Search page
-    const ProfilePage(), // Profile page
+    const ProfilePage(),
+    if (AuthController.instance.isVendorAcount.value)
+      MarketPlaceManagment(
+        vendorId: AuthController.instance.currentUser.value!.id,
+        editMode: true,
+      ), // Profile page
   ];
 }

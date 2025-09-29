@@ -29,6 +29,7 @@ class AuthController extends GetxController {
   final RxBool isPasswordHidden = true.obs;
   final RxBool isLoginPasswordHidden = true.obs;
   final RxBool rememberMe = false.obs;
+  final RxBool isVendorAcount = false.obs;
   final Rx<UserModel?> currentUser = Rx<UserModel?>(null);
 
   @override
@@ -119,6 +120,7 @@ class AuthController extends GetxController {
         final user = await _userRepository.getUserById(authUser.id);
         if (user != null) {
           currentUser.value = user;
+          isVendorAcount.value = user.accountType == 1;
         } else {
           // If user not found in our database, create a temporary user object
           final tempUser = UserModel(
@@ -140,6 +142,7 @@ class AuthController extends GetxController {
             updatedAt: DateTime.now(),
           );
           currentUser.value = tempUser;
+          isVendorAcount.value = currentUser.value?.accountType == 1;
         }
       } catch (e) {
         // If there's an error, create a temporary user object
@@ -611,6 +614,8 @@ class AuthController extends GetxController {
 
       if (updatedUser != null) {
         currentUser.value = updatedUser;
+        // تحديث نوع الحساب
+        isVendorAcount.value = updatedUser.accountType == 1;
         Get.snackbar(
           'success'.tr,
           'profile_image_updated'.tr,
@@ -938,5 +943,13 @@ class AuthController extends GetxController {
   Future<Map<String, dynamic>> verifyEmailWithToken(String token) async {
     // Email verification is disabled, return success
     return {'success': true, 'message': 'Email verification is not required'};
+  }
+
+  /// تحديث نوع الحساب (عادي/تجاري)
+  void updateAccountType(int accountType) {
+    if (currentUser.value != null) {
+      currentUser.value = currentUser.value!.copyWith(accountType: accountType);
+      isVendorAcount.value = accountType == 1;
+    }
   }
 }

@@ -71,7 +71,9 @@ Container getEmptyEdit(
             children: [
               Visibility(
                 visible: withTitle,
-                child: BuildSectorTitle(name: sectorName, vendorId: vendorId),
+                child: Flexible(
+                  child: BuildSectorTitle(name: sectorName, vendorId: vendorId),
+                ),
               ),
               GestureDetector(
                 onTap:
@@ -316,7 +318,9 @@ Row titleWithEdit(
     children: [
       Visibility(
         visible: withTitle,
-        child: BuildSectorTitle(name: sectorName, vendorId: vendorId),
+        child: Flexible(
+          child: BuildSectorTitle(name: sectorName, vendorId: vendorId),
+        ),
       ),
       GestureDetector(
         onTap:

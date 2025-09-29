@@ -54,13 +54,17 @@ class BuildSectorTitle extends StatelessWidget {
                                 : sector.englishName;
                         return Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                          child: TCustomWidgets.buildTitle(displayText),
+                          child: Flexible(
+                            child: TCustomWidgets.buildTitle(displayText),
+                          ),
                         );
                       },
                     )
                     : Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                      child: TCustomWidgets.buildTitle(sector.englishName),
+                      child: Flexible(
+                        child: TCustomWidgets.buildTitle(sector.englishName),
+                      ),
                     ),
           );
         }

@@ -411,6 +411,10 @@ class InitialCommercialController extends GetxController {
         // Update user profile account type
         await _supabaseService.updateUserAccountType(currentUser.id, 1);
 
+        // تحديث نوع الحساب في AuthController
+        final authController = Get.find<AuthController>();
+        authController.updateAccountType(1);
+
         uploadProgress.value = 1.0;
 
         Get.snackbar(

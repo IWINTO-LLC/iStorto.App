@@ -59,34 +59,6 @@ class BannerRepository extends GetxController {
     }
   }
 
-  // Get company banners only
-  Future<List<BannerModel>> getCompanyBanners() async {
-    try {
-      final response = await _client
-          .from('banners')
-          .select()
-          .eq('active', true)
-          .eq('scope', 'company')
-          .order('priority', ascending: false)
-          .order('created_at', ascending: false);
-
-      if (kDebugMode) {
-        print("=======Company Banners==============");
-        print(response.toString());
-      }
-
-      final resultList =
-          (response as List).map((data) => BannerModel.fromJson(data)).toList();
-
-      return resultList;
-    } catch (e) {
-      if (kDebugMode) {
-        print("Error getting company banners: $e");
-      }
-      throw 'Failed to get company banners: ${e.toString()}';
-    }
-  }
-
   // Get vendor banners only
   Future<List<BannerModel>> getVendorBanners() async {
     try {
@@ -94,7 +66,7 @@ class BannerRepository extends GetxController {
           .from('banners')
           .select()
           .eq('active', true)
-          .eq('scope', 'vendor')
+          .not('vendor_id', 'is', null)
           .order('priority', ascending: false)
           .order('created_at', ascending: false);
 
@@ -122,7 +94,6 @@ class BannerRepository extends GetxController {
           .from('banners')
           .select()
           .eq('active', true)
-          .eq('scope', 'vendor')
           .eq('vendor_id', vendorId)
           .order('priority', ascending: false)
           .order('created_at', ascending: false);
@@ -173,7 +144,9 @@ class BannerRepository extends GetxController {
   }
 
   // Get banners by target screen
-  Future<List<BannerModel>> getBannersByTargetScreen(String targetScreen) async {
+  Future<List<BannerModel>> getBannersByTargetScreen(
+    String targetScreen,
+  ) async {
     try {
       final response = await _client
           .from('banners')
@@ -201,7 +174,10 @@ class BannerRepository extends GetxController {
   }
 
   // Get mixed banners for specific target screen
-  Future<List<BannerModel>> getMixedBannersForScreen(String targetScreen, String? vendorId) async {
+  Future<List<BannerModel>> getMixedBannersForScreen(
+    String targetScreen,
+    String? vendorId,
+  ) async {
     try {
       final response = await _client
           .from('banners')

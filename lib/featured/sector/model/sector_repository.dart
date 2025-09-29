@@ -19,7 +19,6 @@ class SectorRepository extends GetxController {
       final response = await _client
           .from('sectors')
           .select('*')
-          .eq('vendor_id', vendorId)
           .order('created_at', ascending: true);
 
       final sectors =
@@ -91,7 +90,6 @@ class SectorRepository extends GetxController {
           await _client
               .from('sectors')
               .select('id')
-              .eq('vendor_id', vendorId)
               .eq('name', name)
               .maybeSingle();
 
@@ -110,10 +108,7 @@ class SectorRepository extends GetxController {
   // Initialize default sectors if none exist
   Future<void> initializeSectorCollection(String vendorId) async {
     try {
-      final existing = await _client
-          .from('sectors')
-          .select('id')
-          .eq('vendor_id', vendorId);
+      final existing = await _client.from('sectors').select('id');
       if ((existing as List).isNotEmpty) return;
 
       final defaults = <SectorModel>[

@@ -10,6 +10,7 @@ import 'package:istoreto/featured/category/view/create_category/create_category.
 import 'package:istoreto/featured/product/controllers/product_controller.dart';
 import 'package:istoreto/featured/product/views/widgets/product_details.dart';
 import 'package:istoreto/featured/product/views/widgets/product_widget_medium_fixed_height.dart';
+import 'package:istoreto/featured/sector/controller/sector_controller.dart';
 import 'package:istoreto/featured/shop/view/widgets/grid_builder.dart';
 import 'package:istoreto/featured/shop/view/widgets/grid_builder_custom_card.dart';
 import 'package:istoreto/featured/shop/view/widgets/sector_builder.dart';
@@ -25,6 +26,7 @@ class AllTab extends StatelessWidget {
   final String vendorId;
   @override
   Widget build(BuildContext context) {
+    Get.put(SectorController(vendorId));
     ProductController.instance.closeList;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -33,7 +35,7 @@ class AllTab extends StatelessWidget {
         // const SizedBox(
         //   height: 4,
         // ),
-        TPromoSlider(editMode: editMode, vendorId: vendorId),
+        // TPromoSlider(editMode: editMode, vendorId: vendorId),
         Container(color: Colors.transparent, height: 16),
 
         viewCategories(),
@@ -209,7 +211,7 @@ class AllTab extends StatelessWidget {
                     if (index == 0) {
                       return Padding(
                         padding: const EdgeInsets.all(8.0),
-                        child: addCategoryItem(index, context),
+                        child: addCategoryItem(index, context, vendorId),
                       );
                     } else {
                       return Padding(
@@ -264,7 +266,11 @@ class AllTab extends StatelessWidget {
                                           right: 10,
                                           bottom: 45.0,
                                         ),
-                                        child: addCategoryItem(index, context),
+                                        child: addCategoryItem(
+                                          index,
+                                          context,
+                                          vendorId,
+                                        ),
                                       ),
                                       const SizedBox(width: 10),
                                     ],
@@ -716,7 +722,7 @@ class AllTab extends StatelessWidget {
     }
   }
 
-  Stack addCategoryItem(int index, BuildContext context) {
+  Stack addCategoryItem(int index, BuildContext context, String vendorId) {
     return Stack(
       alignment: Alignment.center,
       children: [

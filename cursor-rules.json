@@ -13,6 +13,7 @@
     "folderStructure": "feature-based: each feature has its own folder with model, controller, repository, and views",
     "componentNaming": "descriptive and feature-based",
     "agentBehavior": "always follow this structure unless explicitly told otherwise",
-    "language": "Arabic for comments and UI labels"
-  }
+    "language": "Arabic for comments and UI labels",
+    "alwaysApply": true
+}
   
