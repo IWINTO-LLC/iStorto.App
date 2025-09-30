@@ -8,6 +8,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:istoreto/controllers/category_controller.dart';
 import 'package:istoreto/featured/shop/controller/vendor_controller.dart';
 import 'package:istoreto/services/image_upload_service.dart';
+import 'package:uuid/uuid.dart';
 import '../data/models/category_model.dart';
 import '../data/repositories/category_repository.dart';
 
@@ -120,7 +121,7 @@ class CreateCategoryController extends GetxController {
       icon: imageUrl.value,
       vendorId: vendorId,
       createdAt: DateTime.now(),
-
+      id: Uuid().v4(),
       isActive: true,
     );
 

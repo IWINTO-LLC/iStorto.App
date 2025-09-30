@@ -3,6 +3,12 @@ import 'package:get/get.dart';
 import 'package:istoreto/utils/common/widgets/appbar/custom_app_bar.dart';
 import 'package:istoreto/utils/constants/color.dart';
 import 'package:istoreto/views/admin/admin_categories_page.dart';
+import 'package:istoreto/views/admin/admin_currencies_page.dart';
+import 'package:istoreto/views/test/currency_test_page.dart';
+import 'package:istoreto/views/test/product_currency_test_page.dart';
+import 'package:istoreto/views/test/banner_test_page.dart';
+import 'package:istoreto/views/test/promo_slider_test_page.dart';
+import 'package:istoreto/views/test/banner_upload_test_page.dart';
 
 class AdminZonePage extends StatelessWidget {
   const AdminZonePage({super.key});
@@ -103,6 +109,17 @@ class AdminZonePage extends StatelessWidget {
 
                 const SizedBox(height: 12),
 
+                // Currency Management
+                _buildManagementCard(
+                  icon: Icons.currency_exchange,
+                  title: 'admin_zone_currencies'.tr,
+                  subtitle: 'admin_zone_currencies_desc'.tr,
+                  color: Colors.amber,
+                  onTap: () => Get.to(() => const AdminCurrenciesPage()),
+                ),
+
+                const SizedBox(height: 12),
+
                 // Products Management
                 _buildManagementCard(
                   icon: Icons.inventory,
@@ -194,6 +211,61 @@ class AdminZonePage extends StatelessWidget {
                       colorText: Colors.white,
                     );
                   },
+                ),
+
+                const SizedBox(height: 12),
+
+                // Currency Test (Development)
+                _buildManagementCard(
+                  icon: Icons.science,
+                  title: 'Currency Controller Test',
+                  subtitle: 'Test currency conversion and functionality',
+                  color: Colors.purple,
+                  onTap: () => Get.to(() => const CurrencyTestPage()),
+                ),
+
+                const SizedBox(height: 12),
+
+                // Product Currency Test (Development)
+                _buildManagementCard(
+                  icon: Icons.shopping_bag,
+                  title: 'Product Currency Test',
+                  subtitle: 'Test product price conversion with currencies',
+                  color: Colors.orange,
+                  onTap: () => Get.to(() => const ProductCurrencyTestPage()),
+                ),
+
+                const SizedBox(height: 12),
+
+                // Banner Test (Development)
+                _buildManagementCard(
+                  icon: Icons.campaign,
+                  title: 'Banner Test',
+                  subtitle: 'Test banner functionality with vendorId',
+                  color: Colors.teal,
+                  onTap: () => Get.to(() => const BannerTestPage()),
+                ),
+
+                const SizedBox(height: 12),
+
+                // Promo Slider Test (Development)
+                _buildManagementCard(
+                  icon: Icons.slideshow,
+                  title: 'Promo Slider Test',
+                  subtitle: 'Test promo slider with vendor banners',
+                  color: Colors.indigo,
+                  onTap: () => Get.to(() => const PromoSliderTestPage()),
+                ),
+
+                const SizedBox(height: 12),
+
+                // Banner Upload Test (Development)
+                _buildManagementCard(
+                  icon: Icons.cloud_upload,
+                  title: 'Banner Upload Test',
+                  subtitle: 'Test Supabase upload with progress tracking',
+                  color: Colors.purple,
+                  onTap: () => Get.to(() => const BannerUploadTestPage()),
                 ),
 
                 // مساحة إضافية في النهاية

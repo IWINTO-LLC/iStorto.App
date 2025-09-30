@@ -2,6 +2,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:istoreto/featured/home-page/views/widgets/category_section.dart';
+import 'package:istoreto/utils/common/widgets/shimmers/catrgory_shimmer.dart';
+import 'package:istoreto/utils/constants/sizes.dart';
 
 import '../../../../../controllers/major_category_controller.dart';
 import '../../../../../data/models/major_category_model.dart';
@@ -65,10 +67,7 @@ class MajorCategorySection extends StatelessWidget {
         const SizedBox(height: 16),
         Obx(() {
           if (controller.isLoading) {
-            return SizedBox(
-              height: 120,
-              child: Center(child: CircularProgressIndicator()),
-            );
+            return const TCategoryShummer(itemCount: 8);
           }
 
           // Show all active categories for all users
@@ -110,18 +109,18 @@ class MajorCategorySection extends StatelessWidget {
     }
 
     return Container(
-      width: 90, // Slightly wider for better text display
-      margin: const EdgeInsets.only(right: 12),
+      width: 110, // Slightly wider for better text display
+      margin: const EdgeInsets.only(bottom: TSizes.paddingSizeEight),
       child: Column(
         children: [
           GestureDetector(
             onTap: () => _onCategoryTap(category),
             child: Container(
-              width: 70, // Slightly larger for better visibility
-              height: 70,
+              width: 90, // Slightly larger for better visibility
+              height: 90,
               decoration: BoxDecoration(
                 color: Colors.grey.shade200,
-                borderRadius: BorderRadius.circular(35),
+                borderRadius: BorderRadius.circular(100),
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black.withOpacity(0.1),
@@ -133,7 +132,7 @@ class MajorCategorySection extends StatelessWidget {
               child:
                   category.image != null && category.image!.isNotEmpty
                       ? ClipRRect(
-                        borderRadius: BorderRadius.circular(35),
+                        borderRadius: BorderRadius.circular(100),
                         child: Image.network(
                           category.image!,
                           fit: BoxFit.cover,
@@ -189,7 +188,7 @@ class MajorCategorySection extends StatelessWidget {
     final controller = Get.find<MajorCategoryController>();
     return Container(
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(35),
+        borderRadius: BorderRadius.circular(100),
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,

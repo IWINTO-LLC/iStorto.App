@@ -15,7 +15,7 @@ import 'package:uuid/uuid.dart';
 class InitialCommercialController extends GetxController {
   // Form controllers
   final organizationNameController = TextEditingController();
-  final slugnController = TextEditingController();
+  final briefController = TextEditingController();
   final organizationBioController = TextEditingController();
 
   // Page controller
@@ -52,7 +52,7 @@ class InitialCommercialController extends GetxController {
   void onClose() {
     // Dispose controllers
     organizationNameController.dispose();
-    slugnController.dispose();
+    briefController.dispose();
     organizationBioController.dispose();
     pageController.dispose();
     super.onClose();
@@ -321,13 +321,11 @@ class InitialCommercialController extends GetxController {
     return null;
   }
 
-  String? validateSlug(String? value) {
+  String? validateBrief(String? value) {
     if (value == null || value.isEmpty) {
-      return 'organization_slug_required'.tr;
+      return 'organization_brief_required'.tr;
     }
-    if (!RegExp(r'^[a-z0-9-]+$').hasMatch(value)) {
-      return 'slug_format_error'.tr;
-    }
+
     return null;
   }
 
@@ -394,7 +392,7 @@ class InitialCommercialController extends GetxController {
         id: Uuid().v4(),
         userId: currentUser.id,
         organizationName: organizationNameController.text.trim(),
-        slugn: slugnController.text.trim(),
+        brief: briefController.text.trim(),
         organizationBio: organizationBioController.text.trim(),
         organizationLogo: logoUrl ?? '',
         organizationCover: coverUrl ?? '',
@@ -465,7 +463,7 @@ class InitialCommercialController extends GetxController {
 
   // Review data getters
   String get organizationName => organizationNameController.text;
-  String get slug => slugnController.text;
+  String get brief => briefController.text;
   String get organizationBio =>
       organizationBioController.text.isEmpty
           ? 'not_provided'.tr

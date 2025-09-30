@@ -238,13 +238,13 @@ class InitialCommercialPage extends StatelessWidget {
 
               // Slug
               TextFormField(
-                controller: controller.slugnController,
+                controller: controller.briefController,
                 decoration: InputDecoration(
-                  labelText: 'organization_slug'.tr + ' *',
+                  labelText: 'store_settings_brief'.tr + ' *',
                   hintText: 'slug_example'.tr,
                   border: const OutlineInputBorder(),
                 ),
-                validator: controller.validateSlug,
+                validator: controller.validateBrief,
               ),
               const SizedBox(height: TSizes.spaceBtwInputFields),
 

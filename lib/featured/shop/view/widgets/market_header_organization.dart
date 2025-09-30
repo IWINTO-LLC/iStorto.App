@@ -212,14 +212,14 @@ Widget marketHeaderSection(String userId, bool editMode, bool isVendor) {
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            GestureDetector(
-                              onTap: () => Get.to(() => CartScreen()),
+                            // GestureDetector(
+                            //   onTap: () => Get.to(() => CartScreen()),
 
-                              child: const Padding(
-                                padding: EdgeInsets.symmetric(vertical: 8.0),
-                                child: CartWidget(),
-                              ),
-                            ),
+                            //   child: const Padding(
+                            //     padding: EdgeInsets.symmetric(vertical: 8.0),
+                            //     child: CartWidget(),
+                            //   ),
+                            // ),
                             Visibility(
                               visible: isVendor && !editMode,
                               child: GestureDetector(
@@ -743,16 +743,16 @@ Widget marketHeaderSection(String userId, bool editMode, bool isVendor) {
                               ),
                             ],
                           ),
-                          if (userMap.slugn != '' && !isVendor)
+                          if (userMap.brief != '' && !isVendor)
                             const SizedBox(height: 10),
-                          userMap.slugn != ''
+                          userMap.brief != ''
                               ? Row(
                                 children: [
                                   Visibility(
                                     visible: editMode,
                                     child: Builder(
                                       builder: (context) {
-                                        return editSlugnIcon(
+                                        return editBriefIcon(
                                           context,
                                           userMap.toJson(),
                                         );
@@ -764,7 +764,7 @@ Widget marketHeaderSection(String userId, bool editMode, bool isVendor) {
                                     child: const SizedBox(width: 6),
                                   ),
                                   Obx(() {
-                                    final brief = userMap.slugn;
+                                    final brief = userMap.brief;
                                     return TranslateController
                                             .instance
                                             .enableTranslateProductDetails
@@ -812,7 +812,7 @@ Widget marketHeaderSection(String userId, bool editMode, bool isVendor) {
                               : isVendor
                               ? GestureDetector(
                                 onTap:
-                                    () => editSlugn(
+                                    () => editBrief(
                                       Get.context!,
                                       userMap.toJson(),
                                     ),
@@ -938,12 +938,12 @@ GestureDetector editName(BuildContext context, Map<String, dynamic>? userMap) {
   );
 }
 
-GestureDetector editSlugnIcon(
+GestureDetector editBriefIcon(
   BuildContext context,
   Map<String, dynamic>? userMap,
 ) {
   return GestureDetector(
-    onTap: () => editSlugn(context, userMap),
+    onTap: () => editBrief(context, userMap),
     child: TRoundedContainer(
       width: 28,
       height: 28,
@@ -958,7 +958,7 @@ GestureDetector editSlugnIcon(
   );
 }
 
-editSlugn(BuildContext context, Map<String, dynamic>? userMap) {}
+editBrief(BuildContext context, Map<String, dynamic>? userMap) {}
 
 Widget itemCount(String userId, BuildContext context) {
   // var isVendorAction= CategoryController.instance.productCount.value ==0  &&   !VendorController.instance.isVendor.value

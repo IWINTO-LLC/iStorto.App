@@ -13,8 +13,8 @@ import 'package:istoreto/featured/product/data/product_model.dart';
 import 'package:istoreto/featured/product/data/product_repository.dart';
 import 'package:istoreto/utils/common/styles/styles.dart';
 import 'package:istoreto/utils/constants/color.dart';
-import 'package:istoreto/utils/constants/constant.dart';
 import 'package:istoreto/utils/loader/loaders.dart';
+import 'package:uuid/uuid.dart';
 
 class ProductController extends GetxController {
   static ProductController get instance => Get.find();
@@ -102,7 +102,7 @@ class ProductController extends GetxController {
       message.value = 'product.sending_data'.tr;
 
       final product = ProductModel(
-        id: '',
+        id: Uuid().v4(),
         vendorId: vendorId,
         title: title,
         description: description,

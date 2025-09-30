@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:get/get.dart';
+import 'package:istoreto/featured/currency/controller/currency_controller.dart';
 import 'package:istoreto/navigation_menu.dart';
 import 'package:istoreto/views/splash_screen.dart';
 import 'package:istoreto/views/login_page.dart';
@@ -39,9 +40,8 @@ class MyApp extends StatelessWidget {
     // Initialize Controllers
     final translationController = Get.put(TranslationController());
     Get.put(AuthController());
-
-    // Initialize General Bindings (all other controllers)
     Get.put(GeneralBindings());
+    // Initialize General Bindings (all other controllers)
 
     return Sizer(
       builder: (context, orientation, deviceType) {

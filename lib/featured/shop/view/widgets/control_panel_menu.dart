@@ -11,8 +11,10 @@ import 'package:istoreto/featured/product/views/all_products_list.dart';
 import 'package:istoreto/featured/shop/data/menu_model.dart';
 import 'package:istoreto/featured/shop/view/market_place_view.dart';
 import 'package:istoreto/featured/shop/view/policy_page.dart';
+import 'package:istoreto/featured/shop/view/store_settings.dart';
 import 'package:istoreto/navigation_menu.dart';
 import 'package:istoreto/utils/common/styles/styles.dart';
+import 'package:line_icons/line_icons.dart';
 
 class ControlPanelMenu extends StatelessWidget {
   const ControlPanelMenu({
@@ -77,6 +79,19 @@ class ControlPanelMenu extends StatelessWidget {
         onTap:
             () => Get.to(
               () => MarketPlaceView(vendorId: vendorId, editMode: false),
+              duration: Duration(microseconds: 900),
+              transition: Transition.cupertino,
+            ),
+      ),
+      MenuItemData(
+        icon: LineIcons.magic,
+        title: 'settings'.tr,
+        onTap:
+            () => Get.to(
+              () => VendorSettingsPage(
+                vendorId: vendorId,
+                fromBage: 'control_panel',
+              ),
               duration: Duration(microseconds: 900),
               transition: Transition.cupertino,
             ),
@@ -159,17 +174,7 @@ class ControlPanelMenu extends StatelessWidget {
               transition: Transition.cupertino,
             ),
       ),
-      // MenuItemData(
-      //   icon: Icons.settings,
-      //   title: 'app_setting'.tr,
 
-      //   onTap:
-      //       () => Get.to(
-      //         () => ControlCenter(),
-      //         duration: Duration(microseconds: 900),
-      //         transition: Transition.cupertino,
-      //       ),
-      // ),
       MenuItemData(
         icon: CupertinoIcons.reply,
         title: "exit".tr,

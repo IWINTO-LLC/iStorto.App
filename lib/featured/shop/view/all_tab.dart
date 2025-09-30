@@ -35,7 +35,7 @@ class AllTab extends StatelessWidget {
         // const SizedBox(
         //   height: 4,
         // ),
-        // TPromoSlider(editMode: editMode, vendorId: vendorId),
+        TPromoSlider(editMode: editMode, vendorId: vendorId),
         Container(color: Colors.transparent, height: 16),
 
         viewCategories(),

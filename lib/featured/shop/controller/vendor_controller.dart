@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../data/vendor_model.dart';
+import '../data/social-link.dart';
 import '../data/vendor_repository.dart';
 import '../../../controllers/auth_controller.dart';
 
@@ -30,6 +31,7 @@ class VendorController extends GetxController {
   late TextEditingController organizationBioController;
   late TextEditingController organizationNameController;
   late TextEditingController storeMessageController;
+  late TextEditingController briefController;
 
   @override
   void onInit() {
@@ -38,6 +40,7 @@ class VendorController extends GetxController {
     organizationBioController = TextEditingController();
     organizationNameController = TextEditingController();
     storeMessageController = TextEditingController();
+    briefController = TextEditingController();
     debugPrint("VendorController initialized with text controllers");
     fetchUserData();
   }
@@ -123,6 +126,8 @@ class VendorController extends GetxController {
       organizationBioController.text = profile.organizationBio;
       organizationNameController.text = profile.organizationName;
       storeMessageController.text = profile.storeMessage;
+      briefController.text =
+          profile.organizationBio; // Use bio as brief for now
       debugPrint("Text controllers updated successfully");
     } catch (e) {
       debugPrint("Error updating text controllers: $e");
@@ -136,6 +141,7 @@ class VendorController extends GetxController {
       storeMessageController = TextEditingController(
         text: profile.storeMessage,
       );
+      briefController = TextEditingController(text: profile.organizationBio);
     }
   }
 
@@ -149,6 +155,7 @@ class VendorController extends GetxController {
       organizationBioController.dispose();
       organizationNameController.dispose();
       storeMessageController.dispose();
+      briefController.dispose();
     } catch (e) {
       debugPrint("Error disposing text controllers: $e");
     }
@@ -179,6 +186,7 @@ class VendorController extends GetxController {
         storeMessage: storeMessageController.text.trim(),
         organizationDeleted: organizationDeleted.value,
         organizationActivated: organizationActivated.value,
+        socialLink: profileData.value.socialLink, // الحفاظ على روابط السوشال
       );
 
       // Debug: Print the updated vendor
@@ -194,6 +202,140 @@ class VendorController extends GetxController {
     } finally {
       isUpdate.value = false;
     }
+  }
+
+  // حفظ روابط السوشال ميديا
+  Future<void> saveSocialLinks(String vendorId, SocialLink socialLink) async {
+    try {
+      isUpdate.value = true;
+
+      // حفظ روابط السوشال ميديا مباشرة
+      await repository.updateVendorSocialLinks(vendorId, socialLink);
+
+      // تحديث البيانات المحلية
+      profileData.value = profileData.value.copyWith(socialLink: socialLink);
+      vendorData.value = vendorData.value.copyWith(socialLink: socialLink);
+
+      debugPrint("Social links saved successfully");
+    } catch (e) {
+      debugPrint("Error saving social links: $e");
+      rethrow;
+    } finally {
+      isUpdate.value = false;
+    }
+  }
+
+  // الحصول على روابط السوشال ميديا
+  SocialLink getSocialLinks() {
+    return profileData.value.socialLink ?? const SocialLink();
+  }
+
+  // تحديث رابط سوشال واحد
+  void updateSocialLink(String platform, String value) {
+    final currentSocialLink = getSocialLinks();
+    SocialLink updatedSocialLink;
+
+    switch (platform) {
+      case 'facebook':
+        updatedSocialLink = currentSocialLink.copyWith(facebook: value);
+        break;
+      case 'instagram':
+        updatedSocialLink = currentSocialLink.copyWith(instagram: value);
+        break;
+      case 'whatsapp':
+        updatedSocialLink = currentSocialLink.copyWith(whatsapp: value);
+        break;
+      case 'website':
+        updatedSocialLink = currentSocialLink.copyWith(website: value);
+        break;
+      case 'tiktok':
+        updatedSocialLink = currentSocialLink.copyWith(tiktok: value);
+        break;
+      case 'youtube':
+        updatedSocialLink = currentSocialLink.copyWith(youtube: value);
+        break;
+      case 'x':
+        updatedSocialLink = currentSocialLink.copyWith(x: value);
+        break;
+      case 'linkedin':
+        updatedSocialLink = currentSocialLink.copyWith(linkedin: value);
+        break;
+      case 'location':
+        updatedSocialLink = currentSocialLink.copyWith(location: value);
+        break;
+      default:
+        return;
+    }
+
+    // تحديث البيانات المحلية
+    profileData.value = profileData.value.copyWith(
+      socialLink: updatedSocialLink,
+    );
+    vendorData.value = vendorData.value.copyWith(socialLink: updatedSocialLink);
+  }
+
+  // تحديث حالة إظهار رابط سوشال
+  void updateSocialLinkVisibility(String platform, bool visible) {
+    final currentSocialLink = getSocialLinks();
+    SocialLink updatedSocialLink;
+
+    switch (platform) {
+      case 'facebook':
+        updatedSocialLink = currentSocialLink.copyWith(
+          visibleFacebook: visible,
+        );
+        break;
+      case 'instagram':
+        updatedSocialLink = currentSocialLink.copyWith(
+          visibleInstagram: visible,
+        );
+        break;
+      case 'whatsapp':
+        updatedSocialLink = currentSocialLink.copyWith(
+          visibleWhatsapp: visible,
+        );
+        break;
+      case 'website':
+        updatedSocialLink = currentSocialLink.copyWith(visibleWebsite: visible);
+        break;
+      case 'tiktok':
+        updatedSocialLink = currentSocialLink.copyWith(visibleTiktok: visible);
+        break;
+      case 'youtube':
+        updatedSocialLink = currentSocialLink.copyWith(visibleYoutube: visible);
+        break;
+      case 'x':
+        updatedSocialLink = currentSocialLink.copyWith(visibleX: visible);
+        break;
+      case 'linkedin':
+        updatedSocialLink = currentSocialLink.copyWith(
+          visibleLinkedin: visible,
+        );
+        break;
+      case 'phones':
+        updatedSocialLink = currentSocialLink.copyWith(visiblePhones: visible);
+        break;
+      default:
+        return;
+    }
+
+    // تحديث البيانات المحلية
+    profileData.value = profileData.value.copyWith(
+      socialLink: updatedSocialLink,
+    );
+    vendorData.value = vendorData.value.copyWith(socialLink: updatedSocialLink);
+  }
+
+  // تحديث قائمة الهواتف
+  void updatePhones(List<String> phones) {
+    final currentSocialLink = getSocialLinks();
+    final updatedSocialLink = currentSocialLink.copyWith(phones: phones);
+
+    // تحديث البيانات المحلية
+    profileData.value = profileData.value.copyWith(
+      socialLink: updatedSocialLink,
+    );
+    vendorData.value = vendorData.value.copyWith(socialLink: updatedSocialLink);
   }
 
   // Location methods can be added here when needed

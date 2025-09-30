@@ -6,7 +6,6 @@ import 'package:istoreto/views/initial_commercial_page.dart';
 import 'package:istoreto/views/admin/admin_zone_page.dart';
 import 'package:istoreto/views/settings_page.dart';
 import 'package:istoreto/views/edit_personal_info_page.dart';
-import 'package:istoreto/test_market_header_page.dart';
 
 /// مكون قائمة الملف الشخصي - يعرض خيارات الإعدادات والإجراءات
 class ProfileMenuWidget extends StatelessWidget {
@@ -47,12 +46,7 @@ class ProfileMenuWidget extends StatelessWidget {
             subtitle: 'app_preferences_and_configuration'.tr,
             onTap: () => _showSettingsDialog(Get.context!),
           ),
-          _buildMenuItem(
-            icon: Icons.bug_report,
-            title: 'Test Market Header',
-            subtitle: 'Test market header organization widget',
-            onTap: () => Get.to(() => const TestMarketHeaderPage()),
-          ),
+
           _buildMenuItem(
             icon: Icons.help,
             title: 'help_and_support'.tr,

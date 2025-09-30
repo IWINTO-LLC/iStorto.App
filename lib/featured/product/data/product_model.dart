@@ -16,6 +16,7 @@ class ProductModel {
   bool isDeleted;
   int minQuantity;
   int salePercentage;
+  String? currency; // Currency ISO code (e.g., 'USD', 'EUR')
   DateTime? createdAt;
   DateTime? updatedAt;
 
@@ -35,6 +36,7 @@ class ProductModel {
     this.isDeleted = false,
     this.minQuantity = 1,
     this.salePercentage = 0,
+    this.currency = 'USD', // Default to USD
     this.createdAt,
     this.updatedAt,
   });
@@ -56,6 +58,7 @@ class ProductModel {
       'is_deleted': isDeleted,
       'min_quantity': minQuantity,
       'sale_percentage': salePercentage,
+      'currency': currency,
       'created_at': createdAt?.toIso8601String(),
       'updated_at': updatedAt?.toIso8601String(),
     };
@@ -83,6 +86,7 @@ class ProductModel {
       isDeleted: data['is_deleted'] ?? false,
       minQuantity: data['min_quantity'] ?? 1,
       salePercentage: data['sale_percentage'] ?? 0,
+      currency: data['currency'] ?? 'USD',
       createdAt:
           data['created_at'] != null
               ? DateTime.parse(data['created_at'])
@@ -110,6 +114,7 @@ class ProductModel {
     bool? isDeleted,
     int? minQuantity,
     int? salePercentage,
+    String? currency,
     DateTime? createdAt,
     DateTime? updatedAt,
   }) {
@@ -129,6 +134,7 @@ class ProductModel {
       isDeleted: isDeleted ?? this.isDeleted,
       minQuantity: minQuantity ?? this.minQuantity,
       salePercentage: salePercentage ?? this.salePercentage,
+      currency: currency ?? this.currency,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
     );
@@ -164,9 +170,47 @@ class ProductModel {
     return ((oldPrice! - price) / oldPrice! * 100).round();
   }
 
+  // Get currency symbol
+  String get currencySymbol {
+    switch (currency?.toUpperCase()) {
+      case 'USD':
+        return '\$';
+      case 'EUR':
+        return '€';
+      case 'GBP':
+        return '£';
+      case 'JPY':
+        return '¥';
+      case 'SAR':
+        return 'ر.س';
+      case 'AED':
+        return 'د.إ';
+      case 'EGP':
+        return 'ج.م';
+      default:
+        return currency ?? 'USD';
+    }
+  }
+
+  // Get formatted price with currency
+  String get formattedPrice {
+    return '${price.toStringAsFixed(2)} $currencySymbol';
+  }
+
+  // Get formatted old price with currency
+  String get formattedOldPrice {
+    if (oldPrice == null || oldPrice! <= 0) return '';
+    return '${oldPrice!.toStringAsFixed(2)} $currencySymbol';
+  }
+
+  // Check if currency is supported
+  bool get hasValidCurrency {
+    return currency != null && currency!.isNotEmpty;
+  }
+
   @override
   String toString() {
-    return 'ProductModel(id: $id, title: $title, price: $price)';
+    return 'ProductModel(id: $id, title: $title, price: $price, currency: $currency)';
   }
 
   @override

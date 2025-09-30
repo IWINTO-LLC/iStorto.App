@@ -84,8 +84,8 @@ class TCustomWidgets {
   }
 
   static Widget formattedPrice(double value, double size, Color fontColor) {
-    var curr =
-        AuthController.instance.currentUser.value?.defaultCurrency ?? 'USD';
+    var curr = 'USD';
+    // AuthController.instance.currentUser.value?.defaultCurrency ?? 'USD';
 
     return RichText(
       textDirection: TextDirection.ltr,
@@ -97,11 +97,12 @@ class TCustomWidgets {
           fontFamily: 'Poppins',
         ), // حجم الرقم الأساسي
         children: [
-          TextSpan(
-            text: TFormatter.formateNumber(
-              CurrencyController.instance.convertToDefaultCurrency(value),
-            ),
-          ),
+          // TextSpan(
+          //   text: TFormatter.formateNumber(
+          //     CurrencyController.instance.convertToDefaultCurrency(value),
+          //   ),
+          // ),
+          TextSpan(text: value.toString()),
 
           // TextSpan(text: "  "),
           // TextSpan(text: formatNumberWithCommas(value)), // الرقم المنسق

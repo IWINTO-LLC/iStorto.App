@@ -122,7 +122,7 @@ class TCategoryGridItem extends StatelessWidget {
                             ? FutureBuilder<String>(
                               future: TranslateController.instance
                                   .getTranslatedText(
-                                    text: category.icon!,
+                                    text: category.title,
                                     targetLangCode:
                                         Localizations.localeOf(
                                           context,
@@ -151,7 +151,7 @@ class TCategoryGridItem extends StatelessWidget {
                               },
                             )
                             : Text(
-                              category.icon!,
+                              category.title,
                               maxLines: 2,
                               textAlign: TextAlign.center,
                               overflow: TextOverflow.ellipsis,

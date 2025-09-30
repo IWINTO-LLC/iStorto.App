@@ -41,9 +41,9 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
       child: AppBar(
         backgroundColor: Theme.of(context).cardColor,
         toolbarHeight: 70,
-        iconTheme: IconThemeData(
-          color: Theme.of(context).textTheme.bodyLarge?.color,
-        ),
+        // iconTheme: IconThemeData(
+        //   color: Theme.of(context).textTheme.bodyLarge?.color,
+        // ),
         automaticallyImplyLeading: false,
         title: Padding(
           padding: const EdgeInsets.only(top: 10.0),

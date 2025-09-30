@@ -9,7 +9,7 @@ class VendorModel {
   final String organizationLogo;
   final String organizationCover;
   final String website;
-  final String slugn;
+  final String brief;
   final String exclusiveId;
   final String storeMessage;
   final bool inExclusive;
@@ -35,7 +35,7 @@ class VendorModel {
     this.organizationLogo = '',
     this.organizationCover = '',
     this.website = '',
-    this.slugn = '',
+    this.brief = '',
     this.exclusiveId = '',
     this.storeMessage = '',
     this.inExclusive = false,
@@ -63,7 +63,7 @@ class VendorModel {
       organizationLogo: json['organization_logo'] ?? '',
       organizationCover: json['organization_cover'] ?? '',
       website: json['website'] ?? '',
-      slugn: json['slugn'] ?? '',
+      brief: json['brief'] ?? '',
       exclusiveId: json['exclusive_id'] ?? '',
       storeMessage: json['store_message'] ?? '',
       inExclusive: json['in_exclusive'] ?? false,
@@ -76,6 +76,10 @@ class VendorModel {
       organizationActivated: json['organization_activated'] ?? true,
       defaultCurrency: json['default_currency'] ?? 'USD',
       selectedMajorCategories: json['selected_major_categories'],
+      socialLink:
+          json['social_link'] != null
+              ? SocialLink.fromJson(json['social_link'])
+              : const SocialLink(),
       createdAt:
           json['created_at'] != null
               ? DateTime.parse(json['created_at'])
@@ -96,7 +100,7 @@ class VendorModel {
       'organization_logo': organizationLogo,
       'organization_cover': organizationCover,
       'website': website,
-      'slugn': slugn,
+      'brief': brief,
       'exclusive_id': exclusiveId,
       'store_message': storeMessage,
       'in_exclusive': inExclusive,
@@ -109,6 +113,7 @@ class VendorModel {
       'organization_activated': organizationActivated,
       'default_currency': defaultCurrency,
       'selected_major_categories': selectedMajorCategories,
+      'social_link': socialLink?.toJson(),
       'created_at': createdAt?.toIso8601String(),
       'updated_at': updatedAt?.toIso8601String(),
     };
@@ -136,7 +141,7 @@ class VendorModel {
     String? organizationLogo,
     String? organizationCover,
     String? website,
-    String? slugn,
+    String? brief,
     String? exclusiveId,
     String? storeMessage,
     bool? inExclusive,
@@ -148,6 +153,8 @@ class VendorModel {
     bool? organizationDeleted,
     bool? organizationActivated,
     String? defaultCurrency,
+    String? selectedMajorCategories,
+    SocialLink? socialLink,
     DateTime? createdAt,
     DateTime? updatedAt,
   }) {
@@ -160,7 +167,7 @@ class VendorModel {
       organizationLogo: organizationLogo ?? this.organizationLogo,
       organizationCover: organizationCover ?? this.organizationCover,
       website: website ?? this.website,
-      slugn: slugn ?? this.slugn,
+      brief: brief ?? this.brief,
       exclusiveId: exclusiveId ?? this.exclusiveId,
       storeMessage: storeMessage ?? this.storeMessage,
       inExclusive: inExclusive ?? this.inExclusive,
@@ -173,6 +180,9 @@ class VendorModel {
       organizationActivated:
           organizationActivated ?? this.organizationActivated,
       defaultCurrency: defaultCurrency ?? this.defaultCurrency,
+      selectedMajorCategories:
+          selectedMajorCategories ?? this.selectedMajorCategories,
+      socialLink: socialLink ?? this.socialLink,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
     );

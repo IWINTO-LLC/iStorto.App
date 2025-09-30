@@ -71,6 +71,7 @@ class _MarketPlaceViewState extends State<MarketPlaceView> {
 
   @override
   Widget build(BuildContext context) {
+    VendorController.instance.fetchVendorData(widget.vendorId);
     Get.put(SectorController(widget.vendorId));
     // Show loading while initializing
     if (!_isInitialized) {

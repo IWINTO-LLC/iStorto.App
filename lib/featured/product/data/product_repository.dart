@@ -1,11 +1,17 @@
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
+import 'package:istoreto/featured/shop/controller/vendor_controller.dart';
+import 'package:istoreto/featured/currency/controller/currency_controller.dart';
+import 'package:istoreto/featured/product/services/product_currency_service.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'product_model.dart';
 
 class ProductRepository extends GetxController {
   static ProductRepository get instance => Get.find();
   final _client = Supabase.instance.client;
+  final CurrencyController _currencyController = Get.find<CurrencyController>();
+  final ProductCurrencyService _currencyService =
+      Get.find<ProductCurrencyService>();
 
   // Get active (non-deleted) products for a vendor
   Future<List<ProductModel>> getProducts(String vendorId) async {
@@ -359,6 +365,7 @@ class ProductRepository extends GetxController {
 
   // Create new product
   Future<ProductModel> createProduct(ProductModel product) async {
+    product.vendorId = VendorController.instance.profileData.value.id;
     try {
       if (!product.isValid) {
         throw 'Product data is invalid';
@@ -720,6 +727,215 @@ class ProductRepository extends GetxController {
         print("Error getting user product count: $e");
       }
       throw 'Failed to get user product count: ${e.toString()}';
+    }
+  }
+
+  // ============ CURRENCY-AWARE PRODUCT METHODS ============
+
+  // Get products converted to user's preferred currency
+  Future<List<ProductModel>> getProductsInUserCurrency(String vendorId) async {
+    try {
+      final products = await getProducts(vendorId);
+      final userCurrency =
+          _currencyController.currentUserCurrency.isNotEmpty
+              ? _currencyController.currentUserCurrency
+              : 'USD';
+
+      return _currencyService.convertProductsCurrency(products, userCurrency);
+    } catch (e) {
+      if (kDebugMode) {
+        print("Error getting products in user currency: $e");
+      }
+      throw 'Failed to get products in user currency: ${e.toString()}';
+    }
+  }
+
+  // Get products in specific currency
+  Future<List<ProductModel>> getProductsInCurrency(
+    String vendorId,
+    String targetCurrency,
+  ) async {
+    try {
+      final products = await getProducts(vendorId);
+      return _currencyService.convertProductsCurrency(products, targetCurrency);
+    } catch (e) {
+      if (kDebugMode) {
+        print("Error getting products in currency: $e");
+      }
+      throw 'Failed to get products in currency: ${e.toString()}';
+    }
+  }
+
+  // Get single product in user currency
+  Future<ProductModel?> getProductInUserCurrency(String productId) async {
+    try {
+      final product = await getProductById(productId);
+      if (product == null) return null;
+
+      final userCurrency =
+          _currencyController.currentUserCurrency.isNotEmpty
+              ? _currencyController.currentUserCurrency
+              : 'USD';
+
+      return _currencyService.convertProductToCurrency(product, userCurrency);
+    } catch (e) {
+      if (kDebugMode) {
+        print("Error getting product in user currency: $e");
+      }
+      throw 'Failed to get product in user currency: ${e.toString()}';
+    }
+  }
+
+  // Get single product in specific currency
+  Future<ProductModel?> getProductInCurrency(
+    String productId,
+    String targetCurrency,
+  ) async {
+    try {
+      final product = await getProductById(productId);
+      if (product == null) return null;
+
+      return _currencyService.convertProductToCurrency(product, targetCurrency);
+    } catch (e) {
+      if (kDebugMode) {
+        print("Error getting product in currency: $e");
+      }
+      throw 'Failed to get product in currency: ${e.toString()}';
+    }
+  }
+
+  // Update product with currency information
+  Future<bool> updateProductCurrency(String productId, String currency) async {
+    try {
+      if (productId.isEmpty) {
+        throw 'Product ID is required';
+      }
+
+      if (currency.isEmpty) {
+        throw 'Currency is required';
+      }
+
+      await _client
+          .from('products')
+          .update({
+            'currency': currency.toUpperCase(),
+            'updated_at': DateTime.now().toIso8601String(),
+          })
+          .eq('id', productId);
+
+      if (kDebugMode) {
+        print("Product currency updated successfully");
+      }
+
+      return true;
+    } catch (e) {
+      if (kDebugMode) {
+        print("Error updating product currency: $e");
+      }
+      throw 'Failed to update product currency: ${e.toString()}';
+    }
+  }
+
+  // Get products by currency
+  Future<List<ProductModel>> getProductsByCurrency(
+    String vendorId,
+    String currency,
+  ) async {
+    try {
+      if (vendorId.isEmpty) {
+        throw 'Vendor ID is required';
+      }
+
+      final response = await _client
+          .from('products')
+          .select('''
+            *,
+            category:categories!category_id(
+              id,
+              title,
+              icon,
+              color,
+              is_active,
+              created_at,
+              updated_at
+            )
+          ''')
+          .eq('vendor_id', vendorId)
+          .eq('currency', currency.toUpperCase())
+          .eq('is_deleted', false)
+          .order('created_at', ascending: false);
+
+      final resultList =
+          (response as List)
+              .map((data) => ProductModel.fromJson(data))
+              .toList();
+
+      return resultList;
+    } catch (e) {
+      if (kDebugMode) {
+        print("Error getting products by currency: $e");
+      }
+      throw 'Failed to get products by currency: ${e.toString()}';
+    }
+  }
+
+  // Get currency statistics for vendor products
+  Future<Map<String, int>> getProductCurrencyStats(String vendorId) async {
+    try {
+      final response = await _client
+          .from('products')
+          .select('currency')
+          .eq('vendor_id', vendorId)
+          .eq('is_deleted', false);
+
+      final stats = <String, int>{};
+
+      for (final item in response as List) {
+        final currency = item['currency'] ?? 'USD';
+        stats[currency] = (stats[currency] ?? 0) + 1;
+      }
+
+      return stats;
+    } catch (e) {
+      if (kDebugMode) {
+        print("Error getting product currency stats: $e");
+      }
+      throw 'Failed to get product currency stats: ${e.toString()}';
+    }
+  }
+
+  // Bulk update products currency
+  Future<bool> bulkUpdateProductsCurrency(
+    List<String> productIds,
+    String currency,
+  ) async {
+    try {
+      if (productIds.isEmpty) {
+        throw 'Product IDs are required';
+      }
+
+      if (currency.isEmpty) {
+        throw 'Currency is required';
+      }
+
+      await _client
+          .from('products')
+          .update({
+            'currency': currency.toUpperCase(),
+            'updated_at': DateTime.now().toIso8601String(),
+          })
+          .inFilter('id', productIds);
+
+      if (kDebugMode) {
+        print("Bulk currency update completed successfully");
+      }
+
+      return true;
+    } catch (e) {
+      if (kDebugMode) {
+        print("Error bulk updating products currency: $e");
+      }
+      throw 'Failed to bulk update products currency: ${e.toString()}';
     }
   }
 }

@@ -1,14 +1,12 @@
-import 'package:flutter/cupertino.dart';
 import "package:flutter/material.dart";
 import 'package:get/get.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:istoreto/controllers/auth_controller.dart';
+import 'package:istoreto/featured/cart/view/cart_screen.dart';
+import 'package:istoreto/featured/currency/controller/currency_controller.dart';
 import 'package:istoreto/featured/home-page/views/home_page.dart';
+import 'package:istoreto/featured/product/services/product_currency_service.dart';
 import 'package:istoreto/featured/shop/view/market_place_managment.dart';
-import 'package:istoreto/featured/shop/view/market_place_view.dart';
-import 'package:istoreto/views/cart_page.dart';
-import 'package:istoreto/test_market_header_page.dart';
 import 'package:istoreto/views/favorites_page.dart';
 import 'package:istoreto/views/profile_page.dart';
 import 'package:line_icons/line_icons.dart';
@@ -19,6 +17,8 @@ class NavigationMenu extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Get.put(CurrencyController());
+    Get.put(ProductCurrencyService());
     // Get.put(LaterListController());
     // Get.put(CartController());
     final controller = Get.put(NavigationController());
@@ -132,7 +132,7 @@ class NavigationController extends GetxController {
   final screens = [
     const HomePage(), // Get page
     const FavoritesPage(), // Likes page
-    const CartPage(), // Search page
+    const CartScreen(), // Search page
     const ProfilePage(),
     if (AuthController.instance.isVendorAcount.value)
       MarketPlaceManagment(

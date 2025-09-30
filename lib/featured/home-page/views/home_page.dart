@@ -14,6 +14,7 @@ import 'package:istoreto/featured/banner/controller/banner_controller.dart';
 import 'package:istoreto/featured/cart/controller/cart_controller.dart';
 import 'package:istoreto/featured/cart/controller/save_for_later.dart';
 import 'package:istoreto/featured/cart/controller/saved_controller.dart';
+import 'package:istoreto/featured/currency/controller/currency_controller.dart';
 import 'package:istoreto/featured/home-page/views/widgets/banner_section.dart';
 import 'package:istoreto/featured/home-page/views/widgets/category_section.dart';
 import 'package:istoreto/featured/home-page/views/widgets/just_foryou_section.dart';
@@ -25,10 +26,12 @@ import 'package:istoreto/featured/payment/services/address_service.dart';
 import 'package:istoreto/featured/product/controllers/edit_product_controller.dart';
 import 'package:istoreto/featured/product/controllers/favorite_product_controller.dart';
 import 'package:istoreto/featured/product/controllers/product_controller.dart';
+import 'package:istoreto/featured/product/services/product_currency_service.dart';
 import 'package:istoreto/featured/sector/controller/sector_controller.dart';
 import 'package:istoreto/featured/shop/controller/vendor_controller.dart';
 import 'package:istoreto/featured/shop/data/vendor_repository.dart';
 import 'package:istoreto/featured/shop/follow/controller/follow_controller.dart';
+import 'package:istoreto/services/image_upload_service.dart';
 import 'package:istoreto/utils/bindings/general_binding.dart';
 import 'package:istoreto/utils/constants/color.dart';
 import 'package:istoreto/utils/constants/constant.dart';
@@ -69,7 +72,10 @@ class HomePage extends StatelessWidget {
     Get.put(CartController());
     Get.put(AddressService());
     Get.put(EditCategoryController());
+    Get.put(ImageUploadService());
     Get.put(TranslateController());
+    Get.put(CurrencyController());
+    Get.put(ProductCurrencyService());
 
     Get.put(FollowController());
     return SingleChildScrollView(

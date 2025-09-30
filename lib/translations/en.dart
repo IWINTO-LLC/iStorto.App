@@ -471,6 +471,10 @@ class En {
     'store_settings_store_activated': 'Store activated successfully',
     'store_settings_store_deactivated': 'Store deactivated successfully',
     'store_settings_store_policies': 'Store Policies',
+
+    // Settings
+    'settings.title': 'Settings',
+
     'uploading_photo': 'Upload photo ..',
     'everything_done': 'Everything done',
     'sending_data': 'Send data..',
@@ -902,6 +906,8 @@ class En {
     'admin_zone_management_sections': 'Management Sections',
     'admin_zone_categories': 'Categories Management',
     'admin_zone_categories_desc': 'Add, edit, and delete general categories',
+    'admin_zone_currencies': 'Currency Management',
+    'admin_zone_currencies_desc': 'Add and manage currency exchange rates',
     'admin_zone_products': 'Products Management',
     'admin_zone_products_desc': 'Manage all app products',
     'admin_zone_users': 'Users Management',

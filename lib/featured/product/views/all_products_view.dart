@@ -705,7 +705,7 @@ class _AllProductViewClientState extends State<AllProductViewClient>
                                                 ),
                                                 const SizedBox(width: 8),
                                                 Text(
-                                                  'common.list_view'.tr,
+                                                  'list_view'.tr,
                                                   style: TextStyle(
                                                     color:
                                                         _viewMode == 0
@@ -736,7 +736,7 @@ class _AllProductViewClientState extends State<AllProductViewClient>
                                                 ),
                                                 const SizedBox(width: 8),
                                                 Text(
-                                                  'common.grid_4_items'.tr,
+                                                  'grid_4_items'.tr,
                                                   style: TextStyle(
                                                     color:
                                                         _viewMode == 1
@@ -767,7 +767,7 @@ class _AllProductViewClientState extends State<AllProductViewClient>
                                                 ),
                                                 const SizedBox(width: 8),
                                                 Text(
-                                                  'common.grid_2_items'.tr,
+                                                  'grid_2_items'.tr,
                                                   style: TextStyle(
                                                     color:
                                                         _viewMode == 2
