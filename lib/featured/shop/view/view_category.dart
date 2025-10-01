@@ -25,7 +25,7 @@ Widget viewCategories({
   WidgetsBinding.instance.addPostFrameCallback((_) {
     if (CategoryController.instance.lastFetchedUserId != vendorId) {
       print("🔄 viewCategories: Loading categories for vendor: $vendorId");
-      CategoryController.instance.getCategoryOfUser(vendorId);
+      CategoryController.instance.getCategoryOfVendor(vendorId);
     } else {
       print(
         "✅ viewCategories: Categories already loaded for vendor: $vendorId",

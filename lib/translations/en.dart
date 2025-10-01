@@ -923,5 +923,65 @@ class En {
     'browse_categories_subtitle':
         'Explore our wide range of product categories',
     'no_categories_available': 'No categories available at the moment',
+
+    // Personal Information
+    'personal_information': 'Personal Information',
+    'profile_photo': 'Profile Photo',
+    'full_name': 'Full Name',
+    'bio_description': 'Bio & Description',
+    'not_set': 'Not Set',
+    'no_user_data': 'No User Data Available',
+
+    // Account Type
+    'account_type': 'Account Type',
+    'business_account': 'Business Account',
+    'personal_account': 'Personal Account',
+    'business_account_description':
+        'You have a business account with additional features',
+    'personal_account_description':
+        'Upgrade to business account for more features',
+
+    // Account Statistics
+    'account_statistics': 'Account Statistics',
+    'member_since': 'Member Since',
+    'not_available': 'Not Available',
+    'days_ago': 'days ago',
+    'months_ago': 'months ago',
+    'years_ago': 'years ago',
+
+    // Banner Management
+    'banner_management': 'Banner Management',
+    'company_banners': 'Company Banners',
+    'vendor_banners': 'Vendor Banners',
+    'add_banner': 'Add Banner',
+    'add_new_banner': 'Add New Banner',
+    'no_company_banners': 'No company banners available',
+    'no_vendor_banners': 'No vendor banners available',
+    'from_gallery': 'From Gallery',
+    'choose_from_gallery': 'Choose image from gallery',
+    'from_camera': 'From Camera',
+    'take_new_photo': 'Take a new photo',
+
+    'activate': 'Activate',
+    'deactivate': 'Deactivate',
+    'to_company': 'To Company',
+    'priority': 'Priority',
+    'untitled_banner': 'Untitled Banner',
+    'banner_activated_successfully': 'Banner activated successfully',
+    'banner_deactivated_successfully': 'Banner deactivated successfully',
+    'failed_to_update_banner': 'Failed to update banner',
+    'confirm_conversion': 'Confirm Conversion',
+    'convert_to_company_banner_message':
+        'Are you sure you want to convert this vendor banner to a company banner? This will make it visible on the home page.',
+    'convert': 'Convert',
+    'banner_converted_successfully':
+        'Banner converted to company banner successfully',
+    'failed_to_convert_banner': 'Failed to convert banner',
+    'confirm_deletion': 'Confirm Deletion',
+    'delete_banner_message':
+        'Are you sure you want to delete this banner? This action cannot be undone.',
+    'banner_deleted_successfully': 'Banner deleted successfully',
+    'failed_to_delete_banner': 'Failed to delete banner',
+    'failed_to_load_banners': 'Failed to load banners',
   };
 }

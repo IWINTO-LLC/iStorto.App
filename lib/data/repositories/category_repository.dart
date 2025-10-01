@@ -299,22 +299,22 @@ class CategoryRepository extends GetxController {
   }
 
   // Get all categories for a specific user (alias for getCategoriesByVendor)
-  Future<List<CategoryModel>> getAllCategoriesUserId(String userId) async {
+  Future<List<CategoryModel>> getAllCategoriesVendorId(String vendorId) async {
     try {
-      if (userId.isEmpty) {
+      if (vendorId.isEmpty) {
         throw 'User ID is required';
       }
 
       final response = await _client
           .from('vendor_categories')
           .select()
-          .eq('vendor_id', userId)
+          .eq('vendor_id', vendorId)
           .eq('is_active', true)
           .order('sort_order', ascending: true);
 
       if (kDebugMode) {
         print("=======User Categories Data==============");
-        print("User ID: $userId");
+        print("User ID: $vendorId");
         print(response.toString());
       }
 

@@ -122,3 +122,5 @@ WHERE tablename IN ('products', 'vendor_categories', 'vendors')
 ORDER BY tablename, policyname;
 
 
+
+

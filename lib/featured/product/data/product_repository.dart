@@ -24,7 +24,7 @@ class ProductRepository extends GetxController {
           .from('products')
           .select('''
             *,
-            category:categories!category_id(
+            category:vendor_categories!vendor_category_id(
               id,
               title,
               icon,
@@ -63,7 +63,7 @@ class ProductRepository extends GetxController {
           .from('products')
           .select('''
             *,
-            category:categories!category_id(
+            category:vendor_categories!vendor_category_id(
               id,
               title,
               icon,
@@ -101,7 +101,7 @@ class ProductRepository extends GetxController {
           .from('products')
           .select('''
             *,
-            category:categories!category_id(
+            category:vendor_categories!vendor_category_id(
               id,
               title,
               icon,
@@ -145,7 +145,7 @@ class ProductRepository extends GetxController {
           .from('products')
           .select('''
             *,
-            category:categories!category_id(
+            category:vendor_categories!vendor_category_id(
               id,
               title,
               icon,
@@ -191,7 +191,7 @@ class ProductRepository extends GetxController {
               .from('products')
               .select('''
                 *,
-                category:categories!category_id(
+                category:vendor_categories!vendor_category_id(
                   id,
                   title,
                   icon,
@@ -232,7 +232,7 @@ class ProductRepository extends GetxController {
           .from('products')
           .select('''
             *,
-            category:categories!category_id(
+            category:vendor_categories!vendor_category_id(
               id,
               title,
               icon,
@@ -242,7 +242,7 @@ class ProductRepository extends GetxController {
               updated_at
             )
           ''')
-          .eq('category_id', categoryId)
+          .eq('vendor_category_id', categoryId)
           .eq('vendor_id', vendorId)
           .eq('is_deleted', false)
           .order('created_at', ascending: false)
@@ -281,7 +281,7 @@ class ProductRepository extends GetxController {
           .from('products')
           .select('''
             *,
-            category:categories!category_id(
+            category:vendor_categories!vendor_category_id(
               id,
               title,
               icon,
@@ -539,7 +539,7 @@ class ProductRepository extends GetxController {
           .from('products')
           .select('''
             *,
-            category:categories!category_id(
+            category:vendor_categories!vendor_category_id(
               id,
               title,
               icon,
@@ -588,7 +588,7 @@ class ProductRepository extends GetxController {
                 .from('products')
                 .select('''
                   *,
-                  category:categories!category_id(
+                  category:vendor_categories!vendor_category_id(
                     id,
                     title,
                     icon,
@@ -703,21 +703,21 @@ class ProductRepository extends GetxController {
   }
 
   // Get user product count
-  Future<int> getUserProductCount(String userId) async {
+  Future<int> getUserProductCount(String vendorId) async {
     try {
-      if (userId.isEmpty) {
+      if (vendorId.isEmpty) {
         throw 'User ID is required';
       }
 
       final response = await _client
           .from('products')
           .select('id')
-          .eq('vendor_id', userId)
+          .eq('vendor_id', vendorId)
           .eq('is_deleted', false);
 
       if (kDebugMode) {
         print("=======User Product Count==============");
-        print("User ID: $userId");
+        print("User ID: $vendorId");
         print("Count: ${(response as List).length}");
       }
 
@@ -850,7 +850,7 @@ class ProductRepository extends GetxController {
           .from('products')
           .select('''
             *,
-            category:categories!category_id(
+            category:vendor_categories!vendor_category_id(
               id,
               title,
               icon,

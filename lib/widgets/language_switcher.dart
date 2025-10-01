@@ -239,9 +239,10 @@ class CompactLanguageSwitcher extends StatelessWidget {
           color: Theme.of(context).colorScheme.surface,
           borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
         ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
             Container(
               width: 40,
               height: 4,
@@ -306,6 +307,7 @@ class CompactLanguageSwitcher extends StatelessWidget {
             }),
             const SizedBox(height: 20),
           ],
+          ),
         ),
       ),
       isScrollControlled: true,

@@ -4,11 +4,13 @@ import 'package:istoreto/utils/common/widgets/appbar/custom_app_bar.dart';
 import 'package:istoreto/utils/constants/color.dart';
 import 'package:istoreto/views/admin/admin_categories_page.dart';
 import 'package:istoreto/views/admin/admin_currencies_page.dart';
+import 'package:istoreto/views/admin/admin_banners_page.dart';
 import 'package:istoreto/views/test/currency_test_page.dart';
 import 'package:istoreto/views/test/product_currency_test_page.dart';
 import 'package:istoreto/views/test/banner_test_page.dart';
 import 'package:istoreto/views/test/promo_slider_test_page.dart';
 import 'package:istoreto/views/test/banner_upload_test_page.dart';
+import 'package:istoreto/views/test/banner_debug_page.dart';
 
 class AdminZonePage extends StatelessWidget {
   const AdminZonePage({super.key});
@@ -116,6 +118,17 @@ class AdminZonePage extends StatelessWidget {
                   subtitle: 'admin_zone_currencies_desc'.tr,
                   color: Colors.amber,
                   onTap: () => Get.to(() => const AdminCurrenciesPage()),
+                ),
+
+                const SizedBox(height: 12),
+
+                // Banner Management
+                _buildManagementCard(
+                  icon: Icons.campaign,
+                  title: 'banner_management'.tr,
+                  subtitle: 'Manage company and vendor banners',
+                  color: Colors.pink,
+                  onTap: () => Get.to(() => const AdminBannersPage()),
                 ),
 
                 const SizedBox(height: 12),
@@ -266,6 +279,17 @@ class AdminZonePage extends StatelessWidget {
                   subtitle: 'Test Supabase upload with progress tracking',
                   color: Colors.purple,
                   onTap: () => Get.to(() => const BannerUploadTestPage()),
+                ),
+
+                const SizedBox(height: 12),
+
+                // Banner Debug Page (Development)
+                _buildManagementCard(
+                  icon: Icons.bug_report,
+                  title: 'Banner Debug',
+                  subtitle: 'Debug banner loading and RLS policies',
+                  color: Colors.red,
+                  onTap: () => Get.to(() => const BannerDebugPage()),
                 ),
 
                 // مساحة إضافية في النهاية

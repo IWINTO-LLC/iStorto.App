@@ -85,6 +85,7 @@ class TColors {
     BoxShadow(
       color: shadow, //Colors.grey.withValues(alpha: .15),
       blurRadius: 3,
+      spreadRadius: 3,
       offset: const Offset(0, 3),
     ),
   ];

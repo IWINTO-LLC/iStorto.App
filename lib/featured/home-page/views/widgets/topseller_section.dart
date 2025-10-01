@@ -3,6 +3,9 @@ import 'package:get/get.dart';
 import 'package:istoreto/featured/shop/data/vendor_model.dart';
 import 'package:istoreto/featured/shop/data/vendor_repository.dart';
 import 'package:istoreto/featured/shop/view/market_place_view.dart';
+import 'package:istoreto/utils/common/widgets/custom_shapes/containers/rounded_container.dart';
+import 'package:istoreto/utils/constants/sizes.dart';
+import 'package:istoreto/utils/helpers/rtl_helper.dart';
 
 class TopSellerSections extends StatefulWidget {
   const TopSellerSections({super.key});
@@ -132,13 +135,24 @@ class _TopSellerSectionsState extends State<TopSellerSections> {
 
           return SizedBox(
             height: 120,
-            child: ListView.builder(
+            child: ListView.separated(
+              separatorBuilder: (context, index) {
+                return const SizedBox(width: TSizes.spaceBtWItems);
+              },
               scrollDirection: Axis.horizontal,
-              padding: const EdgeInsets.symmetric(horizontal: 16),
+              // padding: const EdgeInsets.symmetric(horizontal: 16),
               itemCount: _topVendors.length,
               itemBuilder: (context, index) {
                 final vendor = _topVendors[index];
-                return _buildVendorCard(context, vendor);
+
+                return Padding(
+                  padding: RTLHelper.getHorizontalListPadding(
+                    index: index,
+                    totalItems: _topVendors.length,
+                    context: context,
+                  ),
+                  child: _buildVendorCard(context, vendor),
+                );
               },
             ),
           );
@@ -154,21 +168,25 @@ class _TopSellerSectionsState extends State<TopSellerSections> {
           Get.to(() => MarketPlaceView(vendorId: vendor.id!, editMode: false));
         }
       },
-      child: Container(
+      child: TRoundedContainer(
         width: 200,
-        margin: const EdgeInsets.only(right: 16),
+        margin: const EdgeInsets.only(bottom: 5),
         padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.05),
-              blurRadius: 10,
-              offset: const Offset(0, 2),
-            ),
-          ],
-        ),
+        radius: BorderRadius.circular(12),
+        enableShadow: true,
+        showBorder: true,
+        borderColor: Colors.grey.shade200,
+        // decoration: BoxDecoration(
+        //   color: Colors.white,
+        //   borderRadius: BorderRadius.circular(12),
+        //   boxShadow: [
+        //     BoxShadow(
+        //       color: Colors.black.withValues(alpha: 0.05),
+        //       blurRadius: 10,
+        //       offset: const Offset(0, 2),
+        //     ),
+        //   ],
+        // ),
         child: Row(
           children: [
             Container(

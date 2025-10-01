@@ -1,51 +1,32 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
-import 'dart:convert';
-import 'dart:io';
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:http/http.dart' as http;
 import 'package:istoreto/controllers/auth_controller.dart';
-import 'package:istoreto/utils/dialog/reusable_dialog.dart';
-import 'package:logger/logger.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:share_plus/share_plus.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:sizer/sizer.dart';
-
 import 'package:istoreto/controllers/category_controller.dart';
 import 'package:istoreto/data/models/category_model.dart';
-import 'package:istoreto/featured/cart/controller/cart_controller.dart';
 import 'package:istoreto/featured/category/view/create_category/create_category.dart';
 import 'package:istoreto/featured/currency/controller/currency_controller.dart';
 import 'package:istoreto/featured/custom_Excel_menu/controller/bulk_excel_product_control.dart';
 import 'package:istoreto/featured/custom_menu/controller/bulk_product_control.dart';
 import 'package:istoreto/featured/custom_menu/screen/product_menu.dart';
-import 'package:istoreto/featured/excel/view/excel_terms.dart';
 import 'package:istoreto/featured/payment/controller/order_controller.dart';
 import 'package:istoreto/featured/payment/data/order.dart';
 import 'package:istoreto/featured/product/cashed_network_image.dart';
 import 'package:istoreto/featured/product/data/product_model.dart';
 import 'package:istoreto/featured/sector/controller/sector_controller.dart';
 import 'package:istoreto/featured/sector/model/sector_model.dart';
-import 'package:istoreto/featured/shop/view/market_place_managment.dart';
 import 'package:istoreto/featured/shop/view/market_place_view.dart';
-import 'package:istoreto/featured/shop/view/store_settings.dart';
-import 'package:istoreto/featured/shop/view/widgets/current_currency.dart';
 import 'package:istoreto/utils/common/styles/styles.dart';
 import 'package:istoreto/utils/common/widgets/buttons/custom_button.dart';
 import 'package:istoreto/utils/common/widgets/custom_shapes/containers/rounded_container.dart';
 import 'package:istoreto/utils/common/widgets/shimmers/shimmer.dart';
 import 'package:istoreto/utils/common/widgets/texts/widgets/bottom_menu_item.dart';
 import 'package:istoreto/utils/constants/color.dart';
-import 'package:istoreto/utils/constants/constant.dart';
-
-import 'package:istoreto/utils/constants/sizes.dart';
+import 'package:istoreto/utils/dialog/reusable_dialog.dart';
 import 'package:istoreto/utils/formatters/formatter.dart';
 import 'package:istoreto/utils/loader/loaders.dart';
-import 'package:istoreto/utils/logging/logger.dart';
+import 'package:sizer/sizer.dart';
 
 class TCustomWidgets {
   static Widget buildDivider() {
@@ -601,12 +582,12 @@ void showManageOrderBottomSheet(
 
                     TLoader.successSnackBar(
                       title: "",
-                      message: "status_updated_to".tr + ": $translated",
+                      message: "${"status_updated_to".tr}: $translated",
                     );
                   },
                 ),
               );
-            }).toList(),
+            }),
 
             const SizedBox(height: 8),
             Text(
@@ -653,7 +634,7 @@ void showManageOrderBottomSheet2(
                     order.docId,
                     '2',
                   );
-                  Navigator.of(context).pop();
+                  Get.back();
                   TLoader.successSnackBar(
                     title: "",
                     message: "order_delivered".tr,
@@ -931,7 +912,7 @@ void showEditDialog(BuildContext context, SectorModel sector) {
                   await ctr.updateSectorName(updatedSector);
 
                   // إغلاق Dialog باستخدام GetX
-                  Navigator.pop(context);
+                  Get.back();
 
                   // عرض رسالة نجاح
                   Get.snackbar(

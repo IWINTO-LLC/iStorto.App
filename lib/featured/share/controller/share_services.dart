@@ -1,19 +1,14 @@
 import 'dart:io';
-import 'package:flutter/services.dart';
-import 'package:image/image.dart' as img;
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:http/http.dart' as http;
-import 'package:istoreto/featured/shop/data/vendor_model.dart';
-
-import 'package:path_provider/path_provider.dart';
-import 'package:share_plus/share_plus.dart';
-
 import 'package:istoreto/featured/currency/controller/currency_controller.dart';
 import 'package:istoreto/featured/product/data/product_model.dart';
-
+import 'package:istoreto/featured/shop/data/vendor_model.dart';
 import 'package:istoreto/utils/formatters/formatter.dart';
-import 'package:flutter_image_compress/flutter_image_compress.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:share_plus/share_plus.dart';
 
 class ShareServices {
   static Future<void> shareProduct(ProductModel product) async {

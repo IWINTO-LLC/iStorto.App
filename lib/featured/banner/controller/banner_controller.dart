@@ -57,6 +57,223 @@ class BannerController extends GetxController {
     activeBanners.assignAll(banners.where((p0) => p0.active == true));
   }
 
+  // Fetch all banners (for admin)
+  Future<void> fetchAllBanners() async {
+    try {
+      isLoading.value = true;
+      final snapshot = await bannersRepo.getAllBanners();
+      print(
+        "=======Banners Data snapshot ==========${snapshot.toString()}====",
+      );
+      banners.value = snapshot;
+      activeBanners.assignAll(banners.where((p0) => p0.active == true));
+    } catch (e) {
+      TLoader.erroreSnackBar(message: 'failed_to_load_banners'.tr);
+      print("Error fetching all banners: $e");
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  // Toggle banner active status
+  Future<void> toggleBannerActive(String bannerId, bool isActive) async {
+    try {
+      await bannersRepo.toggleBannerActive(bannerId, isActive);
+    } catch (e) {
+      throw 'Failed to toggle banner status: $e';
+    }
+  }
+
+  // Convert vendor banner to company banner
+  Future<void> convertToCompanyBanner(BannerModel banner) async {
+    try {
+      if (banner.id == null || banner.id!.isEmpty) {
+        throw 'Banner ID is required';
+      }
+
+      final updatedBanner = banner.copyWith(
+        scope: BannerScope.company,
+        vendorId: null,
+      );
+
+      await bannersRepo.updateBanner(updatedBanner);
+    } catch (e) {
+      throw 'Failed to convert banner: $e';
+    }
+  }
+
+  // Delete banner (admin)
+  Future<void> deleteBannerAdmin(BannerModel banner) async {
+    try {
+      if (banner.id == null || banner.id!.isEmpty) {
+        throw 'Banner ID is required';
+      }
+
+      await bannersRepo.deleteBanner(banner.id!);
+      banners.remove(banner);
+      activeBanners.remove(banner);
+    } catch (e) {
+      throw 'Failed to delete banner: $e';
+    }
+  }
+
+  // Add company banner (for admin)
+  Future<void> addCompanyBanner(String mode) async {
+    var pickedFile = (await ImagePicker().pickImage(
+      source: mode == 'gallery' ? ImageSource.gallery : ImageSource.camera,
+    ));
+
+    if (pickedFile != null) {
+      final croppedFile = await ImageCropper().cropImage(
+        sourcePath: pickedFile.path,
+        compressFormat: ImageCompressFormat.jpg,
+        compressQuality: 100,
+        aspectRatio: const CropAspectRatio(ratioX: 364, ratioY: 214),
+        uiSettings: [
+          AndroidUiSettings(
+            toolbarTitle: 'banner.image'.tr,
+            toolbarColor: Colors.white,
+            toolbarWidgetColor: Colors.black,
+            initAspectRatio: CropAspectRatioPreset.original,
+            lockAspectRatio: true,
+            hideBottomControls: true,
+          ),
+          IOSUiSettings(title: 'banner.image'.tr, aspectRatioLockEnabled: true),
+        ],
+      );
+
+      if (croppedFile == null) return;
+
+      File img = File(croppedFile.path);
+      localBannerImageFile.value = img.path;
+
+      await showSimpleLoadingDialog<String>(
+        context: Get.context!,
+        future: () async {
+          try {
+            isUploading.value = true;
+            uploadProgress.value = 0.0;
+
+            message.value = "banner.upload_image_to_server".tr;
+
+            // Upload to Supabase Storage with progress tracking
+            final uploadResult = await _uploadBannerImageWithProgress(
+              img,
+              'company', // Use 'company' as folder identifier
+            );
+
+            if (uploadResult['success'] == true) {
+              bannerImageHostUrl = uploadResult['url'];
+              message.value = "banner.send_data".tr;
+
+              // Get the current authenticated user ID for RLS policy
+              final currentUserId =
+                  Supabase.instance.client.auth.currentUser?.id;
+              if (currentUserId == null) {
+                throw Exception('User not authenticated');
+              }
+
+              // Create company banner
+              var newBanner = BannerModel(
+                id: null,
+                image: bannerImageHostUrl,
+                targetScreen: '/home',
+                active: true,
+                vendorId: null, // Company banner has no vendorId
+                scope: BannerScope.company,
+                title: 'Company Banner',
+                description: 'Banner created for company',
+                priority: 1,
+                createdAt: DateTime.now(),
+                updatedAt: DateTime.now(),
+              );
+
+              debugPrint('Creating company banner with data:');
+              debugPrint('  Image: ${newBanner.image}');
+              debugPrint('  Scope: ${newBanner.scope.name}');
+              debugPrint('  VendorId: ${newBanner.vendorId}');
+
+              BannerModel createdBanner = await bannersRepo.createBanner(
+                newBanner,
+              );
+
+              banners.add(createdBanner);
+              activeBanners.add(createdBanner);
+
+              TLoader.successSnackBar(
+                title: 'banner.banner_added_successfully'.tr,
+                message: '',
+              );
+              message.value = '';
+
+              return "add done";
+            } else {
+              throw Exception(uploadResult['error'] ?? 'Upload failed');
+            }
+          } catch (e) {
+            message.value = 'Error: $e';
+            print("Error adding company banner: $message.value");
+            TLoader.erroreSnackBar(
+              message: 'banner.failed_to_upload_banner'.tr,
+            );
+            rethrow;
+          } finally {
+            isUploading.value = false;
+            uploadProgress.value = 0.0;
+          }
+        },
+        // Custom dialog with progress
+        dialogBuilder: (context, _) {
+          return AlertDialog(
+            content: Obx(
+              () => Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const SizedBox(height: 20),
+                  Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      SizedBox(
+                        width: 60,
+                        height: 60,
+                        child: CircularProgressIndicator(
+                          value:
+                              isUploading.value ? uploadProgress.value : null,
+                          strokeWidth: 4,
+                        ),
+                      ),
+                      if (isUploading.value)
+                        Text(
+                          '${(uploadProgress.value * 100).toInt()}%',
+                          style: const TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  Text(message.value),
+                  if (isUploading.value) ...[
+                    const SizedBox(height: 8),
+                    LinearProgressIndicator(
+                      value: uploadProgress.value,
+                      backgroundColor: Colors.grey[300],
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                        TColors.primary,
+                      ),
+                    ),
+                  ],
+                  const SizedBox(height: 16),
+                ],
+              ),
+            ),
+          );
+        },
+      );
+    }
+  }
+
   addBannersModel(BuildContext context, String vendorId) {
     showModalBottomSheet(
       context: context,

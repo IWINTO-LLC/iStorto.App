@@ -6,6 +6,7 @@ import 'package:istoreto/views/initial_commercial_page.dart';
 import 'package:istoreto/views/admin/admin_zone_page.dart';
 import 'package:istoreto/views/settings_page.dart';
 import 'package:istoreto/views/edit_personal_info_page.dart';
+import 'package:istoreto/views/test_user_profile_page.dart';
 
 /// مكون قائمة الملف الشخصي - يعرض خيارات الإعدادات والإجراءات
 class ProfileMenuWidget extends StatelessWidget {
@@ -52,6 +53,13 @@ class ProfileMenuWidget extends StatelessWidget {
             title: 'help_and_support'.tr,
             subtitle: 'get_help_and_contact_support'.tr,
             onTap: () => _showHelpDialog(Get.context!),
+          ),
+
+          _buildMenuItem(
+            icon: Icons.visibility,
+            title: 'عرض الملف الشخصي',
+            subtitle: 'اختبار صفحة عرض الملف الشخصي للآخرين',
+            onTap: () => Get.to(() => const TestUserProfilePage()),
           ),
           SizedBox(height: 20),
           _buildMenuItem(
@@ -134,7 +142,7 @@ class ProfileMenuWidget extends StatelessWidget {
       Get.to(
         () => MarketPlaceView(
           editMode: true,
-          vendorId: authController.currentUser.value!.id,
+          vendorId: authController.currentUser.value!.vendorId!,
         ),
       );
     } else {

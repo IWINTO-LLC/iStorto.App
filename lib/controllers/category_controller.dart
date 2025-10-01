@@ -34,23 +34,23 @@ class CategoryController extends GetxController {
 
   String? lastFetchedUserId;
   var load = false.obs;
-  getCategoryOfUser(String userId) async {
+  getCategoryOfVendor(String vendorId) async {
     load(true);
-    var count = await ProductRepository.instance.getUserProductCount(userId);
+    var count = await ProductRepository.instance.getUserProductCount(vendorId);
     productCount.value = count;
     print("📌 product count is $count");
-    await SectorController.instance.initialSectors(userId);
+    await SectorController.instance.initialSectors(vendorId);
 
-    if (lastFetchedUserId == userId && allItems.isNotEmpty) {
+    if (lastFetchedUserId == vendorId && allItems.isNotEmpty) {
       print("📌 البيانات مخزنة بالفعل، لا حاجة لإعادة الجلب!");
       load(false);
       return;
     }
-    ProductController.instance.resetDynamicLists(userId);
-    var s = await categoryRepository.getAllCategoriesUserId(userId);
+    ProductController.instance.resetDynamicLists(vendorId);
+    var s = await categoryRepository.getAllCategoriesVendorId(vendorId);
     allItems.value = s;
     load(false);
-    lastFetchedUserId = userId;
+    lastFetchedUserId = vendorId;
     // return allItems;
     // .where((cat) => cat.parentId.isEmpty)
     // .take(8)
@@ -395,10 +395,10 @@ class CategoryController extends GetxController {
   }
 
   // Refresh categories for user
-  Future<void> refreshUserCategories(String userId) async {
+  Future<void> refreshVendorCategories(String vendorId) async {
     try {
       isLoading.value = true;
-      await getCategoryOfUser(userId);
+      await getCategoryOfVendor(vendorId);
     } catch (e) {
       if (kDebugMode) {
         print("Error refreshing user categories: $e");

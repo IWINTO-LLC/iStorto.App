@@ -22,9 +22,9 @@ void main() {
   group('CurrencyController Tests', () {
     test('should initialize with empty values', () {
       expect(currencyController.userCurrency.value, '');
-      expect(currencyController.allItems.value, isEmpty);
+      expect(currencyController.allItems, isEmpty);
       expect(currencyController.isLoading.value, false);
-      expect(currencyController.currencies.value, isEmpty);
+      expect(currencyController.currencies, isEmpty);
     });
 
     test('should fetch all currencies successfully', () async {

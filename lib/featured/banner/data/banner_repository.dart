@@ -16,13 +16,13 @@ class BannerRepository extends GetxController {
           .order('created_at', ascending: false);
 
       if (kDebugMode) {
-        print("=======Banners Data==============");
+        print("=======Banners Data==========${response.toString()}====");
         print(response.toString());
       }
 
       final resultList =
           (response as List).map((data) => BannerModel.fromJson(data)).toList();
-
+      print("=======Banners Data result ==========${resultList}====");
       return resultList;
     } catch (e) {
       if (kDebugMode) {

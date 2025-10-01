@@ -78,3 +78,5 @@ AND column_name = 'category_id';
 - `fix_products_foreign_key.sql` - الحل المفصل
 
 
+
+

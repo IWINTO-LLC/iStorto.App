@@ -1,6 +1,7 @@
 class UserModel {
   final String id;
   final String userId;
+  final String? vendorId;
   final String? username;
   final String name;
   final String? email;
@@ -19,6 +20,7 @@ class UserModel {
   UserModel({
     required this.id,
     required this.userId,
+    this.vendorId,
     this.username,
     required this.name,
     this.email,
@@ -40,6 +42,7 @@ class UserModel {
     return UserModel(
       id: json['id'] as String,
       userId: json['user_id'] as String,
+      vendorId: json['vendor_id'] as String?, // ✨ vendor_id from JSON
       username: json['username'] as String?,
       name: json['name'] as String? ?? '',
       email: json['email'] as String?,
@@ -62,6 +65,7 @@ class UserModel {
     return {
       'id': id,
       'user_id': userId,
+      'vendor_id': vendorId, // ✨ vendor_id to JSON
       'username': username,
       'name': name,
       'email': email,
@@ -143,6 +147,7 @@ class UserModel {
   UserModel copyWith({
     String? id,
     String? userId,
+    String? vendorId,
     String? username,
     String? name,
     String? email,
@@ -161,6 +166,7 @@ class UserModel {
     return UserModel(
       id: id ?? this.id,
       userId: userId ?? this.userId,
+      vendorId: vendorId ?? this.vendorId, // ✨ vendor_id in copyWith
       username: username ?? this.username,
       name: name ?? this.name,
       email: email ?? this.email,
@@ -228,6 +234,16 @@ class UserModel {
     return accountType == 0;
   }
 
+  // Check if user is a vendor (has vendor_id)
+  bool get isVendor {
+    return vendorId != null && vendorId!.isNotEmpty;
+  }
+
+  // Check if user is a verified vendor
+  bool get isVerifiedVendor {
+    return isCommercialAccount && isVendor;
+  }
+
   // Get account type display name
   String get accountTypeDisplayName {
     switch (accountType) {
@@ -252,7 +268,7 @@ class UserModel {
 
   @override
   String toString() {
-    return 'UserModel(id: $id, userId: $userId, username: $username, name: $name, email: $email)';
+    return 'UserModel(id: $id, userId: $userId, vendorId: $vendorId, username: $username, name: $name, email: $email)';
   }
 
   @override

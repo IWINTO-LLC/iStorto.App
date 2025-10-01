@@ -21,6 +21,7 @@ class ProductController extends GetxController {
 
   //Variable
   final isLoading = false.obs;
+  final hasChanges = false.obs;
   final productRepository = Get.put(ProductRepository());
   List<ProductModel> saleProduct = [];
   final RxList<ProductModel> allItems = <ProductModel>[].obs;
@@ -41,6 +42,16 @@ class ProductController extends GetxController {
   RxList<String> images = <String>[].obs;
   RxString message = ''.obs;
   final searchTextController = TextEditingController();
+
+  // Check if form has any changes
+  void checkForChanges() {
+    hasChanges.value =
+        title.text.trim().isNotEmpty ||
+        description.text.trim().isNotEmpty ||
+        price.text.trim().isNotEmpty ||
+        selectedImage.isNotEmpty;
+  }
+
   void deleteTempItems() => tempProducts = <ProductModel>[].obs;
 
   String t = "";

@@ -16,7 +16,6 @@ import 'package:istoreto/featured/cart/controller/save_for_later.dart';
 import 'package:istoreto/featured/cart/controller/saved_controller.dart';
 import 'package:istoreto/featured/currency/controller/currency_controller.dart';
 import 'package:istoreto/featured/home-page/views/widgets/banner_section.dart';
-import 'package:istoreto/featured/home-page/views/widgets/category_section.dart';
 import 'package:istoreto/featured/home-page/views/widgets/just_foryou_section.dart';
 import 'package:istoreto/featured/home-page/views/widgets/major_category_section.dart';
 import 'package:istoreto/featured/home-page/views/widgets/most_popular_section.dart';
@@ -27,17 +26,19 @@ import 'package:istoreto/featured/product/controllers/edit_product_controller.da
 import 'package:istoreto/featured/product/controllers/favorite_product_controller.dart';
 import 'package:istoreto/featured/product/controllers/product_controller.dart';
 import 'package:istoreto/featured/product/services/product_currency_service.dart';
-import 'package:istoreto/featured/sector/controller/sector_controller.dart';
+import 'package:istoreto/featured/product/views/widgets/product_widget_medium.dart';
 import 'package:istoreto/featured/shop/controller/vendor_controller.dart';
 import 'package:istoreto/featured/shop/data/vendor_repository.dart';
 import 'package:istoreto/featured/shop/follow/controller/follow_controller.dart';
 import 'package:istoreto/services/image_upload_service.dart';
 import 'package:istoreto/utils/bindings/general_binding.dart';
+import 'package:istoreto/utils/common/widgets/shimmers/shimmer.dart';
 import 'package:istoreto/utils/constants/color.dart';
 import 'package:istoreto/utils/constants/constant.dart';
 import 'package:istoreto/utils/constants/sizes.dart';
 import 'package:istoreto/utils/http/network.dart';
 import 'package:istoreto/widgets/language_switcher.dart';
+import 'package:sizer/sizer.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class HomePage extends StatelessWidget {
@@ -51,9 +52,11 @@ class HomePage extends StatelessWidget {
     }
     // Get translation controller to trigger rebuild on language change
     Get.find<TranslationController>();
-    Get.put(GeneralBindings());
+    // Initialize General Bindings
+    final generalBindings = GeneralBindings();
+    generalBindings.dependencies();
     Get.put(VendorRepository());
-    Get.put(VendorController());
+
     Get.put(CategoryController());
     Get.put(NetworkManager());
     Get.put(CategoryRepository());
@@ -137,11 +140,12 @@ class HomePage extends StatelessWidget {
           PopularProduct(context: context),
 
           const SizedBox(height: TSizes.spaceBtWsections),
-
-          // New Items Section
-          NewItemSection(context: context),
-
+          MostPopularSection(),
           const SizedBox(height: TSizes.spaceBtWsections),
+          // New Items Section
+          // NewItemSection(context: context),
+
+          // const SizedBox(height: TSizes.spaceBtWsections),
 
           // Top Sellers Section
           TopSellerSections(),
@@ -278,10 +282,38 @@ class NewItemSection extends StatelessWidget {
   }
 }
 
-class PopularProduct extends StatelessWidget {
+class PopularProduct extends StatefulWidget {
   const PopularProduct({super.key, required this.context});
 
   final BuildContext context;
+
+  @override
+  State<PopularProduct> createState() => _PopularProductState();
+}
+
+class _PopularProductState extends State<PopularProduct> {
+  final ProductController _productController = Get.find<ProductController>();
+  final VendorController _vendorController = Get.find<VendorController>();
+
+  @override
+  void initState() {
+    super.initState();
+    _loadPopularProducts();
+  }
+
+  Future<void> _loadPopularProducts() async {
+    try {
+      final vendorId = _vendorController.profileData.value.id;
+      if (vendorId != null && vendorId.isNotEmpty) {
+        // Fetch popular products (you can modify this to use a specific type or criteria)
+        _productController.fetchOffersData(vendorId, 'all');
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error loading popular products: $e');
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -302,15 +334,13 @@ class PopularProduct extends StatelessWidget {
               Row(
                 children: [
                   Container(
-                    width: 32,
-                    height: 32,
                     decoration: BoxDecoration(
                       color: Colors.black,
                       shape: BoxShape.circle,
                     ),
                     child: Center(
                       child: Padding(
-                        padding: const EdgeInsets.all(5.0),
+                        padding: const EdgeInsets.all(TSizes.paddingSizeSmall),
                         child: Icon(
                           Icons.arrow_back_ios,
                           color: Colors.white,
@@ -319,17 +349,15 @@ class PopularProduct extends StatelessWidget {
                       ),
                     ),
                   ),
-                  const SizedBox(width: 8),
+                  const SizedBox(width: TSizes.spaceBtWItems / 2),
                   Container(
-                    width: 40,
-                    height: 40,
                     decoration: BoxDecoration(
                       color: Colors.black,
                       shape: BoxShape.circle,
                     ),
                     child: Center(
                       child: Padding(
-                        padding: const EdgeInsets.all(5.0),
+                        padding: const EdgeInsets.all(TSizes.paddingSizeSmall),
                         child: const Icon(
                           Icons.arrow_forward_ios,
                           color: Colors.white,
@@ -344,89 +372,66 @@ class PopularProduct extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 16),
-        SizedBox(
-          height: 100,
-          child: ListView.builder(
-            scrollDirection: Axis.horizontal,
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            itemCount: 2,
-            itemBuilder: (context, index) {
-              final products = [
-                {
-                  'name': 'Short jacket in long-pile faux fur',
-                  'price': '\$218.00',
-                  'image': 'assets/images/product_12.jpg',
-                },
-                {
-                  'name': 'Women\'s walking shoes ten',
-                  'price': '\$54.99',
-                  'image': 'assets/images/product_2.png',
-                },
-              ];
+        Obx(() {
+          if (_productController.isLoading.value) {
+            return SizedBox(
+              height: 200,
+              child: Center(child: TShimmerEffect(height: 200, width: 70.w)),
+            );
+          }
 
-              return Container(
-                width: MediaQuery.of(context).size.width - 32,
-                margin: const EdgeInsets.only(right: 16),
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(12),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.05),
-                      blurRadius: 10,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
-                ),
-                child: Row(
+          final products = _productController.allDynamic;
+
+          if (products.isEmpty) {
+            return SizedBox(
+              height: 200,
+              child: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Container(
-                      width: 60,
-                      height: 60,
-                      decoration: BoxDecoration(
-                        color: Colors.grey.shade200,
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Icon(
-                        Icons.image,
-                        color: Colors.grey.shade400,
-                        size: 30,
-                      ),
+                    Icon(
+                      Icons.shopping_bag_outlined,
+                      size: 48,
+                      color: Colors.grey.shade400,
                     ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            products[index]['name'] as String,
-                            style: const TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
-                            ),
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            products[index]['price'] as String,
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              color: Theme.of(context).colorScheme.primary,
-                            ),
-                          ),
-                        ],
+                    const SizedBox(height: 16),
+                    Text(
+                      'no_products_available'.tr,
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: Colors.grey.shade600,
                       ),
                     ),
                   ],
                 ),
-              );
-            },
-          ),
-        ),
+              ),
+            );
+          }
+
+          return SizedBox(
+            height: 200,
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              itemCount: products.length,
+              itemBuilder: (context, index) {
+                final product = products[index];
+
+                return Container(
+                  width: MediaQuery.of(context).size.width - 32,
+                  margin: const EdgeInsets.only(right: 16),
+                  child: ProductWidgetMedium(
+                    product: product,
+                    vendorId: _vendorController.profileData.value.id ?? '',
+                    editMode: false,
+                    prefferHeight: 200,
+                    prefferWidth: MediaQuery.of(context).size.width - 32,
+                  ),
+                );
+              },
+            ),
+          );
+        }),
       ],
     );
   }

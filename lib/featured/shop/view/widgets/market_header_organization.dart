@@ -7,22 +7,18 @@ import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:istoreto/controllers/auth_controller.dart';
-import 'package:istoreto/featured/shop/controller/vendor_controller.dart';
-import 'package:istoreto/featured/shop/data/vendor_model.dart';
-import 'package:istoreto/featured/shop/view/widgets/control_panel_menu.dart';
-import 'package:istoreto/utils/loader/loader_widget.dart';
-import 'package:sizer/sizer.dart';
 import 'package:istoreto/controllers/category_controller.dart';
 import 'package:istoreto/controllers/translate_controller.dart';
-import 'package:istoreto/featured/cart/view/cart_screen.dart';
-import 'package:istoreto/featured/cart/view/cart_widget.dart';
 import 'package:istoreto/featured/product/cashed_network_image_free.dart';
 import 'package:istoreto/featured/product/views/all_products_view.dart';
-
+import 'package:istoreto/featured/shop/controller/vendor_controller.dart';
+import 'package:istoreto/featured/shop/controller/vendor_image_controller.dart';
+import 'package:istoreto/featured/shop/data/vendor_model.dart';
 import 'package:istoreto/featured/shop/follow/screens/followers_details.dart';
 import 'package:istoreto/featured/shop/follow/screens/widgets/follow_heart.dart';
 import 'package:istoreto/featured/shop/follow/screens/widgets/follower_number.dart';
 import 'package:istoreto/featured/shop/view/market_place_managment.dart';
+import 'package:istoreto/featured/shop/view/widgets/control_panel_menu.dart';
 import 'package:istoreto/featured/shop/view/widgets/control_panel_menu_visitor.dart';
 import 'package:istoreto/featured/shop/view/widgets/share_vendor_widget.dart';
 import 'package:istoreto/featured/shop/view/widgets/vendor_social_bar.dart';
@@ -32,22 +28,60 @@ import 'package:istoreto/utils/common/widgets/display_image_full.dart';
 import 'package:istoreto/utils/common/widgets/shimmers/shimmer.dart';
 import 'package:istoreto/utils/constants/color.dart';
 import 'package:istoreto/utils/constants/constant.dart';
+import 'package:istoreto/utils/loader/loader_widget.dart';
+import 'package:istoreto/views/view_personal_info_page.dart';
+import 'package:sizer/sizer.dart';
 
-Widget marketHeaderSection(String userId, bool editMode, bool isVendor) {
+class MarketHeaderSection extends StatefulWidget {
+  final String userId;
+  final bool editMode;
+  final bool isVendor;
+
+  const MarketHeaderSection({
+    super.key,
+    required this.userId,
+    required this.editMode,
+    required this.isVendor,
+  });
+
+  @override
+  State<MarketHeaderSection> createState() => _MarketHeaderSectionState();
+}
+
+class _MarketHeaderSectionState extends State<MarketHeaderSection> {
   bool fetchingExclusive = false;
 
-  return Obx(() {
-    VendorController.instance.fetchVendorData(userId);
+  @override
+  void initState() {
+    super.initState();
+    _loadVendorData();
+  }
 
-    //  print(" nname ${userMap['organizationName']}");
-    if (VendorController.instance.isLoading.value) {
-      return TLoaderWidget();
-    } else if (VendorController.instance.vendorData.value !=
-        VendorModel.empty()) {
-      // Handle no data state
-      return Center(child: Text('user_profile_top_section.user_not_found'.tr));
-    } else {
-      final userMap = VendorController.instance.profileData.value;
+  Future<void> _loadVendorData() async {
+    // Initialize VendorImageController if not already initialized
+    if (!Get.isRegistered<VendorImageController>()) {
+      Get.put(VendorImageController());
+    }
+
+    // Fetch vendor data
+    await VendorController.instance.fetchVendorData(widget.userId);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Obx(() {
+      if (VendorController.instance.isLoading.value) {
+        return TLoaderWidget();
+      }
+
+      if (VendorController.instance.vendorData.value == VendorModel.empty()) {
+        // Handle no data state
+        return Center(
+          child: Text('user_profile_top_section.user_not_found'.tr),
+        );
+      }
+
+      final userMap = VendorController.instance.vendorData.value;
 
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -70,9 +104,7 @@ Widget marketHeaderSection(String userId, bool editMode, bool isVendor) {
                         children: [
                           GestureDetector(
                             onTap: () async {
-                              if (editMode) {
-                                // TODO: Implement cover image edit functionality
-                                print('Edit cover image');
+                              if (widget.editMode) {
                               } else {
                                 Get.to(
                                   () => NetworkImageFullScreen(
@@ -102,42 +134,60 @@ Widget marketHeaderSection(String userId, bool editMode, bool isVendor) {
                                           bottomLeft: Radius.circular(0),
                                           bottomRight: Radius.circular(0),
                                         ),
-                                        child: CachedNetworkImage(
-                                          imageUrl: userMap.organizationCover,
-                                          imageBuilder:
-                                              (context, imageProvider) =>
-                                                  Container(
-                                                    decoration: BoxDecoration(
-                                                      image: DecorationImage(
-                                                        image: imageProvider,
-                                                        fit: BoxFit.cover,
+                                        child: Obx(() {
+                                          // Check if cover image is being updated
+                                          final vendorImageController =
+                                              Get.find<VendorImageController>();
+                                          final isLoadingCover =
+                                              vendorImageController.isLoading;
+
+                                          if (isLoadingCover) {
+                                            return TShimmerEffect(
+                                              width: 100.w,
+                                              height: 33.h,
+                                              baseColor: TColors.lightgrey,
+                                            );
+                                          }
+
+                                          return CachedNetworkImage(
+                                            imageUrl: userMap.organizationCover,
+                                            imageBuilder:
+                                                (context, imageProvider) =>
+                                                    Container(
+                                                      decoration: BoxDecoration(
+                                                        image: DecorationImage(
+                                                          image: imageProvider,
+                                                          fit: BoxFit.cover,
+                                                        ),
                                                       ),
                                                     ),
-                                                  ),
-                                          placeholder:
-                                              (context, url) => TShimmerEffect(
-                                                width: 100.w,
-                                                height: 33.h,
-                                                baseColor: TColors.lightgrey,
-                                              ),
-                                          errorWidget:
-                                              (
-                                                context,
-                                                url,
-                                                error,
-                                              ) => Container(
-                                                width: 100.w,
-                                                height: 33.h,
-                                                color: Colors.grey,
-                                                child: const Center(
-                                                  child: Icon(
-                                                    Icons.image_not_supported,
-                                                    color: Colors.white,
-                                                    size: 50,
+                                            placeholder:
+                                                (context, url) =>
+                                                    TShimmerEffect(
+                                                      width: 100.w,
+                                                      height: 33.h,
+                                                      baseColor:
+                                                          TColors.lightgrey,
+                                                    ),
+                                            errorWidget:
+                                                (
+                                                  context,
+                                                  url,
+                                                  error,
+                                                ) => Container(
+                                                  width: 100.w,
+                                                  height: 33.h,
+                                                  color: Colors.grey,
+                                                  child: const Center(
+                                                    child: Icon(
+                                                      Icons.image_not_supported,
+                                                      color: Colors.white,
+                                                      size: 50,
+                                                    ),
                                                   ),
                                                 ),
-                                              ),
-                                        ),
+                                          );
+                                        }),
                                       ),
                             ),
                           ),
@@ -147,52 +197,104 @@ Widget marketHeaderSection(String userId, bool editMode, bool isVendor) {
                   ),
 
                   // Edit cover icon - only visible in edit mode
-                  if (editMode)
+                  if (widget.editMode)
                     Positioned(
                       top: 10,
                       right: 10,
                       child: GestureDetector(
                         onTap: () {
-                          // TODO: Implement cover image edit functionality
-                          print('Edit cover image');
+                          // تحرير صورة الغلاف
+                          final vendorImageController =
+                              Get.find<VendorImageController>();
+                          vendorImageController.editVendorCoverImage(
+                            widget.userId,
+                          );
                         },
-                        child: Container(
-                          padding: const EdgeInsets.all(8),
-                          decoration: BoxDecoration(
-                            color: Colors.black.withOpacity(0.6),
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: const Icon(
-                            Icons.edit,
-                            color: Colors.white,
-                            size: 20,
-                          ),
-                        ),
+                        child: Obx(() {
+                          final vendorImageController =
+                              Get.find<VendorImageController>();
+                          final isLoading = vendorImageController.isLoading;
+
+                          return Container(
+                            padding: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              color:
+                                  isLoading
+                                      ? Colors.blue.withOpacity(0.8)
+                                      : Colors.black.withOpacity(0.6),
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child:
+                                isLoading
+                                    ? SizedBox(
+                                      width: 20,
+                                      height: 20,
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2,
+                                        valueColor:
+                                            AlwaysStoppedAnimation<Color>(
+                                              Colors.white,
+                                            ),
+                                      ),
+                                    )
+                                    : const Icon(
+                                      Icons.edit,
+                                      color: Colors.white,
+                                      size: 20,
+                                    ),
+                          );
+                        }),
                       ),
                     ),
 
                   // Edit cover icon - only visible in edit mode
-                  if (editMode)
+                  if (widget.editMode)
                     Positioned(
                       top: 10,
                       right: 10,
                       child: GestureDetector(
                         onTap: () {
-                          // TODO: Implement cover image edit functionality
-                          print('Edit cover image');
+                          // تحرير شعار المتجر
+                          final vendorImageController =
+                              Get.find<VendorImageController>();
+                          vendorImageController.editVendorLogoImage(
+                            widget.userId,
+                          );
                         },
-                        child: Container(
-                          padding: const EdgeInsets.all(8),
-                          decoration: BoxDecoration(
-                            color: Colors.black.withOpacity(0.6),
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: const Icon(
-                            Icons.edit,
-                            color: Colors.white,
-                            size: 20,
-                          ),
-                        ),
+                        child: Obx(() {
+                          final vendorImageController =
+                              Get.find<VendorImageController>();
+                          final isLoading = vendorImageController.isLoading;
+
+                          return Container(
+                            padding: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              color:
+                                  isLoading
+                                      ? Colors.blue.withOpacity(0.8)
+                                      : Colors.red.withOpacity(0.6),
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child:
+                                isLoading
+                                    ? SizedBox(
+                                      width: 20,
+                                      height: 20,
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2,
+                                        valueColor:
+                                            AlwaysStoppedAnimation<Color>(
+                                              Colors.white,
+                                            ),
+                                      ),
+                                    )
+                                    : const Icon(
+                                      Icons.camera,
+                                      color: Colors.white,
+                                      size: 20,
+                                    ),
+                          );
+                        }),
                       ),
                     ),
 
@@ -221,7 +323,7 @@ Widget marketHeaderSection(String userId, bool editMode, bool isVendor) {
                             //   ),
                             // ),
                             Visibility(
-                              visible: isVendor && !editMode,
+                              visible: widget.isVendor && !widget.editMode,
                               child: GestureDetector(
                                 onTap: () {},
                                 child: Padding(
@@ -232,7 +334,7 @@ Widget marketHeaderSection(String userId, bool editMode, bool isVendor) {
                                     onTap:
                                         () => Get.to(
                                           () => MarketPlaceManagment(
-                                            vendorId: userId,
+                                            vendorId: widget.userId,
                                             editMode: true,
                                           ),
                                         ),
@@ -274,7 +376,7 @@ Widget marketHeaderSection(String userId, bool editMode, bool isVendor) {
                           padding: const EdgeInsets.only(left: 8.0, right: 8),
                           child: ShareVendorButton(
                             size: 25,
-                            vendorId: userId, // تمرير vendorId
+                            vendorId: widget.userId, // تمرير vendorId
                           ),
                         ),
                       ],
@@ -283,7 +385,7 @@ Widget marketHeaderSection(String userId, bool editMode, bool isVendor) {
                   Positioned(
                     bottom: 26,
                     right: 70,
-                    child: itemCount(userId, Get.context!),
+                    child: itemCount(widget.userId, Get.context!),
                   ),
                   Positioned(
                     right: 14,
@@ -344,17 +446,17 @@ Widget marketHeaderSection(String userId, bool editMode, bool isVendor) {
                         //       height: 0,
                         //     )),
 
-                        // if (!isVendor &&
+                        // if (!widget.isVendor &&
                         //     (userMap['inExclusive']) == true)
-                        if (!isVendor && userMap.inExclusive)
+                        if (!widget.isVendor && userMap.inExclusive)
                           Visibility(
-                            visible: !editMode,
+                            visible: !widget.editMode,
                             child: const SizedBox(height: 10),
                           ),
 
-                        if (!isVendor && userMap.inExclusive)
+                        if (!widget.isVendor && userMap.inExclusive)
                           Visibility(
-                            visible: !editMode,
+                            visible: !widget.editMode,
                             child: GestureDetector(
                               onTap: () async {
                                 if (fetchingExclusive) return;
@@ -382,15 +484,15 @@ Widget marketHeaderSection(String userId, bool editMode, bool isVendor) {
                             ),
                           ),
 
-                        if (!isVendor && userMap.inExclusive)
+                        if (!widget.isVendor && userMap.inExclusive)
                           Visibility(
-                            visible: !editMode,
+                            visible: !widget.editMode,
                             child: const SizedBox(height: 10),
                           ),
                         const SizedBox(height: 10),
                         GestureDetector(
                           onTap: () {
-                            HapticFeedback.lightImpact;
+                            Get.to(() => ViewPersonalInfoPage());
                           },
                           child: TRoundedContainer(
                             radius: BorderRadius.circular(50),
@@ -417,7 +519,7 @@ Widget marketHeaderSection(String userId, bool editMode, bool isVendor) {
                         ),
                         const SizedBox(height: 10),
                         // Control Panel Menu for non-edit mode
-                        if (!editMode)
+                        if (!widget.editMode)
                           TRoundedContainer(
                             width: 35,
                             radius: BorderRadius.circular(300),
@@ -425,13 +527,13 @@ Widget marketHeaderSection(String userId, bool editMode, bool isVendor) {
                             backgroundColor: TColors.white,
                             showBorder: true,
                             child: ControlPanelMenuVisitor(
-                              vendorId: userId,
-                              editMode: isVendor,
+                              vendorId: widget.userId,
+                              editMode: widget.editMode,
                             ),
                           ),
 
                         // Control Panel Menu for edit mode
-                        if (editMode)
+                        if (widget.editMode)
                           TRoundedContainer(
                             width: 35,
                             height: 35,
@@ -440,13 +542,13 @@ Widget marketHeaderSection(String userId, bool editMode, bool isVendor) {
                             showBorder: true,
                             child: Center(
                               child: ControlPanelMenu(
-                                vendorId: userId,
-                                editMode: editMode,
+                                vendorId: widget.userId,
+                                editMode: widget.editMode,
                               ),
                             ),
                           ),
                         const SizedBox(height: 10),
-                        isVendor
+                        widget.isVendor
                             ? Row(
                               mainAxisSize: MainAxisSize.min,
                               crossAxisAlignment: CrossAxisAlignment.end,
@@ -458,10 +560,10 @@ Widget marketHeaderSection(String userId, bool editMode, bool isVendor) {
                                         MaterialPageRoute(
                                           builder:
                                               (context) => FollowersScreen(
-                                                vendorId: userId,
+                                                vendorId: widget.userId,
                                               ),
                                         ),
-                                      ), //   FollowersScreen(vendorId: userId)),
+                                      ), //   FollowersScreen(vendorId: widget.userId)),
                                   child: TRoundedContainer(
                                     width: 35,
                                     height: 35,
@@ -487,11 +589,11 @@ Widget marketHeaderSection(String userId, bool editMode, bool isVendor) {
                         //   height: 4,
                         // ),
                         Visibility(
-                          visible: isVendor,
-                          child: FollowNumber(vendorId: userId),
+                          visible: widget.isVendor,
+                          child: FollowNumber(vendorId: widget.userId),
                         ),
                         Visibility(
-                          visible: !isVendor,
+                          visible: !widget.isVendor,
                           child: const SizedBox(height: 27),
                         ),
                       ],
@@ -513,10 +615,10 @@ Widget marketHeaderSection(String userId, bool editMode, bool isVendor) {
                 left: 16,
                 child: GestureDetector(
                   onTap: () async {
-                    if (editMode) {
+                    if (widget.editMode) {
                       // await uploadorganizationBannerImageAndSaveToFirestore(
                       //   Get.context!,
-                      //   userId,
+                      //   widget.userId,
                       // );
                     } else {
                       Get.to(
@@ -565,10 +667,10 @@ Widget marketHeaderSection(String userId, bool editMode, bool isVendor) {
                                         )
                                         : GestureDetector(
                                           onTap: () async {
-                                            if (editMode) {
+                                            if (widget.editMode) {
                                               // await uploadLogoAndSaveToFirestore(
                                               //   Get.context!,
-                                              //   userId,
+                                              //   widget.userId,
                                               // );
                                               // uploadProfileLogoImageAndSaveToFirestore(
                                               //     context, ref);
@@ -577,8 +679,8 @@ Widget marketHeaderSection(String userId, bool editMode, bool isVendor) {
                                               //     MaterialPageRoute(
                                               //         builder: (context) =>
                                               //             MarketPlaceManagment(
-                                              //                 vendorId: userId,
-                                              //                 editMode: true)));
+                                              //                 vendorId: widget.userId,
+                                              //                 widget.editMode: true)));
                                             } else {
                                               Get.to(
                                                 () => NetworkImageFullScreen(
@@ -591,47 +693,115 @@ Widget marketHeaderSection(String userId, bool editMode, bool isVendor) {
                                           child: Stack(
                                             children: [
                                               ClipOval(
-                                                child: CachedNetworkImage(
-                                                  imageUrl:
-                                                      userMap
-                                                          .organizationLogo, //
-                                                  width: 130,
-                                                  height: 130,
-                                                ),
+                                                child: Obx(() {
+                                                  // Check if logo is being updated
+                                                  final vendorImageController =
+                                                      Get.find<
+                                                        VendorImageController
+                                                      >();
+                                                  final isLoadingLogo =
+                                                      vendorImageController
+                                                          .isLoading;
+
+                                                  if (isLoadingLogo) {
+                                                    return TShimmerEffect(
+                                                      width: 130,
+                                                      height: 130,
+                                                      baseColor:
+                                                          TColors.lightgrey,
+                                                      raduis:
+                                                          BorderRadius.circular(
+                                                            65,
+                                                          ),
+                                                    );
+                                                  }
+
+                                                  return CachedNetworkImage(
+                                                    imageUrl:
+                                                        userMap
+                                                            .organizationLogo,
+                                                    width: 130,
+                                                    height: 130,
+                                                  );
+                                                }),
                                               ),
                                               // Edit logo icon - only visible in edit mode
-                                              if (editMode)
+                                              if (widget.editMode)
                                                 Positioned(
                                                   bottom: 0,
                                                   right: 0,
                                                   child: GestureDetector(
                                                     onTap: () {
-                                                      // TODO: Implement logo edit functionality
-                                                      print('Edit logo');
+                                                      // تحرير شعار المتجر
+                                                      final vendorImageController =
+                                                          Get.find<
+                                                            VendorImageController
+                                                          >();
+                                                      vendorImageController
+                                                          .editVendorLogoImage(
+                                                            widget.userId,
+                                                          );
                                                     },
-                                                    child: Container(
-                                                      padding:
-                                                          const EdgeInsets.all(
-                                                            6,
-                                                          ),
-                                                      decoration: BoxDecoration(
-                                                        color: Colors.black
-                                                            .withOpacity(0.7),
-                                                        borderRadius:
-                                                            BorderRadius.circular(
-                                                              15,
+                                                    child: Obx(() {
+                                                      final vendorImageController =
+                                                          Get.find<
+                                                            VendorImageController
+                                                          >();
+                                                      final isLoading =
+                                                          vendorImageController
+                                                              .isLoading;
+
+                                                      return Container(
+                                                        padding:
+                                                            const EdgeInsets.all(
+                                                              6,
                                                             ),
-                                                        border: Border.all(
-                                                          color: Colors.white,
-                                                          width: 2,
+                                                        decoration: BoxDecoration(
+                                                          color:
+                                                              isLoading
+                                                                  ? Colors.blue
+                                                                      .withOpacity(
+                                                                        0.8,
+                                                                      )
+                                                                  : Colors.black
+                                                                      .withOpacity(
+                                                                        0.7,
+                                                                      ),
+                                                          borderRadius:
+                                                              BorderRadius.circular(
+                                                                15,
+                                                              ),
+                                                          border: Border.all(
+                                                            color: Colors.white,
+                                                            width: 2,
+                                                          ),
                                                         ),
-                                                      ),
-                                                      child: const Icon(
-                                                        Icons.edit,
-                                                        color: Colors.white,
-                                                        size: 16,
-                                                      ),
-                                                    ),
+                                                        child:
+                                                            isLoading
+                                                                ? SizedBox(
+                                                                  width: 16,
+                                                                  height: 16,
+                                                                  child: CircularProgressIndicator(
+                                                                    strokeWidth:
+                                                                        2,
+                                                                    valueColor:
+                                                                        AlwaysStoppedAnimation<
+                                                                          Color
+                                                                        >(
+                                                                          Colors
+                                                                              .white,
+                                                                        ),
+                                                                  ),
+                                                                )
+                                                                : const Icon(
+                                                                  Icons.edit,
+                                                                  color:
+                                                                      Colors
+                                                                          .white,
+                                                                  size: 16,
+                                                                ),
+                                                      );
+                                                    }),
                                                   ),
                                                 ),
                                             ],
@@ -661,7 +831,7 @@ Widget marketHeaderSection(String userId, bool editMode, bool isVendor) {
             ],
           ),
 
-          // if (!editMode)
+          // if (!widget.editMode)
           //   Container(
           //     color: Colors.transparent,
           //     height: 10,
@@ -683,7 +853,7 @@ Widget marketHeaderSection(String userId, bool editMode, bool isVendor) {
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               Visibility(
-                                visible: editMode,
+                                visible: widget.editMode,
                                 child: Builder(
                                   builder: (context) {
                                     return editName(context, userMap.toJson());
@@ -691,11 +861,11 @@ Widget marketHeaderSection(String userId, bool editMode, bool isVendor) {
                                 ),
                               ),
                               Visibility(
-                                visible: editMode,
+                                visible: widget.editMode,
                                 child: const SizedBox(width: 6),
                               ),
                               SizedBox(
-                                width: editMode ? 80.w : 95.w,
+                                width: widget.editMode ? 80.w : 95.w,
                                 child: Obx(() {
                                   final orgName = userMap.organizationName;
                                   return TranslateController
@@ -743,13 +913,13 @@ Widget marketHeaderSection(String userId, bool editMode, bool isVendor) {
                               ),
                             ],
                           ),
-                          if (userMap.brief != '' && !isVendor)
+                          if (userMap.brief != '' && !widget.isVendor)
                             const SizedBox(height: 10),
                           userMap.brief != ''
                               ? Row(
                                 children: [
                                   Visibility(
-                                    visible: editMode,
+                                    visible: widget.editMode,
                                     child: Builder(
                                       builder: (context) {
                                         return editBriefIcon(
@@ -760,7 +930,7 @@ Widget marketHeaderSection(String userId, bool editMode, bool isVendor) {
                                     ),
                                   ),
                                   Visibility(
-                                    visible: editMode,
+                                    visible: widget.editMode,
                                     child: const SizedBox(width: 6),
                                   ),
                                   Obx(() {
@@ -809,7 +979,7 @@ Widget marketHeaderSection(String userId, bool editMode, bool isVendor) {
                                   }),
                                 ],
                               )
-                              : isVendor
+                              : widget.isVendor
                               ? GestureDetector(
                                 onTap:
                                     () => editBrief(
@@ -843,7 +1013,7 @@ Widget marketHeaderSection(String userId, bool editMode, bool isVendor) {
               //   height: 25,
               // ),
               // Visibility(visible: true, child: SocialMediaIcons()),
-              VendorSocialLinksBar(vendorId: userId, iconSize: 25),
+              VendorSocialLinksBar(vendorId: widget.userId, iconSize: 25),
 
               if (userMap.organizationBio != '')
                 Container(color: Colors.transparent, height: 16),
@@ -892,15 +1062,15 @@ Widget marketHeaderSection(String userId, bool editMode, bool isVendor) {
             ],
           ),
 
-          if (editMode)
+          if (widget.editMode)
             const Padding(
               padding: EdgeInsets.only(left: 8.0, right: 8, top: 8),
               child: Divider(thickness: 1.5),
             ),
           Container(color: Colors.transparent, height: 10),
           //        TPromoSlider(
-          //     editMode: editMode,
-          //     vendorId: userId,
+          //     widget.editMode: widget.editMode,
+          //     vendorId: widget.userId,
           //   ),
           //   Container(
           //     color: Colors.transparent,
@@ -908,14 +1078,14 @@ Widget marketHeaderSection(String userId, bool editMode, bool isVendor) {
           //   ),
 
           //  viewCategories(
-          //    vendorId: userId,
-          //    editMode: editMode,
+          //    vendorId: widget.userId,
+          //    widget.editMode: widget.editMode,
           //    context: context,
           //  ),
         ],
       );
-    }
-  });
+    });
+  }
 }
 
 GestureDetector editName(BuildContext context, Map<String, dynamic>? userMap) {

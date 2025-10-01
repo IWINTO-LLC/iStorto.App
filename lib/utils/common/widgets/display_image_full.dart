@@ -1,12 +1,13 @@
+import 'dart:io';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:sizer/sizer.dart';
-import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:photo_manager/photo_manager.dart';
+import 'package:sizer/sizer.dart';
 
 /// Controller for managing the full-size image display state
 class DisplayImageFullController extends GetxController {
@@ -101,7 +102,8 @@ class DisplayImageFullController extends GetxController {
 
       // Show loading message
       Get.snackbar(
-        '','image_save_saving_image'.tr,
+        '',
+        'image_save_saving_image'.tr,
         snackPosition: SnackPosition.BOTTOM,
         backgroundColor: Colors.black,
         colorText: Colors.white,
@@ -119,9 +121,7 @@ class DisplayImageFullController extends GetxController {
       // Download image
       final response = await http.get(Uri.parse(imageUrl));
       if (response.statusCode != 200) {
-        throw Exception(
-         'image_save_download_error'.tr);
-        
+        throw Exception('image_save_download_error'.tr);
       }
 
       // Get temporary directory
@@ -141,9 +141,9 @@ class DisplayImageFullController extends GetxController {
 
       if (result != null) {
         Get.snackbar(
-        'common_success'.tr,
+          'common_success'.tr,
           'image_save_image_saved_success'.tr,
-           
+
           snackPosition: SnackPosition.BOTTOM,
           backgroundColor: Colors.green,
           colorText: Colors.white,
@@ -151,10 +151,8 @@ class DisplayImageFullController extends GetxController {
           margin: EdgeInsets.only(bottom: 20, left: 20, right: 20),
           borderRadius: 12,
         );
-      }   else {
-        throw Exception(
-          'image_save_save_failed'.tr,
-        );
+      } else {
+        throw Exception('image_save_save_failed'.tr);
       }
     } catch (e) {
       Get.snackbar(
@@ -167,7 +165,6 @@ class DisplayImageFullController extends GetxController {
         margin: EdgeInsets.only(bottom: 20, left: 20, right: 20),
         borderRadius: 12,
       );
-      print('Error saving image: $e');
     }
   }
 
@@ -200,7 +197,7 @@ class DisplayImageFullController extends GetxController {
               Icon(Icons.save, color: Colors.white, size: 20),
               SizedBox(width: 12),
               Text(
-                  'image_save.save_image'.tr,
+                'image_save.save_image'.tr,
                 style: TextStyle(color: Colors.white, fontSize: 16),
               ),
             ],

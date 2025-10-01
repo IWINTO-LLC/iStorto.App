@@ -16,6 +16,7 @@ import 'package:istoreto/featured/product/controllers/edit_product_controller.da
 import 'package:istoreto/featured/product/controllers/favorite_product_controller.dart';
 import 'package:istoreto/featured/product/controllers/product_controller.dart';
 import 'package:istoreto/featured/shop/controller/vendor_controller.dart';
+import 'package:istoreto/featured/shop/controller/vendor_image_controller.dart';
 import 'package:istoreto/featured/shop/data/vendor_repository.dart';
 import 'package:istoreto/featured/shop/follow/controller/follow_controller.dart';
 import 'package:istoreto/services/image_upload_service.dart';
@@ -29,25 +30,39 @@ class GeneralBindings extends Bindings {
   void dependencies() async {
     // Get.put(SectorController());
     TLoggerHelper.info("SectorController initialize");
-    Get.put(CurrencyController());
-    Get.put(TranslateController());
-    Get.put(VendorController());
-    Get.put(UploadService());
-    Get.put(ImageUploadService());
 
-    try {
-      Get.put(ProductController());
-      TLoggerHelper.info("ProductController initialize (outside auth check)");
-    } catch (e) {
-      TLoggerHelper.info("Error initializing ProductController: $e");
+    // Initialize controllers only if not already registered
+    if (!Get.isRegistered<CurrencyController>()) {
+      Get.put(CurrencyController());
     }
-    Get.put(VendorRepository());
-    try {
+    if (!Get.isRegistered<TranslateController>()) {
+      Get.put(TranslateController());
+    }
+    if (!Get.isRegistered<VendorController>()) {
       Get.put(VendorController());
-      TLoggerHelper.info("VendorController initialize (outside auth check)");
-    } catch (e) {
-      TLoggerHelper.info("Error initializing VendorController: $e");
+      TLoggerHelper.info("VendorController initialized");
     }
+    if (!Get.isRegistered<VendorImageController>()) {
+      Get.put(VendorImageController());
+      TLoggerHelper.info("VendorImageController initialized");
+    }
+    if (!Get.isRegistered<UploadService>()) {
+      Get.put(UploadService());
+    }
+    if (!Get.isRegistered<ImageUploadService>()) {
+      Get.put(ImageUploadService());
+    }
+
+    if (!Get.isRegistered<ProductController>()) {
+      try {
+        Get.put(ProductController());
+        TLoggerHelper.info("ProductController initialized");
+      } catch (e) {
+        TLoggerHelper.info("Error initializing ProductController: $e");
+      }
+    }
+
+    Get.put(VendorRepository());
 
     try {
       Get.put(CategoryController());
@@ -129,6 +144,11 @@ class GeneralBindings extends Bindings {
 
     if (!Get.isRegistered<VendorController>()) {
       TLoggerHelper.info("VendorController is not ready");
+      return false;
+    }
+
+    if (!Get.isRegistered<VendorImageController>()) {
+      TLoggerHelper.info("VendorImageController is not ready");
       return false;
     }
 

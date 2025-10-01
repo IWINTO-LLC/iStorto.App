@@ -4,10 +4,10 @@ import 'package:get/get.dart';
 import 'package:istoreto/utils/loader/loaders.dart';
 
 class CopyableText extends StatelessWidget {
-  CopyableText({super.key, required this.child, required this.text});
+  const CopyableText({super.key, required this.child, required this.text});
 
   final Widget child;
-  String text;
+  final String text;
 
   @override
   Widget build(BuildContext context) {

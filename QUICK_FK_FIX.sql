@@ -31,3 +31,5 @@ CREATE POLICY "categories_all" ON categories FOR ALL USING (true);
 SELECT 'Foreign Key fixed!' as status;
 
 
+
+

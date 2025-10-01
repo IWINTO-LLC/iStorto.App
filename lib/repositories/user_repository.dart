@@ -27,10 +27,32 @@ class UserRepository {
   // Get user by ID
   Future<UserModel?> getUserById(String id) async {
     try {
+      // Join with vendors table to get vendor_id if user is a vendor
       final response =
-          await _client.from(_tableName).select().eq('id', id).single();
+          await _client
+              .from(_tableName)
+              .select('*, vendors!inner(id)')
+              .eq('id', id)
+              .maybeSingle();
 
-      return UserModel.fromJson(response);
+      if (response == null) {
+        // Try without vendor join (for non-vendor users)
+        final userResponse =
+            await _client.from(_tableName).select().eq('id', id).single();
+        return UserModel.fromJson(userResponse);
+      }
+
+      // Extract vendor_id from the nested vendors data
+      final userData = Map<String, dynamic>.from(response);
+      if (userData['vendors'] != null && userData['vendors'] is List) {
+        final vendors = userData['vendors'] as List;
+        if (vendors.isNotEmpty && vendors[0]['id'] != null) {
+          userData['vendor_id'] = vendors[0]['id'];
+        }
+      }
+      userData.remove('vendors'); // Remove nested data
+
+      return UserModel.fromJson(userData);
     } catch (e) {
       if (kDebugMode) {
         print('Error getting user by ID: $e');
@@ -39,17 +61,39 @@ class UserRepository {
     }
   }
 
-  // Get user by user_id (Firebase ID)
+  // Get user by user_id (Supabase Auth ID)
   Future<UserModel?> getUserByUserId(String userId) async {
     try {
+      // Join with vendors table to get vendor_id if user is a vendor
       final response =
           await _client
               .from(_tableName)
-              .select()
+              .select('*, vendors!inner(id)')
               .eq('user_id', userId)
-              .single();
+              .maybeSingle();
 
-      return UserModel.fromJson(response);
+      if (response == null) {
+        // Try without vendor join (for non-vendor users)
+        final userResponse =
+            await _client
+                .from(_tableName)
+                .select()
+                .eq('user_id', userId)
+                .single();
+        return UserModel.fromJson(userResponse);
+      }
+
+      // Extract vendor_id from the nested vendors data
+      final userData = Map<String, dynamic>.from(response);
+      if (userData['vendors'] != null && userData['vendors'] is List) {
+        final vendors = userData['vendors'] as List;
+        if (vendors.isNotEmpty && vendors[0]['id'] != null) {
+          userData['vendor_id'] = vendors[0]['id'];
+        }
+      }
+      userData.remove('vendors'); // Remove nested data
+
+      return UserModel.fromJson(userData);
     } catch (e) {
       print('Error getting user by user_id: $e');
       return null;

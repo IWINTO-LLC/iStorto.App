@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
+import 'package:istoreto/controllers/auth_controller.dart';
 import 'package:istoreto/featured/payment/data/currency_model.dart';
 import 'package:istoreto/featured/payment/data/currency_repository.dart';
 import 'package:istoreto/services/supabase_service.dart';
@@ -44,10 +45,22 @@ class CurrencyController extends GetxController {
   double convertToDefaultCurrency(double amount) {
     if (amount == 0.0) return 0.0;
 
-    // Get user's default currency
-    final defaultCurrency = currencies[userCurrency.value];
+    // Get user's default currency ISO code
+    final defaultCurrencyISO =
+        AuthController.instance.currentUser.value?.defaultCurrency;
+
+    // إذا كان المستخدم زائر (غير مسجل) أو لم يحدد عملة افتراضية، استخدم الدولار
+    String currencyToUse;
+    if (defaultCurrencyISO == null || defaultCurrencyISO.isEmpty) {
+      currencyToUse = 'USD'; // العملة الافتراضية للزوار
+    } else {
+      currencyToUse = defaultCurrencyISO;
+    }
+
+    // Get currency model from currencies map
+    final defaultCurrency = currencies[currencyToUse];
     if (defaultCurrency == null) {
-      throw Exception("Default currency not found");
+      throw Exception("Currency data not found for $currencyToUse");
     }
 
     return amount * defaultCurrency.usdToCoinExchangeRate;
@@ -108,6 +121,12 @@ class CurrencyController extends GetxController {
 
   Future<String?> getDefaultCurrency(String userId) async {
     try {
+      // إذا كان المستخدم زائر (userId فارغ أو غير صالح)، استخدم الدولار
+      if (userId.isEmpty) {
+        userCurrency.value = 'USD';
+        return 'USD';
+      }
+
       final response =
           await _client
               .from('users')
@@ -116,16 +135,23 @@ class CurrencyController extends GetxController {
               .maybeSingle();
 
       if (response != null) {
-        final defaultCurrency = response['default_currency'] as String? ?? '';
+        final defaultCurrency =
+            response['default_currency'] as String? ?? 'USD';
         userCurrency.value = defaultCurrency;
         return defaultCurrency;
+      } else {
+        // إذا لم يتم العثور على المستخدم، استخدم الدولار كافتراضي
+        userCurrency.value = 'USD';
+        return 'USD';
       }
     } catch (e) {
       if (kDebugMode) {
         print('Error getting default currency: $e');
       }
+      // في حالة الخطأ، استخدم الدولار كافتراضي
+      userCurrency.value = 'USD';
+      return 'USD';
     }
-    return null;
   }
 
   Future<void> updateDefaultCurrency(String userId, String newCurrency) async {
@@ -175,7 +201,13 @@ class CurrencyController extends GetxController {
   }
 
   // Get current user's default currency
-  String get currentUserCurrency => userCurrency.value;
+  String get currentUserCurrency {
+    // إذا كان المستخدم زائر أو لم يحدد عملة، استخدم الدولار
+    if (userCurrency.value.isEmpty) {
+      return 'USD';
+    }
+    return userCurrency.value;
+  }
 
   // Check if currency is available
   bool isCurrencyAvailable(String iso) {

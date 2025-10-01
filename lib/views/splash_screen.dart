@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:istoreto/controllers/auth_controller.dart';
+import 'package:istoreto/featured/currency/controller/currency_controller.dart';
+import 'package:istoreto/featured/product/services/product_currency_service.dart';
+import 'package:istoreto/featured/shop/controller/vendor_controller.dart';
+import 'package:istoreto/featured/shop/data/vendor_repository.dart';
 import 'package:istoreto/navigation_menu.dart';
+import 'package:istoreto/services/image_upload_service.dart';
 import 'package:istoreto/utils/constants/image_strings.dart';
 import 'package:istoreto/utils/constants/sizes.dart';
 import 'package:istoreto/views/login_page.dart';
@@ -88,19 +93,18 @@ class _SplashScreenState extends State<SplashScreen>
                         ),
                       ),
 
-                      const SizedBox(height: TSizes.spaceBtWsections),
+                      // const SizedBox(height: TSizes.spaceBtWsections),
 
-                      // Tagline
-                      Text(
-                        'your_store_tagline'.tr,
-                        style: TextStyle(
-                          fontSize: 16,
+                      // // Tagline
+                      // Text(
+                      //   'your_store_tagline'.tr,
+                      //   style: TextStyle(
+                      //     fontSize: 16,
 
-                          fontWeight: FontWeight.w300,
-                        ),
-                      ),
-
-                      const SizedBox(height: 50),
+                      //     fontWeight: FontWeight.w300,
+                      //   ),
+                      // ),
+                      const SizedBox(height: 30),
 
                       // Loading indicator
                       SizedBox(

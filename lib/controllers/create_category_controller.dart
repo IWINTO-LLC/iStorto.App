@@ -6,9 +6,9 @@ import 'package:get/get.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:istoreto/controllers/category_controller.dart';
-import 'package:istoreto/featured/shop/controller/vendor_controller.dart';
 import 'package:istoreto/services/image_upload_service.dart';
 import 'package:uuid/uuid.dart';
+
 import '../data/models/category_model.dart';
 import '../data/repositories/category_repository.dart';
 

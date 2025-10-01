@@ -52,7 +52,6 @@ class ProductModel {
       'product_type': productType,
       'thumbnail': thumbnail,
       'images': images,
-      'category_id': category?.id,
       'vendor_category_id': vendorCategoryId,
       'is_feature': isFeature,
       'is_deleted': isDeleted,

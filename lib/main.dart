@@ -2,7 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:get/get.dart';
 import 'package:istoreto/featured/currency/controller/currency_controller.dart';
+import 'package:istoreto/featured/product/services/product_currency_service.dart';
+import 'package:istoreto/featured/shop/controller/vendor_controller.dart';
+import 'package:istoreto/featured/shop/data/vendor_repository.dart';
 import 'package:istoreto/navigation_menu.dart';
+import 'package:istoreto/services/image_upload_service.dart';
 import 'package:istoreto/views/splash_screen.dart';
 import 'package:istoreto/views/login_page.dart';
 import 'package:istoreto/views/register_page.dart';
@@ -40,8 +44,29 @@ class MyApp extends StatelessWidget {
     // Initialize Controllers
     final translationController = Get.put(TranslationController());
     Get.put(AuthController());
-    Get.put(GeneralBindings());
+
+    // Initialize VendorRepository first
+    if (!Get.isRegistered<VendorRepository>()) {
+      Get.lazyPut(() => VendorRepository());
+    }
+
+    // Initialize VendorController only if not already initialized
+    if (!Get.isRegistered<VendorController>()) {
+      Get.put(VendorController());
+    }
+
+    if (!Get.isRegistered<CurrencyController>()) {
+      Get.put(CurrencyController());
+    }
+    if (!Get.isRegistered<ProductCurrencyService>()) {
+      Get.put(ProductCurrencyService());
+    }
+    if (!Get.isRegistered<ImageUploadService>()) {
+      Get.lazyPut(() => ImageUploadService());
+    }
     // Initialize General Bindings (all other controllers)
+    final generalBindings = GeneralBindings();
+    generalBindings.dependencies();
 
     return Sizer(
       builder: (context, orientation, deviceType) {

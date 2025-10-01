@@ -690,5 +690,60 @@ class Ar {
     // Category Section
     'browse_categories_subtitle': 'استكشف مجموعة واسعة من فئات المنتجات',
     'no_categories_available': 'لا توجد فئات متاحة في الوقت الحالي',
+
+    // Banner Management
+    'banner_management': 'إدارة البانرات',
+    'company_banners': 'بانرات الشركة',
+    'vendor_banners': 'بانرات التاجر',
+    'add_banner': 'إضافة البانر',
+    'add_new_banner': 'إضافة البانر الجديد',
+    'no_company_banners': 'لا توجد بانرات متاحة للشركة',
+    'no_vendor_banners': 'لا توجد بانرات متاحة للتاجر',
+    'from_gallery': 'من المعرض',
+    'choose_from_gallery': 'اختر صورة من المعرض',
+    'from_camera': 'من الكاميرا',
+    'take_new_photo': 'التقط صورة جديدة',
+
+    'activate': 'تفعيل',
+    'deactivate': 'إلغاء التفعيل',
+    'to_company': 'إلى الشركة',
+    'priority': 'الأهمية',
+    'untitled_banner': 'بانر بدون عنوان',
+    'banner_activated_successfully': 'تم تفعيل البانر بنجاح',
+    'banner_deactivated_successfully': 'تم إلغاء تفعيل البانر بنجاح',
+    'failed_to_update_banner': 'فشل في تحديث البانر',
+    'confirm_conversion': 'تأكيد التحويل',
+    'convert_to_company_banner_message':
+        'هل أنت متأكد أنك تريد تحويل هذا البانر التاجري إلى بانر شركة؟ سيصبح مرئيًا على الصفحة الرئيسية.',
+    'convert': 'تحويل',
+    'banner_converted_successfully': 'تم تحويل البانر إلى بانر شركة بنجاح',
+    'failed_to_convert_banner': 'فشل في تحويل البانر',
+    'confirm_deletion': 'تأكيد الحذف',
+    'delete_banner_message':
+        'هل أنت متأكد أنك تريد حذف هذا البانر؟ لا يمكن التراجع عن هذا الإجراء.',
+    'banner_deleted_successfully': 'تم حذف البانر بنجاح',
+    'failed_to_delete_banner': 'فشل في حذف البانر',
+    'failed_to_load_banners': 'فشل في تحميل البانرات',
+
+    // Personal Info Page
+    'personal_information': 'المعلومات الشخصية',
+    'profile_photo': 'صورة الملف الشخصي',
+    'full_name': 'الاسم الكامل',
+    'not_set': 'غير محدد',
+    'location': 'الموقع',
+    'bio_description': 'السيرة الذاتية والوصف',
+    'account_type': 'نوع الحساب',
+    'business_account': 'حساب تجاري',
+    'personal_account': 'حساب شخصي',
+    'business_account_description': 'لديك حساب تجاري مع ميزات إضافية',
+    'personal_account_description':
+        'قم بالترقية لحساب تجاري للحصول على المزيد من الميزات',
+    'account_statistics': 'إحصائيات الحساب',
+    'member_since': 'عضو منذ',
+    'not_available': 'غير متاح',
+    'days_ago': 'يوم مضى',
+    'months_ago': 'شهر مضى',
+    'years_ago': 'سنة مضت',
+    'no_user_data': 'لا توجد بيانات مستخدم',
   };
 }
