@@ -40,3 +40,9 @@ ALTER TABLE vendor_categories ENABLE ROW LEVEL SECURITY;
 
 
 
+
+
+
+
+
+

@@ -16,6 +16,78 @@ class Ar {
     'filter': 'تصفية',
     'sort': 'ترتيب',
 
+    // Search Filters
+    'search_filters': 'فلاتر البحث',
+    'reset_filters': 'إعادة تعيين',
+    'apply_filters': 'تطبيق الفلترة',
+    'filters_applied': 'تم تطبيق الفلترة',
+    'filters_applied_message': 'تم تطبيق الفلاتر المحددة',
+    'item_type': 'نوع العنصر',
+    'all': 'الكل',
+    'products': 'المنتجات',
+    'vendors': 'التجار',
+    'categories_filter': 'الفئات',
+    'price_range': 'نطاق السعر',
+    'from': 'من',
+    'to': 'إلى',
+    'minimum_price': 'السعر الأدنى',
+    'maximum_price': 'السعر الأعلى',
+    'rating': 'التقييم',
+    'stars_and_more': 'نجوم وأكثر',
+    'additional_filters': 'فلاتر إضافية',
+    'verified_vendors_only': 'التجار المحققون فقط',
+    'featured_products_only': 'المنتجات المميزة فقط',
+    'please_enter_search_first': 'يرجى إدخال كلمة بحث أولاً',
+    'all_results': 'جميع النتائج',
+
+    // Category Vendors
+    'vendors_in_category': 'التجار في هذه الفئة',
+    'error_loading_vendors': 'خطأ في تحميل التجار',
+    'retry': 'إعادة المحاولة',
+    'no_vendors_in_category': 'لا يوجد تجار في هذه الفئة',
+    'no_vendors_in_category_subtitle':
+        'لم يتم العثور على تجار مرتبطين بهذه الفئة',
+    'specialization_level': 'مستوى التخصص',
+    'primary': 'أساسي',
+    'vendor_selected': 'تم اختيار التاجر',
+    'browse_categories_subtitle': 'تصفح الفئات المختلفة',
+    'no_categories_available': 'لا توجد فئات متاحة',
+    'loading_categories': 'جاري تحميل الفئات...',
+
+    // Category Priority Management
+    'manage_category_priority': 'إدارة أولوية الفئات',
+    'drag_drop_instructions': 'اسحب وأفلت الفئات لترتيب أولوياتها',
+    'priority_level': 'مستوى الأولوية',
+    'category_priority_updated': 'تم تحديث أولوية الفئات بنجاح',
+    'error_updating_priority': 'خطأ في تحديث ترتيب الأولويات',
+    'no_changes_detected': 'لم يتم اكتشاف أي تغييرات',
+    'database_index_error': 'خطأ في فهرس قاعدة البيانات',
+    'concurrent_update_error': 'خطأ في التحديث المتزامن',
+    'saving': 'جاري الحفظ...',
+    'save_changes': 'حفظ التغييرات',
+
+    // Product Rating
+    'product_rating': 'تقييم المنتج',
+    'rate_product': 'قيم المنتج',
+    'rating_submitted': 'تم إرسال التقييم',
+    'thank_you_for_rating': 'شكراً لك على تقييمك',
+    'submit_rating': 'إرسال التقييم',
+    'error_loading_ratings': 'خطأ في تحميل التقييمات',
+    'out_of_5_stars': 'من 5 نجوم',
+    'ratings': 'تقييمات',
+    'rate_this_product': 'قيم هذا المنتج',
+    'write_review_placeholder': 'اكتب مراجعتك هنا...',
+    'failed_to_submit_rating': 'فشل في إرسال التقييم',
+    'loading_vendors': 'جاري تحميل التجار',
+    'loading_vendors_for': 'جاري تحميل التجار لـ',
+    'manage_all_banners': 'إدارة جميع البانرات',
+    'banners': 'بانرات',
+    'add_first_banner': 'أضف أول بانر',
+    'view_all': 'عرض الكل',
+    'view_all_products': 'عرض جميع المنتجات',
+    'your_favorite_shops': 'متاجرك المفضلة',
+    'all_products_will_be_shown': 'سيتم عرض جميع المنتجات',
+
     // Navigation
     'home': 'الرئيسية',
     'categories': 'الفئات',
@@ -43,7 +115,6 @@ class Ar {
     'remember_me': 'تذكرني',
 
     // Products
-    'products': 'المنتجات',
     'product_details': 'تفاصيل المنتج',
     'add_to_cart': 'أضف للسلة',
     'add_to_favorites': 'أضف للمفضلة',
@@ -142,7 +213,7 @@ class Ar {
     'quantity': 'الكمية',
     'description': 'الوصف',
     'reviews': 'التقييمات',
-    'rating': 'التقييم',
+
     'in_stock': 'متوفر',
     'out_of_stock': 'غير متوفر',
     'addNewCategory': 'إضافة تصنيف جديد',
@@ -192,6 +263,20 @@ class Ar {
     'new_items': 'العناصر الجديدة',
     'top_sellers': 'أفضل البائعين',
     'no_vendors_available': 'لا يوجد بائعين متاحين',
+    'latest_vendor': 'انضم لنا مؤخراً',
+    'all_vendors': 'جميع التجار',
+    'all_vendors_will_be_shown': 'سيتم عرض جميع التجار',
+    'error_loading_vendor': 'خطأ في تحميل التاجر',
+    'check_back_later': 'تحقق لاحقاً',
+    'unknown_vendor': 'تاجر غير معروف',
+    'visit_store': 'زيارة المتجر',
+    'follow': 'متابعة',
+    'visiting_store': 'جاري زيارة المتجر',
+    'store_page': 'صفحة المتجر',
+    'following_vendor': 'جاري متابعة التاجر',
+    'followed_successfully': 'تم المتابعة بنجاح',
+    'store': 'متجر',
+    'vendor': 'تاجر',
     'vendor_description': 'متجر احترافي',
     'verified': 'موثق',
     'royal': 'مميز',
@@ -569,7 +654,6 @@ class Ar {
     'inactive': 'غير نشط',
     'unknown': 'غير معروف',
 
-    'all': 'الكل',
     'set_active': 'تعيين كنشط',
     'set_pending': 'تعيين كمعلق',
     'set_inactive': 'تعيين كغير نشط',
@@ -687,10 +771,6 @@ class Ar {
     'admin_zone_settings': 'الإعدادات',
     'admin_zone_settings_desc': 'إعدادات التطبيق العامة',
 
-    // Category Section
-    'browse_categories_subtitle': 'استكشف مجموعة واسعة من فئات المنتجات',
-    'no_categories_available': 'لا توجد فئات متاحة في الوقت الحالي',
-
     // Banner Management
     'banner_management': 'إدارة البانرات',
     'company_banners': 'بانرات الشركة',
@@ -725,6 +805,18 @@ class Ar {
     'failed_to_delete_banner': 'فشل في حذف البانر',
     'failed_to_load_banners': 'فشل في تحميل البانرات',
 
+    // Banner Edit
+    'edit_banner': 'تعديل البانر',
+    'title': 'العنوان',
+
+    'target_screen': 'الشاشة المستهدفة',
+    'convert_to_company': 'تحويل إلى شركة',
+    'convert_to_company_description': 'تحويل هذا البانر إلى بانر شركة',
+
+    'banner_updated_successfully': 'تم تحديث البانر بنجاح',
+    'company': 'شركة',
+    'no_banners_available': 'لا توجد بانرات متاحة',
+
     // Personal Info Page
     'personal_information': 'المعلومات الشخصية',
     'profile_photo': 'صورة الملف الشخصي',
@@ -745,5 +837,14 @@ class Ar {
     'months_ago': 'شهر مضى',
     'years_ago': 'سنة مضت',
     'no_user_data': 'لا توجد بيانات مستخدم',
+
+    // Category Creation
+    'category_image_required': 'يرجى اختيار صورة للفئة',
+    'category_creation_error': 'حدث خطأ أثناء إنشاء الفئة',
+
+    // Category Priority Management (duplicate section removed)
+
+    // Vendor Category
+    'create_first_category': 'إنشاء أول فئة',
   };
 }

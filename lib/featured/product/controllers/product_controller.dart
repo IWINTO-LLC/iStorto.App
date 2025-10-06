@@ -9,6 +9,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:istoreto/services/image_upload_service.dart';
 import 'package:istoreto/controllers/category_controller.dart';
 import 'package:istoreto/data/models/category_model.dart';
+import 'package:istoreto/data/models/vendor_category_model.dart';
 import 'package:istoreto/featured/product/data/product_model.dart';
 import 'package:istoreto/featured/product/data/product_repository.dart';
 import 'package:istoreto/utils/common/styles/styles.dart';
@@ -39,6 +40,7 @@ class ProductController extends GetxController {
   final saleprecentage = TextEditingController();
   final formKey = GlobalKey<FormState>();
   CategoryModel category = CategoryModel.empty();
+  VendorCategoryModel? vendorCategory;
   RxList<String> images = <String>[].obs;
   RxString message = ''.obs;
   final searchTextController = TextEditingController();
@@ -382,6 +384,43 @@ class ProductController extends GetxController {
         print(e);
         return [];
       }
+      return [];
+    }
+  }
+
+  /// جلب جميع المنتجات بدون تحديد تاجر معين
+  /// Fetch all products without vendor ID parameter
+  Future<List<ProductModel>> fetchAllProductsWithoutVendor() async {
+    try {
+      // تأجيل تحديث حالة التحميل إلى ما بعد اكتمال البناء لتجنب مشاكل البناء
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        isLoading.value = true;
+      });
+
+      var allProduct = await productRepository.getAllProductsWithoutVendor();
+
+      // Filter out deleted products
+      var filteredProducts =
+          allProduct.where((product) => !(product.isDeleted ?? false)).toList();
+
+      // تأجيل تحديث القوائم إلى ما بعد اكتمال البناء لتجنب مشاكل البناء
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        allItems.assignAll(filteredProducts);
+        allDynamic.assignAll(filteredProducts);
+        isLoading.value = false;
+      });
+
+      return filteredProducts;
+    } catch (e) {
+      if (kDebugMode) {
+        print('خطأ في جلب جميع المنتجات: $e');
+      }
+
+      // تأجيل تحديث حالة التحميل إلى ما بعد اكتمال البناء لتجنب مشاكل البناء
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        isLoading.value = false;
+      });
+
       return [];
     }
   }

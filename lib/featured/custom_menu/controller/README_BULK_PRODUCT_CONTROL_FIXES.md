@@ -304,3 +304,9 @@ await controller.moveSelectedProductsToCategory(category);
 
 
 
+
+
+
+
+
+

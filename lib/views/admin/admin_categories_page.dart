@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:istoreto/controllers/admin_categories_controller.dart';
 import 'package:istoreto/data/models/major_category_model.dart';
+import 'package:istoreto/utils/common/widgets/appbar/custom_app_bar.dart';
 import 'package:istoreto/utils/constants/color.dart';
 
 class AdminCategoriesPage extends StatelessWidget {
@@ -12,10 +13,9 @@ class AdminCategoriesPage extends StatelessWidget {
     final controller = Get.put(AdminCategoriesController());
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text('admin_categories_title'.tr),
-        backgroundColor: Colors.white,
-        elevation: 0,
+      appBar: CustomAppBar(
+        title: 'admin_categories_title'.tr,
+
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh),

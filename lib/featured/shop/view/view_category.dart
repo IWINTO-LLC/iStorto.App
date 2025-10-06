@@ -209,24 +209,14 @@ Widget viewCategories({
                                     itemBuilder:
                                         (context, index) => InkWell(
                                           onTap: () {
-                                            Navigator.push(
-                                              context,
-                                              PageRouteBuilder(
-                                                transitionDuration:
-                                                    const Duration(
-                                                      milliseconds: 1000,
-                                                    ),
-                                                pageBuilder:
-                                                    (context, anim1, anim2) =>
-                                                        ProductDetails(
-                                                          selected: index,
-                                                          spotList: spotList,
-                                                          key: UniqueKey(),
-                                                          product:
-                                                              spotList[index],
-                                                          vendorId: vendorId,
-                                                        ),
-                                              ),
+                                            Get.toNamed(
+                                              '/product-details',
+                                              arguments: {
+                                                'product': spotList[index],
+                                                'vendorId': vendorId,
+                                                'selected': index,
+                                                'spotList': spotList,
+                                              },
                                             );
                                           },
                                           child: Padding(
@@ -383,24 +373,14 @@ Widget viewCategories({
                                     itemBuilder:
                                         (context, index) => InkWell(
                                           onTap: () {
-                                            Navigator.push(
-                                              context,
-                                              PageRouteBuilder(
-                                                transitionDuration:
-                                                    const Duration(
-                                                      milliseconds: 1000,
-                                                    ),
-                                                pageBuilder:
-                                                    (context, anim1, anim2) =>
-                                                        ProductDetails(
-                                                          spotList: spotList,
-                                                          selected: index,
-                                                          key: UniqueKey(),
-                                                          product:
-                                                              spotList[index],
-                                                          vendorId: vendorId,
-                                                        ),
-                                              ),
+                                            Get.toNamed(
+                                              '/product-details',
+                                              arguments: {
+                                                'product': spotList[index],
+                                                'vendorId': vendorId,
+                                                'selected': index,
+                                                'spotList': spotList,
+                                              },
                                             );
                                           },
                                           child: Padding(
@@ -432,27 +412,14 @@ Widget viewCategories({
                                                     ),
                                             child: InkWell(
                                               onTap: () {
-                                                Navigator.push(
-                                                  context,
-                                                  PageRouteBuilder(
-                                                    transitionDuration:
-                                                        const Duration(
-                                                          milliseconds: 1000,
-                                                        ),
-                                                    pageBuilder:
-                                                        (
-                                                          context,
-                                                          anim1,
-                                                          anim2,
-                                                        ) => ProductDetails(
-                                                          key: UniqueKey(),
-                                                          selected: index,
-                                                          spotList: spotList,
-                                                          product:
-                                                              spotList[index],
-                                                          vendorId: vendorId,
-                                                        ),
-                                                  ),
+                                                Get.toNamed(
+                                                  '/product-details',
+                                                  arguments: {
+                                                    'product': spotList[index],
+                                                    'vendorId': vendorId,
+                                                    'selected': index,
+                                                    'spotList': spotList,
+                                                  },
                                                 );
                                               },
                                               child: SizedBox(
@@ -517,12 +484,7 @@ Stack addCategoryItem(int index, BuildContext context, String vendorId) {
         onTap: () {
           var controller = Get.put(CreateCategoryController());
           controller.deleteTempItems();
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => CreateCategory(vendorId: vendorId),
-            ),
-          );
+          Get.toNamed('/create-category', arguments: {'vendorId': vendorId});
         },
         child: TRoundedContainer(
           showBorder: false,

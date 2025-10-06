@@ -4,6 +4,7 @@ import 'package:istoreto/controllers/auth_controller.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:istoreto/models/user_model.dart';
 import 'package:istoreto/repositories/user_repository.dart';
+import 'package:istoreto/utils/common/widgets/appbar/custom_app_bar.dart';
 
 class ViewPersonalInfoPage extends StatelessWidget {
   final String? userId;
@@ -40,14 +41,9 @@ class ViewPersonalInfoPage extends StatelessWidget {
         userId == authController.currentUser.value?.id;
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text('personal_information'.tr),
-        backgroundColor: Colors.white,
-        elevation: 0,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.grey.shade800),
-          onPressed: () => Get.back(),
-        ),
+      appBar: CustomAppBar(
+        title: 'personal_information'.tr,
+
         actions: [
           // Only show edit button for current user
           if (isCurrentUser)

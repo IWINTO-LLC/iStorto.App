@@ -56,6 +56,15 @@
 				<string>com.istoreto.app</string>
 			</array>
 		</dict>
+		<!-- Apple Sign In URL Scheme -->
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>apple-signin</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>io.supabase.flutterquickstart</string>
+			</array>
+		</dict>
 	</array>
 </dict>
 </plist>

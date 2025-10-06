@@ -4,7 +4,7 @@ import 'package:istoreto/utils/common/widgets/appbar/custom_app_bar.dart';
 import 'package:istoreto/utils/constants/color.dart';
 import 'package:istoreto/views/admin/admin_categories_page.dart';
 import 'package:istoreto/views/admin/admin_currencies_page.dart';
-import 'package:istoreto/views/admin/admin_banners_page.dart';
+import 'package:istoreto/views/admin/banners/admin_banners_page.dart';
 import 'package:istoreto/views/test/currency_test_page.dart';
 import 'package:istoreto/views/test/product_currency_test_page.dart';
 import 'package:istoreto/views/test/banner_test_page.dart';

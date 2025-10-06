@@ -77,8 +77,6 @@ class HomePageWithCategoriesExample extends StatelessWidget {
 
             const SizedBox(height: TSizes.spaceBtWsections),
 
-            const CategorySection(),
-
             // Featured Products Section (placeholder)
             _buildFeaturedProductsSection(),
 

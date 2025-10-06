@@ -6,9 +6,10 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 
-import 'package:istoreto/controllers/category_controller.dart';
 import 'package:istoreto/controllers/translation_controller.dart';
 import 'package:istoreto/data/models/category_model.dart';
+import 'package:istoreto/data/models/vendor_category_model.dart';
+import 'package:istoreto/data/repositories/vendor_category_repository.dart';
 import 'package:istoreto/featured/album/screens/fullscreen_image_viewer.dart';
 import 'package:istoreto/featured/category/view/create_category/create_category.dart';
 import 'package:istoreto/featured/product/controllers/image_crop_rotation_controller.dart';
@@ -104,7 +105,6 @@ class CreateProductForm extends StatelessWidget {
     final ScrolleEditController scrolleController = Get.put(
       ScrolleEditController(),
     );
-    var addCat = CategoryModel(title: "menu.add_category".tr);
 
     final controller = ProductController.instance;
     controller.spotList.value = initialList;
@@ -266,134 +266,7 @@ class CreateProductForm extends StatelessWidget {
             ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child:
-                  CategoryController.instance.isLoading.value
-                      ? const TShimmerEffect(width: double.infinity, height: 55)
-                      : Center(
-                        child: SizedBox(
-                          height: 80,
-                          child: Obx(() {
-                            final items =
-                                CategoryController.instance.allItems.map((cat) {
-                                    return DropdownMenuItem(
-                                      value: cat,
-                                      child: Row(
-                                        children: [
-                                          ClipRRect(
-                                            borderRadius: BorderRadius.circular(
-                                              300,
-                                            ),
-                                            child: SizedBox(
-                                              height: 40,
-                                              width: 40,
-                                              child: Container(
-                                                width: 40,
-                                                height: 40,
-                                                decoration: BoxDecoration(
-                                                  color: Color(
-                                                    int.parse(
-                                                      cat.color.replaceFirst(
-                                                        '#',
-                                                        '0xff',
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                        300,
-                                                      ),
-                                                ),
-                                                child:
-                                                    cat.icon != null
-                                                        ? Icon(
-                                                          Icons.category,
-                                                          color: Colors.white,
-                                                          size: 20,
-                                                        )
-                                                        : null,
-                                              ),
-                                            ),
-                                          ),
-                                          const SizedBox(width: 10),
-                                          Text(
-                                            cat.title,
-                                            style: titilliumRegular.copyWith(
-                                              fontSize: 16,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    );
-                                  }).toList()
-                                  ..add(
-                                    DropdownMenuItem(
-                                      value: addCat,
-                                      child: Row(
-                                        children: [
-                                          const Icon(
-                                            Icons.add,
-                                            color: Colors.blue,
-                                          ),
-                                          const SizedBox(width: 10),
-                                          Text(
-                                            "menu.add_category".tr,
-                                            style: titilliumRegular.copyWith(
-                                              color: Colors.blue,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  );
-                            // إزالة العناصر المكررة والتأكد من وجود القيمة المحددة
-                            final uniqueItems = items.toSet().toList();
-
-                            // البحث عن القيمة المحددة في العناصر الفريدة
-                            CategoryModel? selected;
-                            if (CategoryController
-                                .instance
-                                .allItems
-                                .isNotEmpty) {
-                              try {
-                                final selectedItem = uniqueItems.firstWhere(
-                                  (item) =>
-                                      item.value?.id == controller.category.id,
-                                );
-                                selected = selectedItem.value;
-                              } catch (e) {
-                                // إذا لم توجد القيمة، اختر العنصر الأول
-                                selected =
-                                    uniqueItems.isNotEmpty
-                                        ? uniqueItems.first.value
-                                        : null;
-                              }
-                            }
-                            return DropdownButtonFormField<CategoryModel>(
-                              borderRadius: BorderRadius.circular(15),
-                              iconSize: 40,
-
-                              itemHeight: 60,
-                              value: selected,
-                              items: uniqueItems,
-                              onChanged: (newValue) {
-                                if (newValue == addCat) {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder:
-                                          (context) => CreateCategory(
-                                            vendorId: vendorId,
-                                          ),
-                                    ),
-                                  );
-                                } else if (newValue != null) {
-                                  controller.category = newValue;
-                                }
-                              },
-                            );
-                          }),
-                        ),
-                      ),
+              child: _buildVendorCategoryDropdown(controller, vendorId),
             ),
 
             const SizedBox(height: TSizes.spaceBtwInputFields),
@@ -881,6 +754,236 @@ class CreateProductForm extends StatelessWidget {
             // const SizedBox(height: 100),
           ],
         ),
+      ),
+    );
+  }
+
+  /// بناء قائمة منسدلة لفئات البائع
+  Widget _buildVendorCategoryDropdown(
+    ProductController controller,
+    String vendorId,
+  ) {
+    return Builder(
+      builder:
+          (context) => FutureBuilder<List<VendorCategoryModel>>(
+            future: _loadVendorCategories(vendorId),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const TShimmerEffect(width: double.infinity, height: 55);
+              }
+
+              if (snapshot.hasError ||
+                  !snapshot.hasData ||
+                  snapshot.data!.isEmpty) {
+                return _buildEmptyCategoryState(controller, vendorId, context);
+              }
+
+              final vendorCategories = snapshot.data!;
+              return _buildCategoryDropdown(
+                controller,
+                vendorCategories,
+                vendorId,
+                context,
+              );
+            },
+          ),
+    );
+  }
+
+  /// تحميل فئات البائع
+  Future<List<VendorCategoryModel>> _loadVendorCategories(
+    String vendorId,
+  ) async {
+    try {
+      final repository = Get.put(VendorCategoryRepository());
+      return await repository.getVendorCategories(vendorId);
+    } catch (e) {
+      debugPrint('Error loading vendor categories: $e');
+      return [];
+    }
+  }
+
+  /// بناء القائمة المنسدلة للفئات
+  Widget _buildCategoryDropdown(
+    ProductController controller,
+    List<VendorCategoryModel> vendorCategories,
+    String vendorId,
+    BuildContext context,
+  ) {
+    final addCat = VendorCategoryModel(
+      vendorId: vendorId,
+      title: "menu.add_category".tr,
+    );
+
+    final items =
+        vendorCategories.map((vendorCat) {
+          return DropdownMenuItem<VendorCategoryModel>(
+            value: vendorCat,
+            child: Row(
+              children: [
+                // أيقونة الفئة
+                Container(
+                  width: 40,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    color: TColors.primary.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(
+                      color: TColors.primary.withOpacity(0.3),
+                      width: 1,
+                    ),
+                  ),
+                  child: Icon(Icons.category, color: TColors.primary, size: 20),
+                ),
+                const SizedBox(width: 10),
+
+                // اسم الفئة
+                Expanded(
+                  child: Text(
+                    vendorCat.title,
+                    style: titilliumRegular.copyWith(fontSize: 16),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+
+                // مؤشر الأولوية
+                if (vendorCat.isPrimary)
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 6,
+                      vertical: 2,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.green.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Text(
+                      'primary'.tr,
+                      style: titilliumRegular.copyWith(
+                        fontSize: 10,
+                        color: Colors.green,
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+          );
+        }).toList();
+
+    // إضافة خيار إنشاء فئة جديدة
+    items.add(
+      DropdownMenuItem<VendorCategoryModel>(
+        value: addCat,
+        child: Row(
+          children: [
+            const Icon(Icons.add, color: Colors.blue),
+            const SizedBox(width: 10),
+            Text(
+              "menu.add_category".tr,
+              style: titilliumRegular.copyWith(color: Colors.blue),
+            ),
+          ],
+        ),
+      ),
+    );
+
+    // البحث عن القيمة المحددة
+    VendorCategoryModel? selected;
+    if (controller.vendorCategory != null && vendorCategories.isNotEmpty) {
+      try {
+        selected = vendorCategories.firstWhere(
+          (cat) => cat.id == controller.vendorCategory?.id,
+        );
+      } catch (e) {
+        // إذا لم توجد القيمة، اختر العنصر الأول
+        selected = vendorCategories.isNotEmpty ? vendorCategories.first : null;
+      }
+    }
+
+    return DropdownButtonFormField<VendorCategoryModel>(
+      borderRadius: BorderRadius.circular(15),
+      iconSize: 40,
+      itemHeight: 60,
+      value: selected,
+      items: items,
+      onChanged: (newValue) async {
+        if (newValue == addCat) {
+          // الانتقال إلى صفحة إنشاء فئة جديدة
+          final result = await Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => CreateCategory(vendorId: vendorId),
+            ),
+          );
+
+          // إعادة تحميل الفئات بعد العودة من صفحة الإنشاء
+          if (result == true) {
+            debugPrint(
+              '📌 Refreshing vendor categories after creating new category for vendor: $vendorId',
+            );
+            // إعادة بناء الواجهة لتحميل الفئات الجديدة
+            (context as Element).markNeedsBuild();
+          }
+        } else if (newValue != null) {
+          controller.vendorCategory = newValue;
+          // تحديث فئة المنتج أيضاً للتوافق مع النظام القديم
+          controller.category = CategoryModel(
+            id: newValue.id ?? '',
+            title: newValue.title,
+            color: TColors.primary.value.toRadixString(16),
+          );
+        }
+      },
+    );
+  }
+
+  /// حالة عدم وجود فئات
+  Widget _buildEmptyCategoryState(
+    ProductController controller,
+    String vendorId,
+    BuildContext context,
+  ) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.grey.shade50,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.grey.shade300),
+      ),
+      child: Column(
+        children: [
+          Icon(Icons.category_outlined, size: 48, color: Colors.grey.shade400),
+          const SizedBox(height: 8),
+          Text(
+            'no_categories_available'.tr,
+            style: titilliumRegular.copyWith(
+              fontSize: 14,
+              color: Colors.grey.shade600,
+            ),
+          ),
+          const SizedBox(height: 12),
+          ElevatedButton.icon(
+            onPressed: () async {
+              final result = await Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => CreateCategory(vendorId: vendorId),
+                ),
+              );
+
+              if (result == true) {
+                (context as Element).markNeedsBuild();
+              }
+            },
+            icon: const Icon(Icons.add, size: 16),
+            label: Text('create_first_category'.tr),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: TColors.primary,
+              foregroundColor: Colors.white,
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            ),
+          ),
+        ],
       ),
     );
   }

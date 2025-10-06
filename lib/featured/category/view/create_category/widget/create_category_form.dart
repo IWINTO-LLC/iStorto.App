@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:istoreto/controllers/translation_controller.dart';
 import 'package:istoreto/featured/shop/controller/vendor_controller.dart';
-import 'package:simple_loading_dialog/simple_loading_dialog.dart';
 import 'package:istoreto/controllers/create_category_controller.dart';
 import 'package:istoreto/featured/category/view/all_category/widgets/category_grid_item.dart';
 import 'package:istoreto/featured/category/view/edit_category/edit_category.dart';
@@ -11,14 +10,42 @@ import 'package:istoreto/utils/common/styles/styles.dart';
 import 'package:istoreto/utils/common/widgets/buttons/custom_button.dart';
 import 'package:istoreto/utils/common/widgets/custom_shapes/containers/rounded_container.dart';
 import 'package:istoreto/utils/common/widgets/custom_widgets.dart';
+import 'package:istoreto/utils/constants/color.dart';
 import 'package:istoreto/utils/constants/enums.dart';
 import 'package:istoreto/utils/constants/image_strings.dart';
 import 'package:istoreto/utils/constants/sizes.dart';
-import 'package:istoreto/utils/loader/loader_widget.dart';
 import 'image_uploader.dart';
 
 class CreateCategoryForm extends StatelessWidget {
   CreateCategoryForm({super.key});
+
+  /// حساب النسبة المئوية للتقدم بناءً على رسالة الحالة
+  int _getProgressPercentage(String message) {
+    if (message.contains('جاري التحضير') ||
+        message.contains('uploading_photo')) {
+      return 10;
+    } else if (message.contains('جاري رفع الصورة') ||
+        message.contains('رفع الصورة')) {
+      return 30;
+    } else if (message.contains('جاري إعداد البيانات')) {
+      return 50;
+    } else if (message.contains('جاري إرسال البيانات') ||
+        message.contains('sending_data')) {
+      return 70;
+    } else if (message.contains('جاري تحديث القوائم')) {
+      return 85;
+    } else if (message.contains('تم إنشاء الفئة بنجاح') ||
+        message.contains('everything_done')) {
+      return 100;
+    }
+    return 0;
+  }
+
+  /// حساب قيمة التقدم (0.0 إلى 1.0)
+  double _getProgressValue(String message) {
+    return _getProgressPercentage(message) / 100.0;
+  }
+
   @override
   Widget build(BuildContext context) {
     final createController = Get.put(CreateCategoryController());
@@ -104,40 +131,139 @@ class CreateCategoryForm extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: TSizes.spaceBtwInputFields),
-              CustomButtonBlack(
-                text: 'post'.tr,
-                onTap: () async {
-                  await showSimpleLoadingDialog<String>(
-                    context: context,
-                    future: () async {
-                      await createController.createCategory(
-                        VendorController.instance.profileData.value.id!,
-                      );
-                      return "add category done";
-                    },
-                    // Custom dialog
-                    dialogBuilder: (context, _) {
-                      return AlertDialog(
-                        content: Obx(
-                          () => Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              const SizedBox(height: 20),
-                              const TLoaderWidget(),
-                              const SizedBox(height: 16),
-                              Text(
-                                createController.message.value,
-                                style: titilliumBold,
-                              ),
-                              const SizedBox(height: 16),
-                            ],
-                          ),
+              // شريط تقدم النسبة المئوية
+              Obx(() {
+                return Column(
+                  children: [
+                    if (createController.isUploading.value ||
+                        createController.message.value.isNotEmpty) ...[
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.all(16),
+                        margin: const EdgeInsets.only(bottom: 16),
+                        decoration: BoxDecoration(
+                          color: Colors.grey.shade100,
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: Colors.grey.shade300),
                         ),
-                      );
-                    },
-                  );
-                },
-              ),
+                        child: Column(
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  'جاري المعالجة...',
+                                  style: titilliumBold.copyWith(
+                                    fontSize: 16,
+                                    color: Colors.black87,
+                                  ),
+                                ),
+                                Text(
+                                  '${_getProgressPercentage(createController.message.value)}%',
+                                  style: titilliumBold.copyWith(
+                                    fontSize: 16,
+                                    color: TColors.primary,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 12),
+                            LinearProgressIndicator(
+                              value: _getProgressValue(
+                                createController.message.value,
+                              ),
+                              backgroundColor: Colors.grey.shade300,
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                TColors.primary,
+                              ),
+                              minHeight: 8,
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              createController.message.value.isNotEmpty
+                                  ? createController.message.value
+                                  : 'جاري التحضير...',
+                              style: titilliumRegular.copyWith(
+                                fontSize: 14,
+                                color: Colors.grey.shade600,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+
+                    CustomButtonBlack(
+                      text:
+                          createController.isUploading.value
+                              ? 'جاري المعالجة...'
+                              : 'post'.tr,
+                      onTap:
+                          createController.isUploading.value
+                              ? null
+                              : () async {
+                                // التحقق من صحة النموذج أولاً
+                                if (!createController.formKey.currentState!
+                                    .validate()) {
+                                  return;
+                                }
+
+                                // التحقق من وجود صورة
+                                if (createController.localImage.value.isEmpty) {
+                                  Get.snackbar(
+                                    'error'.tr,
+                                    'category_image_required'.tr,
+                                    snackPosition: SnackPosition.BOTTOM,
+                                    backgroundColor: Colors.red,
+                                    colorText: Colors.white,
+                                  );
+                                  return;
+                                }
+
+                                try {
+                                  createController.isUploading.value = true;
+                                  createController.message.value =
+                                      'جاري التحضير...';
+
+                                  await createController.createCategory(
+                                    VendorController
+                                        .instance
+                                        .profileData
+                                        .value
+                                        .id!,
+                                  );
+
+                                  // إغلاق الصفحة وإرجاع نتيجة نجاح
+                                  Navigator.pop(context, true);
+                                } catch (e) {
+                                  createController.message.value =
+                                      'حدث خطأ: $e';
+
+                                  // عرض رسالة خطأ للمستخدم
+                                  Get.snackbar(
+                                    'error'.tr,
+                                    'category_creation_error'.tr + ': $e',
+                                    snackPosition: SnackPosition.BOTTOM,
+                                    backgroundColor: Colors.red,
+                                    colorText: Colors.white,
+                                  );
+
+                                  // إعادة تفعيل الزر بعد ثانيتين
+                                  Future.delayed(
+                                    const Duration(seconds: 2),
+                                    () {
+                                      createController.isUploading.value =
+                                          false;
+                                      createController.message.value = '';
+                                    },
+                                  );
+                                }
+                              },
+                    ),
+                  ],
+                );
+              }),
               const SizedBox(height: 32),
             ],
           ),

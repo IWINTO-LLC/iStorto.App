@@ -16,9 +16,12 @@ import 'package:istoreto/featured/cart/controller/save_for_later.dart';
 import 'package:istoreto/featured/cart/controller/saved_controller.dart';
 import 'package:istoreto/featured/currency/controller/currency_controller.dart';
 import 'package:istoreto/featured/home-page/views/widgets/banner_section.dart';
+import 'package:istoreto/featured/home-page/views/widgets/home_search_widget.dart';
 import 'package:istoreto/featured/home-page/views/widgets/just_foryou_section.dart';
 import 'package:istoreto/featured/home-page/views/widgets/major_category_section.dart';
 import 'package:istoreto/featured/home-page/views/widgets/most_popular_section.dart';
+import 'package:istoreto/featured/home-page/views/widgets/populer_product.dart';
+import 'package:istoreto/featured/home-page/views/widgets/the_last_vendor_section.dart';
 import 'package:istoreto/featured/home-page/views/widgets/topseller_section.dart';
 import 'package:istoreto/featured/payment/controller/order_controller.dart';
 import 'package:istoreto/featured/payment/services/address_service.dart';
@@ -26,19 +29,12 @@ import 'package:istoreto/featured/product/controllers/edit_product_controller.da
 import 'package:istoreto/featured/product/controllers/favorite_product_controller.dart';
 import 'package:istoreto/featured/product/controllers/product_controller.dart';
 import 'package:istoreto/featured/product/services/product_currency_service.dart';
-import 'package:istoreto/featured/product/views/widgets/product_widget_medium.dart';
-import 'package:istoreto/featured/shop/controller/vendor_controller.dart';
 import 'package:istoreto/featured/shop/data/vendor_repository.dart';
 import 'package:istoreto/featured/shop/follow/controller/follow_controller.dart';
 import 'package:istoreto/services/image_upload_service.dart';
 import 'package:istoreto/utils/bindings/general_binding.dart';
-import 'package:istoreto/utils/common/widgets/shimmers/shimmer.dart';
-import 'package:istoreto/utils/constants/color.dart';
-import 'package:istoreto/utils/constants/constant.dart';
 import 'package:istoreto/utils/constants/sizes.dart';
 import 'package:istoreto/utils/http/network.dart';
-import 'package:istoreto/widgets/language_switcher.dart';
-import 'package:sizer/sizer.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class HomePage extends StatelessWidget {
@@ -81,51 +77,14 @@ class HomePage extends StatelessWidget {
     Get.put(ProductCurrencyService());
 
     Get.put(FollowController());
+
     return SingleChildScrollView(
       child: Column(
         children: [
-          // Banner Carousel
+          // شريط البحث
           Padding(
             padding: const EdgeInsets.all(TSizes.defaultSpace),
-            child: Row(
-              children: [
-                Text(
-                  appName,
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: TColors.textBlack,
-                  ),
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: Container(
-                    height: 40,
-                    decoration: BoxDecoration(
-                      color: Colors.grey.shade100,
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: TextField(
-                      decoration: InputDecoration(
-                        hintText: 'search'.tr,
-                        hintStyle: TextStyle(color: Colors.grey.shade500),
-                        prefixIcon: Icon(
-                          Icons.search,
-                          color: Colors.grey.shade500,
-                        ),
-                        border: InputBorder.none,
-                        contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 8,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 8),
-                const CompactLanguageSwitcher(),
-              ],
-            ),
+            child: const HomeSearchWidget(),
           ),
           BannerSection(),
 
@@ -141,6 +100,14 @@ class HomePage extends StatelessWidget {
 
           const SizedBox(height: TSizes.spaceBtWsections),
           MostPopularSection(),
+          const SizedBox(height: TSizes.spaceBtWsections),
+
+          const TheLastVendorSection(),
+          const SizedBox(height: TSizes.spaceBtWsections),
+
+          // Just For You Section
+          const JustForYou(),
+
           const SizedBox(height: TSizes.spaceBtWsections),
           // New Items Section
           // NewItemSection(context: context),
@@ -222,6 +189,7 @@ class NewItemSection extends StatelessWidget {
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
             padding: const EdgeInsets.symmetric(horizontal: 16),
+            physics: const AlwaysScrollableScrollPhysics(),
             itemCount: 3,
             itemBuilder: (context, index) {
               final items = [
@@ -235,6 +203,7 @@ class NewItemSection extends StatelessWidget {
                 margin: const EdgeInsets.only(right: 16),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
                   children: [
                     Container(
                       height: 140,
@@ -277,161 +246,6 @@ class NewItemSection extends StatelessWidget {
             },
           ),
         ),
-      ],
-    );
-  }
-}
-
-class PopularProduct extends StatefulWidget {
-  const PopularProduct({super.key, required this.context});
-
-  final BuildContext context;
-
-  @override
-  State<PopularProduct> createState() => _PopularProductState();
-}
-
-class _PopularProductState extends State<PopularProduct> {
-  final ProductController _productController = Get.find<ProductController>();
-  final VendorController _vendorController = Get.find<VendorController>();
-
-  @override
-  void initState() {
-    super.initState();
-    _loadPopularProducts();
-  }
-
-  Future<void> _loadPopularProducts() async {
-    try {
-      final vendorId = _vendorController.profileData.value.id;
-      if (vendorId != null && vendorId.isNotEmpty) {
-        // Fetch popular products (you can modify this to use a specific type or criteria)
-        _productController.fetchOffersData(vendorId, 'all');
-      }
-    } catch (e) {
-      if (kDebugMode) {
-        print('Error loading popular products: $e');
-      }
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                'popular_products'.tr,
-                style: const TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              Row(
-                children: [
-                  Container(
-                    decoration: BoxDecoration(
-                      color: Colors.black,
-                      shape: BoxShape.circle,
-                    ),
-                    child: Center(
-                      child: Padding(
-                        padding: const EdgeInsets.all(TSizes.paddingSizeSmall),
-                        child: Icon(
-                          Icons.arrow_back_ios,
-                          color: Colors.white,
-                          size: 14,
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: TSizes.spaceBtWItems / 2),
-                  Container(
-                    decoration: BoxDecoration(
-                      color: Colors.black,
-                      shape: BoxShape.circle,
-                    ),
-                    child: Center(
-                      child: Padding(
-                        padding: const EdgeInsets.all(TSizes.paddingSizeSmall),
-                        child: const Icon(
-                          Icons.arrow_forward_ios,
-                          color: Colors.white,
-                          size: 14,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
-        const SizedBox(height: 16),
-        Obx(() {
-          if (_productController.isLoading.value) {
-            return SizedBox(
-              height: 200,
-              child: Center(child: TShimmerEffect(height: 200, width: 70.w)),
-            );
-          }
-
-          final products = _productController.allDynamic;
-
-          if (products.isEmpty) {
-            return SizedBox(
-              height: 200,
-              child: Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.shopping_bag_outlined,
-                      size: 48,
-                      color: Colors.grey.shade400,
-                    ),
-                    const SizedBox(height: 16),
-                    Text(
-                      'no_products_available'.tr,
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Colors.grey.shade600,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            );
-          }
-
-          return SizedBox(
-            height: 200,
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              itemCount: products.length,
-              itemBuilder: (context, index) {
-                final product = products[index];
-
-                return Container(
-                  width: MediaQuery.of(context).size.width - 32,
-                  margin: const EdgeInsets.only(right: 16),
-                  child: ProductWidgetMedium(
-                    product: product,
-                    vendorId: _vendorController.profileData.value.id ?? '',
-                    editMode: false,
-                    prefferHeight: 200,
-                    prefferWidth: MediaQuery.of(context).size.width - 32,
-                  ),
-                );
-              },
-            ),
-          );
-        }),
       ],
     );
   }

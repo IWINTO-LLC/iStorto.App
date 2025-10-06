@@ -15,6 +15,7 @@ import 'package:istoreto/featured/product/views/widgets/share_product_widget.dar
 import 'package:istoreto/featured/shop/view/widgets/category_product_grid.dart';
 import 'package:istoreto/featured/shop/view/widgets/control_panel_menu_black_product.dart';
 import 'package:istoreto/featured/shop/view/widgets/vendor_profile.dart';
+import 'package:istoreto/featured/product/views/widgets/product_rating_section.dart';
 import 'package:istoreto/utils/common/styles/styles.dart';
 import 'package:istoreto/utils/common/widgets/custom_shapes/containers/rounded_container.dart';
 import 'package:istoreto/utils/common/widgets/custom_widgets.dart';
@@ -382,6 +383,11 @@ class ProductDetailsPage extends StatelessWidget {
                 withunderLink: false,
               ),
             ),
+
+            const SizedBox(height: TSizes.spaceBtWsections),
+
+            // Product Rating Section
+            ProductRatingSection(product: product),
 
             const SizedBox(height: TSizes.spaceBtWsections),
 

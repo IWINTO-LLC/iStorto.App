@@ -91,12 +91,8 @@ class FollowController extends GetxController {
             users!user_follows_user_id_fkey (
               id,
               email,
-              name,
-              phone_number,
-              username,
-              is_active,
-              email_verified,
-              phone_verified,
+              raw_user_meta_data,
+              email_confirmed_at,
               created_at,
               updated_at
             )
@@ -110,7 +106,7 @@ class FollowController extends GetxController {
 
       final resultList =
           (response as List)
-              .map((data) => UserModel.fromJson(data['users']))
+              .map((data) => UserModel.fromAuthUsersJson(data['users']))
               .toList();
 
       return resultList;
@@ -230,22 +226,18 @@ class FollowController extends GetxController {
             users!user_follows_user_id_fkey (
               id,
               email,
-              name,
-              phone_number,
-              username,
-              is_active,
-              email_verified,
-              phone_verified,
+              raw_user_meta_data,
+              email_confirmed_at,
               created_at,
               updated_at
             )
           ''')
           .eq('vendor_id', vendorId)
-          .ilike('users.name', '%$query%');
+          .ilike('users.raw_user_meta_data->>name', '%$query%');
 
       final resultList =
           (response as List)
-              .map((data) => UserModel.fromJson(data['users']))
+              .map((data) => UserModel.fromAuthUsersJson(data['users']))
               .toList();
 
       if (kDebugMode) {
@@ -352,12 +344,8 @@ class FollowController extends GetxController {
             users!user_follows_user_id_fkey (
               id,
               email,
-              name,
-              phone_number,
-              username,
-              is_active,
-              email_verified,
-              phone_verified,
+              raw_user_meta_data,
+              email_confirmed_at,
               created_at,
               updated_at
             )
@@ -367,7 +355,7 @@ class FollowController extends GetxController {
 
       final resultList =
           (response as List)
-              .map((data) => UserModel.fromJson(data['users']))
+              .map((data) => UserModel.fromAuthUsersJson(data['users']))
               .toList();
 
       if (kDebugMode) {

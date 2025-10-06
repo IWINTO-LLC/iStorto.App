@@ -11,11 +11,10 @@ class TIconButtonTheme {
       foregroundColor: Colors.black,
       disabledForegroundColor: Colors.grey[400],
       disabledBackgroundColor: Colors.grey[300],
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.all(10),
       minimumSize: const Size(40, 40),
       maximumSize: const Size(40, 40),
       shape: const CircleBorder(),
-      iconSize: 20,
     ),
   );
 
@@ -27,7 +26,7 @@ class TIconButtonTheme {
       backgroundColor: Colors.black,
       disabledForegroundColor: Colors.grey[600],
       disabledBackgroundColor: Colors.grey[700],
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.all(10),
       minimumSize: const Size(40, 40),
       maximumSize: const Size(40, 40),
       shape: const CircleBorder(),

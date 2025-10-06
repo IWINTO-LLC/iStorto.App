@@ -196,9 +196,13 @@ class CartController extends GetxController {
       final loadedItems = await _cartRepository.loadCartItems();
 
       cartItems.value = loadedItems;
+      debugPrint('🛒 Loaded ${loadedItems.length} cart items');
 
       for (var item in cartItems) {
         productQuantities[item.product.id] = item.quantity.obs;
+        debugPrint(
+          '📦 Product ${item.product.title}: quantity ${item.quantity}',
+        );
       }
 
       // تأجيل تحديث الإجماليات لتجنب استدعاء setState أثناء البناء

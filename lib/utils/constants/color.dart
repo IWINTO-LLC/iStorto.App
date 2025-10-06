@@ -84,8 +84,8 @@ class TColors {
   static List<BoxShadow> tboxShadow = [
     BoxShadow(
       color: shadow, //Colors.grey.withValues(alpha: .15),
-      blurRadius: 3,
-      spreadRadius: 3,
+      blurRadius: 1,
+      spreadRadius: 0,
       offset: const Offset(0, 3),
     ),
   ];

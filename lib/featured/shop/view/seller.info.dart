@@ -24,10 +24,9 @@ class PolicyDisplayPage extends StatelessWidget {
   void _openWebView(BuildContext context, String url, String title) {
     if (url.trim().isEmpty) return;
 
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => PolicyWebViewPage(url: url.trim(), title: title),
-      ),
+    Get.toNamed(
+      '/policy-webview',
+      arguments: {'url': url.trim(), 'title': title},
     );
   }
 
@@ -454,12 +453,9 @@ class PolicyDisplayPage extends StatelessWidget {
                       right: Get.locale?.languageCode == 'ar' ? null : 16,
                       child: CustomFloatActionButton(
                         onTap:
-                            () => Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder:
-                                    (context) => PolicyPage(vendorId: vendorId),
-                              ),
+                            () => Get.toNamed(
+                              '/policy-page',
+                              arguments: {'vendorId': vendorId},
                             ),
                         icon: Icons.edit,
                       ),
@@ -702,22 +698,12 @@ class PolicyDisplayPage extends StatelessWidget {
     List<String> images,
     int initialIndex,
   ) {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder:
-            (context) =>
-                ImageGalleryPage(images: images, initialIndex: initialIndex),
-      ),
-    );
+    Get.to(() => ImageGalleryPage(images: images, initialIndex: initialIndex));
   }
 
   // دالة لفتح ملف PDF
   void _openPDF(BuildContext context, String pdfUrl, String title) {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => PDFViewerPage(pdfUrl: pdfUrl, title: title),
-      ),
-    );
+    Get.to(() => PDFViewerPage(pdfUrl: pdfUrl, title: title));
   }
 }
 
@@ -758,7 +744,7 @@ class _ImageGalleryPageState extends State<ImageGalleryPage> {
         elevation: 0,
         leading: IconButton(
           icon: Icon(Icons.close, color: Colors.white),
-          onPressed: () => Navigator.of(context).pop(),
+          onPressed: () => Get.back(),
         ),
         title: Text(
           "${_currentIndex + 1} / ${widget.images.length}",

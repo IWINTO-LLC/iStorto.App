@@ -79,12 +79,16 @@ class CreateCategoryController extends GetxController {
   }
 
   Future<void> uploadImage() async {
-    message.value = "uploading img";
-    if (localImage.value == "") return;
-
-    isUploading.value = true;
     try {
+      if (localImage.value.isEmpty) {
+        throw 'لا توجد صورة محلية للرفع';
+      }
+
       File img = File(localImage.value);
+
+      if (!await img.exists()) {
+        throw 'ملف الصورة غير موجود';
+      }
 
       // استخدام ImageUploadService
       final result = await ImageUploadService.instance.uploadImage(
@@ -96,7 +100,6 @@ class CreateCategoryController extends GetxController {
         imageUrl.value = result['url'] ?? '';
         if (kDebugMode) {
           print("Upload successful! URL: ${imageUrl.value}");
-          message.value = "Image uploaded successfully";
         }
       } else {
         throw Exception(result['error'] ?? 'Upload failed');
@@ -105,36 +108,68 @@ class CreateCategoryController extends GetxController {
       if (kDebugMode) {
         print("Upload error: $e");
       }
-      message.value = "Upload failed: ${e.toString()}";
       imageUrl.value = '';
-    } finally {
-      isUploading.value = false;
+      rethrow; // إعادة رمي الخطأ للتعامل معه في createCategory
     }
   }
 
   RxList<CategoryModel> tempItems = <CategoryModel>[].obs;
   Future<void> createCategory(String vendorId) async {
-    message.value = "uploading_photo".tr;
-    await uploadImage();
-    final newCat = CategoryModel(
-      title: name.text.trim(),
-      icon: imageUrl.value,
-      vendorId: vendorId,
-      createdAt: DateTime.now(),
-      id: Uuid().v4(),
-      isActive: true,
-    );
-
-    message.value = "sending_data".tr;
     try {
-      categoryRepository.addCategory(newCat);
-      message.value = "everything_done".tr;
-      CategoryController.instance.addItemToLists(newCat);
-      tempItems.add(newCat);
+      isUploading.value = true;
+
+      // التحقق من صحة البيانات
+      if (name.text.trim().isEmpty) {
+        throw 'category_name_required'.tr;
+      }
+
+      if (localImage.value.isEmpty) {
+        throw 'category_image_required'.tr;
+      }
+
+      // بدء عملية رفع الصورة
+      message.value = "جاري رفع الصورة...";
+      await uploadImage();
+
+      // التحقق من نجاح رفع الصورة
+      if (imageUrl.value.isEmpty) {
+        throw 'فشل في رفع الصورة';
+      }
+
+      // إنشاء كائن الفئة الجديدة
+      message.value = "جاري إعداد البيانات...";
+      final newCat = CategoryModel(
+        title: name.text.trim(),
+        icon: imageUrl.value,
+        vendorId: vendorId,
+        createdAt: DateTime.now(),
+        id: Uuid().v4(),
+        isActive: true,
+      );
+
+      // إرسال البيانات إلى قاعدة البيانات
+      message.value = "جاري إرسال البيانات...";
+      final createdCategory = await categoryRepository.addCategory(newCat);
+
+      // إضافة الفئة إلى القوائم المحلية
+      message.value = "جاري تحديث القوائم...";
+      CategoryController.instance.addItemToLists(createdCategory);
+      tempItems.add(createdCategory);
+
+      // إكمال العملية
+      message.value = "تم إنشاء الفئة بنجاح!";
+      await Future.delayed(
+        const Duration(milliseconds: 500),
+      ); // تأخير قصير لإظهار رسالة النجاح
+
       resetFields();
       message.value = "";
     } catch (e) {
-      throw 'some thing go wrong while add category';
+      message.value = "حدث خطأ أثناء إنشاء الفئة: $e";
+      isUploading.value = false;
+      throw 'some thing go wrong while add category: $e';
+    } finally {
+      isUploading.value = false;
     }
   }
 
@@ -143,8 +178,10 @@ class CreateCategoryController extends GetxController {
     selectedParent(CategoryModel.empty());
     isLoading(false);
     isFeatured(false);
+    isUploading(false);
     name.clear();
     localImage.value = "";
     imageUrl.value = "";
+    message.value = "";
   }
 }

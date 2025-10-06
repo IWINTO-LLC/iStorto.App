@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:istoreto/featured/home-page/views/widgets/category_section.dart';
+import 'package:istoreto/featured/home-page/views/widgets/category_vendors_page.dart';
 import 'package:istoreto/utils/common/widgets/shimmers/catrgory_shimmer.dart';
 import 'package:istoreto/utils/constants/sizes.dart';
 
@@ -114,7 +115,7 @@ class MajorCategorySection extends StatelessWidget {
       child: Column(
         children: [
           GestureDetector(
-            onTap: () => _onCategoryTap(category),
+            onTap: () => Get.to(() => CategoryVendorsPage(category: category)),
             child: Container(
               width: 90, // Slightly larger for better visibility
               height: 90,

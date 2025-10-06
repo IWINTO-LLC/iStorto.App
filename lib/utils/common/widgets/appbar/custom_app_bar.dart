@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:istoreto/controllers/translation_controller.dart';
-
-import 'package:istoreto/utils/constants/constant.dart';
 import 'package:istoreto/utils/constants/image_strings.dart';
 import 'package:istoreto/utils/constants/sizes.dart';
 
@@ -18,6 +15,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final bool showLogo;
   final IconData icon;
   final Color? iconColor;
+  final List<Widget>? actions;
 
   const CustomAppBar({
     super.key,
@@ -32,6 +30,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     this.showResetIcon = false,
     this.reset,
     this.showLogo = false,
+    this.actions,
   });
 
   @override
@@ -41,6 +40,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
       child: AppBar(
         backgroundColor: Theme.of(context).cardColor,
         toolbarHeight: 70,
+
         // iconTheme: IconThemeData(
         //   color: Theme.of(context).textTheme.bodyLarge?.color,
         // ),
@@ -59,6 +59,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
           ),
         ),
         centerTitle: true,
+
         excludeHeaderSemantics: true,
         titleSpacing: 0,
         elevation: 1,
@@ -70,6 +71,11 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                 ? Padding(
                   padding: const EdgeInsets.only(top: 10.0),
                   child: IconButton(
+                    style: Theme.of(context).iconButtonTheme.style?.copyWith(
+                      backgroundColor: MaterialStateProperty.all(
+                        Theme.of(context).cardColor,
+                      ),
+                    ),
                     icon: Icon(icon, size: 25, color: iconColor),
                     onPressed:
                         () =>
@@ -86,6 +92,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                   child: SizedBox(child: Image.asset(TImages.shop)),
                 )
                 : const SizedBox(),
+        actions: actions,
       ),
     );
   }

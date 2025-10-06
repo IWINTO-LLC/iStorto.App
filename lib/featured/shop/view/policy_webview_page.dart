@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
+import 'package:get/get.dart';
 
 import 'package:istoreto/utils/common/styles/styles.dart';
 
@@ -28,7 +29,7 @@ class _PolicyWebViewPageState extends State<PolicyWebViewPage> {
         elevation: 1,
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
-          onPressed: () => Navigator.of(context).pop(),
+          onPressed: () => Get.back(),
         ),
         actions: [
           IconButton(

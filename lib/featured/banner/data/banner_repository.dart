@@ -367,6 +367,120 @@ class BannerRepository extends GetxController {
     }
   }
 
+  // Convert vendor banner to company banner
+  Future<void> convertToCompanyBanner(BannerModel banner) async {
+    try {
+      if (banner.id == null || banner.id!.isEmpty) {
+        throw 'Banner ID is required';
+      }
+
+      await _client
+          .from('banners')
+          .update({
+            'scope': 'company',
+            'vendor_id': null,
+            'updated_at': DateTime.now().toIso8601String(),
+          })
+          .eq('id', banner.id!);
+
+      if (kDebugMode) {
+        print("Banner converted to company banner: ${banner.id}");
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print("Error converting banner to company banner: $e");
+      }
+      throw 'Failed to convert banner to company banner: ${e.toString()}';
+    }
+  }
+
+  // Delete banner (admin)
+  Future<void> deleteBannerAdmin(BannerModel banner) async {
+    try {
+      if (banner.id == null || banner.id!.isEmpty) {
+        throw 'Banner ID is required';
+      }
+
+      await _client.from('banners').delete().eq('id', banner.id!);
+
+      if (kDebugMode) {
+        print("Banner deleted: ${banner.id}");
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print("Error deleting banner: $e");
+      }
+      throw 'Failed to delete banner: ${e.toString()}';
+    }
+  }
+
+  // Add company banner
+  Future<void> addCompanyBanner(BannerModel banner) async {
+    try {
+      await _client.from('banners').insert({
+        'image': banner.image,
+        'target_screen': banner.targetScreen,
+        'active': banner.active,
+        'scope': 'company',
+        'vendor_id': null,
+        'title': banner.title,
+        'description': banner.description,
+        'priority': banner.priority ?? 0,
+        'created_at': DateTime.now().toIso8601String(),
+        'updated_at': DateTime.now().toIso8601String(),
+      });
+
+      if (kDebugMode) {
+        print("Company banner added successfully");
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print("Error adding company banner: $e");
+      }
+      throw 'Failed to add company banner: ${e.toString()}';
+    }
+  }
+
+  // Update banner fields
+  Future<void> updateBannerFields(
+    String bannerId, {
+    String? title,
+    String? description,
+    String? targetScreen,
+    int? priority,
+    bool? active,
+    BannerScope? scope,
+  }) async {
+    try {
+      final updateData = <String, dynamic>{
+        'updated_at': DateTime.now().toIso8601String(),
+      };
+
+      if (title != null) updateData['title'] = title;
+      if (description != null) updateData['description'] = description;
+      if (targetScreen != null) updateData['target_screen'] = targetScreen;
+      if (priority != null) updateData['priority'] = priority;
+      if (active != null) updateData['active'] = active;
+      if (scope != null) {
+        updateData['scope'] = scope.name;
+        if (scope == BannerScope.company) {
+          updateData['vendor_id'] = null;
+        }
+      }
+
+      await _client.from('banners').update(updateData).eq('id', bannerId);
+
+      if (kDebugMode) {
+        print("Banner updated successfully: $bannerId");
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print("Error updating banner: $e");
+      }
+      throw 'Failed to update banner: ${e.toString()}';
+    }
+  }
+
   // Search banners by target screen
   Future<List<BannerModel>> searchBannersByTargetScreen(
     String targetScreen,

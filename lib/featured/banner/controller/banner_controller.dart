@@ -87,16 +87,8 @@ class BannerController extends GetxController {
   // Convert vendor banner to company banner
   Future<void> convertToCompanyBanner(BannerModel banner) async {
     try {
-      if (banner.id == null || banner.id!.isEmpty) {
-        throw 'Banner ID is required';
-      }
-
-      final updatedBanner = banner.copyWith(
-        scope: BannerScope.company,
-        vendorId: null,
-      );
-
-      await bannersRepo.updateBanner(updatedBanner);
+      await bannersRepo.convertToCompanyBanner(banner);
+      await fetchAllBanners(); // Refresh banners list
     } catch (e) {
       throw 'Failed to convert banner: $e';
     }
@@ -105,15 +97,36 @@ class BannerController extends GetxController {
   // Delete banner (admin)
   Future<void> deleteBannerAdmin(BannerModel banner) async {
     try {
-      if (banner.id == null || banner.id!.isEmpty) {
-        throw 'Banner ID is required';
-      }
-
-      await bannersRepo.deleteBanner(banner.id!);
-      banners.remove(banner);
-      activeBanners.remove(banner);
+      await bannersRepo.deleteBannerAdmin(banner);
+      await fetchAllBanners(); // Refresh banners list
     } catch (e) {
       throw 'Failed to delete banner: $e';
+    }
+  }
+
+  // Update banner
+  Future<void> updateBanner(
+    String bannerId, {
+    String? title,
+    String? description,
+    String? targetScreen,
+    int? priority,
+    bool? active,
+    BannerScope? scope,
+  }) async {
+    try {
+      await bannersRepo.updateBannerFields(
+        bannerId,
+        title: title,
+        description: description,
+        targetScreen: targetScreen,
+        priority: priority,
+        active: active,
+        scope: scope,
+      );
+      await fetchAllBanners(); // Refresh banners list
+    } catch (e) {
+      throw 'Failed to update banner: $e';
     }
   }
 
@@ -193,12 +206,10 @@ class BannerController extends GetxController {
               debugPrint('  Scope: ${newBanner.scope.name}');
               debugPrint('  VendorId: ${newBanner.vendorId}');
 
-              BannerModel createdBanner = await bannersRepo.createBanner(
-                newBanner,
-              );
+              await bannersRepo.addCompanyBanner(newBanner);
 
-              banners.add(createdBanner);
-              activeBanners.add(createdBanner);
+              // Refresh banners list
+              await fetchAllBanners();
 
               TLoader.successSnackBar(
                 title: 'banner.banner_added_successfully'.tr,

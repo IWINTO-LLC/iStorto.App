@@ -90,6 +90,46 @@ class ProductRepository extends GetxController {
     }
   }
 
+  /// جلب جميع المنتجات بدون تحديد تاجر معين
+  /// Get all products without vendor ID parameter
+  Future<List<ProductModel>> getAllProductsWithoutVendor() async {
+    try {
+      final response = await _client
+          .from('products')
+          .select('''
+            *,
+            category:vendor_categories!vendor_category_id(
+              id,
+              title,
+              icon,
+              color,
+              is_active,
+              created_at,
+              updated_at
+            )
+          ''')
+          .eq('is_deleted', false)
+          .order('created_at', ascending: false);
+
+      final resultList =
+          (response as List)
+              .map((data) => ProductModel.fromJson(data))
+              .toList();
+
+      if (kDebugMode) {
+        print("=======All Products Without Vendor==============");
+        print("Count: ${resultList.length}");
+      }
+
+      return resultList;
+    } catch (e) {
+      if (kDebugMode) {
+        print("Error getting all products without vendor: $e");
+      }
+      throw 'Failed to get all products without vendor: ${e.toString()}';
+    }
+  }
+
   // Get all products for a vendor
   Future<List<ProductModel>> getProductsByVendor(String vendorId) async {
     try {

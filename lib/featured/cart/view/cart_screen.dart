@@ -9,25 +9,19 @@ import 'package:istoreto/utils/common/widgets/custom_widgets.dart';
 
 import 'empty_cart.dart';
 
-class CartScreen extends StatefulWidget {
-  const CartScreen({super.key});
+/// Controller لإدارة ScrollController في CartScreen
+class CartScrollController extends GetxController {
+  late ScrollController scrollController;
+  final CartController cartController = Get.find<CartController>();
 
   @override
-  State<CartScreen> createState() => _CartScreenState();
-}
-
-class _CartScreenState extends State<CartScreen> {
-  late ScrollController _scrollController;
-  late CartController cartController;
-
-  @override
-  void initState() {
-    super.initState();
-    _scrollController = ScrollController();
+  void onInit() {
+    super.onInit();
+    scrollController = ScrollController();
 
     // إضافة listener للتحكم في Visibility
-    _scrollController.addListener(() {
-      final direction = _scrollController.position.userScrollDirection;
+    scrollController.addListener(() {
+      final direction = scrollController.position.userScrollDirection;
       if (direction == ScrollDirection.forward) {
         cartController.setCheckoutVisibility(true);
       } else {
@@ -35,87 +29,99 @@ class _CartScreenState extends State<CartScreen> {
       }
     });
 
-    // تهيئة CartController
-    Get.lazyPut(() => VendorRepository());
-    cartController = Get.put(CartController());
-    cartController.toggleSelectAll(true);
+    // تأجيل تحديد الكل بعد تحميل البيانات
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      cartController.toggleSelectAll(true);
+    });
   }
 
   @override
-  void dispose() {
-    _scrollController.dispose();
-    super.dispose();
+  void onClose() {
+    scrollController.dispose();
+    super.onClose();
   }
+}
+
+class CartScreen extends StatelessWidget {
+  const CartScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        toolbarHeight: 75,
-        backgroundColor: Colors.white,
-        centerTitle: true,
-        elevation: 0,
-        title: Column(
+    // تهيئة Controllers
+    Get.lazyPut(() => VendorRepository());
+    final cartController = Get.put(CartController());
+    final scrollController = Get.put(CartScrollController());
+    return SafeArea(
+      child: Directionality(
+        textDirection: TextDirection.ltr,
+        child: Column(
           children: [
-            Text(
-              'cart.shopList'.tr,
-              style: titilliumBold.copyWith(color: Colors.black, fontSize: 16),
+            Column(
+              children: [
+                Text(
+                  'cart.shopList'.tr,
+                  style: titilliumBold.copyWith(
+                    color: Colors.black,
+                    fontSize: 16,
+                  ),
+                ),
+                const SizedBox(height: 5),
+                Obx(
+                  () =>
+                      (cartController.cartItems.isNotEmpty)
+                          ? TCustomWidgets.formattedPrice(
+                            cartController.totalPrice,
+                            14,
+                            Colors.black,
+                          )
+                          : const SizedBox.shrink(),
+                ),
+              ],
             ),
-            const SizedBox(height: 5),
-            Obx(
-              () =>
-                  (cartController.cartItems.isNotEmpty)
-                      ? TCustomWidgets.formattedPrice(
-                        cartController.totalPrice,
-                        14,
-                        Colors.black,
-                      )
-                      : const SizedBox.shrink(),
+
+            Expanded(
+              child: Obx(() {
+                // إضافة تحميل أثناء جلب البيانات
+                if (cartController.isLoading.value) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+
+                return SingleChildScrollView(
+                  controller: scrollController.scrollController,
+                  child:
+                      cartController.cartItems.isEmpty
+                          ? const EmptyCartView()
+                          : Column(
+                            children: [
+                              Column(
+                                children:
+                                    cartController.groupedByVendor.entries.map((
+                                      entry,
+                                    ) {
+                                      final vendorId = entry.key;
+                                      final items = entry.value;
+
+                                      // التحقق من وجود عناصر ذات كمية أكبر من الصفر
+                                      final hasValidItems = items.any(
+                                        (item) => item.quantity > 0,
+                                      );
+
+                                      if (!hasValidItems)
+                                        return const SizedBox.shrink();
+
+                                      return VendorCartBlock(
+                                        vendorId: vendorId,
+                                        items: items,
+                                      );
+                                    }).toList(),
+                              ),
+                              // const SavedItems(),
+                            ],
+                          ),
+                );
+              }),
             ),
           ],
-        ),
-      ),
-      body: SafeArea(
-        child: Directionality(
-          textDirection: TextDirection.ltr,
-          child: Obx(
-            () => SingleChildScrollView(
-              controller: _scrollController,
-              child:
-                  cartController.cartItems.isEmpty
-                      ? const EmptyCartView() // هذا هو الـ widget اللي صممناه
-                      : Column(
-                        children: [
-                          Column(
-                            children:
-                                cartController.groupedByVendor.entries.map((
-                                  entry,
-                                ) {
-                                  final vendorId = entry.key;
-                                  final items = entry.value;
-
-                                  final allZero = items.every((item) {
-                                    final quantity =
-                                        cartController
-                                            .productQuantities[item.product.id]
-                                            ?.value ??
-                                        0;
-                                    return quantity == 0;
-                                  });
-
-                                  if (allZero) return const SizedBox.shrink();
-
-                                  return VendorCartBlock(
-                                    vendorId: vendorId,
-                                    items: items,
-                                  );
-                                }).toList(),
-                          ),
-                          // const SavedItems(),
-                        ],
-                      ),
-            ),
-          ),
         ),
       ),
     );

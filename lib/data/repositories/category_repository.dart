@@ -276,6 +276,69 @@ class CategoryRepository extends GetxController {
     }
   }
 
+  // Batch update category sort orders to minimize database operations
+  Future<void> batchUpdateCategorySortOrder(
+    List<Map<String, dynamic>> updates,
+  ) async {
+    try {
+      if (updates.isEmpty) {
+        return;
+      }
+
+      if (kDebugMode) {
+        print("Batch updating ${updates.length} category sort orders");
+      }
+
+      // Use a transaction-like approach by updating each category individually
+      // but with optimized error handling and logging
+      int successCount = 0;
+      List<String> errors = [];
+
+      for (final update in updates) {
+        try {
+          await _client
+              .from('vendor_categories')
+              .update({
+                'sort_order': update['sort_order'],
+                'updated_at': update['updated_at'],
+              })
+              .eq('id', update['id']);
+
+          successCount++;
+
+          if (kDebugMode) {
+            print(
+              "Category sort order updated: ${update['id']} -> ${update['sort_order']}",
+            );
+          }
+        } catch (e) {
+          final errorMsg = "Failed to update category ${update['id']}: $e";
+          errors.add(errorMsg);
+
+          if (kDebugMode) {
+            print("Error: $errorMsg");
+          }
+        }
+      }
+
+      if (kDebugMode) {
+        print(
+          "Batch update completed: $successCount successful, ${errors.length} errors",
+        );
+      }
+
+      // If there were any errors, throw an exception with details
+      if (errors.isNotEmpty) {
+        throw 'Batch update failed: ${errors.join('; ')}';
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print("Error in batch update: $e");
+      }
+      throw 'Failed to batch update sort orders: ${e.toString()}';
+    }
+  }
+
   // Get categories count for vendor
   Future<int> getCategoriesCount(String vendorId) async {
     try {

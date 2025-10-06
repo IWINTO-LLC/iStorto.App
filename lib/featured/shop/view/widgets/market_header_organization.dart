@@ -35,13 +35,11 @@ import 'package:sizer/sizer.dart';
 class MarketHeaderSection extends StatefulWidget {
   final String userId;
   final bool editMode;
-  final bool isVendor;
 
   const MarketHeaderSection({
     super.key,
     required this.userId,
     required this.editMode,
-    required this.isVendor,
   });
 
   @override
@@ -323,7 +321,9 @@ class _MarketHeaderSectionState extends State<MarketHeaderSection> {
                             //   ),
                             // ),
                             Visibility(
-                              visible: widget.isVendor && !widget.editMode,
+                              visible:
+                                  VendorController.instance.isVendor.value &&
+                                  widget.editMode,
                               child: GestureDetector(
                                 onTap: () {},
                                 child: Padding(
@@ -446,15 +446,17 @@ class _MarketHeaderSectionState extends State<MarketHeaderSection> {
                         //       height: 0,
                         //     )),
 
-                        // if (!widget.isVendor &&
+                        // if (!vendorController.instance.isVendor.value &&
                         //     (userMap['inExclusive']) == true)
-                        if (!widget.isVendor && userMap.inExclusive)
+                        if (!VendorController.instance.isVendor.value &&
+                            userMap.inExclusive)
                           Visibility(
                             visible: !widget.editMode,
                             child: const SizedBox(height: 10),
                           ),
 
-                        if (!widget.isVendor && userMap.inExclusive)
+                        if (!VendorController.instance.isVendor.value &&
+                            userMap.inExclusive)
                           Visibility(
                             visible: !widget.editMode,
                             child: GestureDetector(
@@ -484,7 +486,8 @@ class _MarketHeaderSectionState extends State<MarketHeaderSection> {
                             ),
                           ),
 
-                        if (!widget.isVendor && userMap.inExclusive)
+                        if (!VendorController.instance.isVendor.value &&
+                            userMap.inExclusive)
                           Visibility(
                             visible: !widget.editMode,
                             child: const SizedBox(height: 10),
@@ -548,7 +551,7 @@ class _MarketHeaderSectionState extends State<MarketHeaderSection> {
                             ),
                           ),
                         const SizedBox(height: 10),
-                        widget.isVendor
+                        VendorController.instance.isVendor.value
                             ? Row(
                               mainAxisSize: MainAxisSize.min,
                               crossAxisAlignment: CrossAxisAlignment.end,
@@ -589,11 +592,11 @@ class _MarketHeaderSectionState extends State<MarketHeaderSection> {
                         //   height: 4,
                         // ),
                         Visibility(
-                          visible: widget.isVendor,
+                          visible: VendorController.instance.isVendor.value,
                           child: FollowNumber(vendorId: widget.userId),
                         ),
                         Visibility(
-                          visible: !widget.isVendor,
+                          visible: !VendorController.instance.isVendor.value,
                           child: const SizedBox(height: 27),
                         ),
                       ],
@@ -913,7 +916,8 @@ class _MarketHeaderSectionState extends State<MarketHeaderSection> {
                               ),
                             ],
                           ),
-                          if (userMap.brief != '' && !widget.isVendor)
+                          if (userMap.brief != '' &&
+                              !VendorController.instance.isVendor.value)
                             const SizedBox(height: 10),
                           userMap.brief != ''
                               ? Row(
@@ -979,7 +983,7 @@ class _MarketHeaderSectionState extends State<MarketHeaderSection> {
                                   }),
                                 ],
                               )
-                              : widget.isVendor
+                              : VendorController.instance.isVendor.value
                               ? GestureDetector(
                                 onTap:
                                     () => editBrief(

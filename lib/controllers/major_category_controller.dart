@@ -81,7 +81,9 @@ class MajorCategoryController extends GetxController {
     print('   - Featured Categories: ${_featuredCategories.length}');
     print('   - Root Categories: ${_rootCategories.length}');
     print('   - Is Loading: ${_isLoading.value}');
+    // Load all necessary data
     loadAllCategories();
+    loadActiveCategories();
   }
 
   // Load all categories

@@ -16,33 +16,33 @@ class AdminCurrenciesPage extends StatelessWidget {
       appBar: CustomAppBar(
         title: 'admin_zone_currencies'.tr,
         centerTitle: true,
-        reset: 
-          IconButton(
-            onPressed: () => _showAddCurrencyDialog(context, controller),
-            icon: const Icon(Icons.add),
-            tooltip: 'Add Currency',
-          ),
-        
+        reset: IconButton(
+          onPressed: () => _showAddCurrencyDialog(context, controller),
+          icon: const Icon(Icons.add),
+          tooltip: 'Add Currency',
+        ),
       ),
       body: Obx(() {
         if (controller.isLoading.value) {
           return const Center(child: CircularProgressIndicator());
         }
 
-        return Column(
-          children: [
-            // Search and filter section
-            _buildSearchSection(controller),
+        return SingleChildScrollView(
+          child: Column(
+            children: [
+              // Search and filter section
+              _buildSearchSection(controller),
 
-            // Statistics section
-            _buildStatisticsSection(controller),
+              // Statistics section
+              _buildStatisticsSection(controller),
 
-            // Currencies list
-            Expanded(child: _buildCurrenciesList(controller)),
+              // Currencies list
+              _buildCurrenciesList(controller),
 
-            // Pagination
-            _buildPaginationSection(controller),
-          ],
+              // Pagination
+              _buildPaginationSection(controller),
+            ],
+          ),
         );
       }),
       floatingActionButton: FloatingActionButton(
@@ -227,6 +227,8 @@ class AdminCurrenciesPage extends StatelessWidget {
 
     return ListView.builder(
       padding: const EdgeInsets.all(16),
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
       itemCount: controller.currencies.length,
       itemBuilder: (context, index) {
         final currency = controller.currencies[index];

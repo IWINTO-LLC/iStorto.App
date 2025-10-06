@@ -6,6 +6,7 @@ import 'package:istoreto/featured/product/data/product_model.dart';
 import 'package:istoreto/featured/product/views/widgets/product_actions_menu.dart';
 import 'package:istoreto/utils/common/widgets/custom_shapes/containers/rounded_container.dart';
 import 'package:istoreto/utils/constants/color.dart';
+import 'package:line_icons/line_icons.dart';
 
 class FavouriteButton extends StatelessWidget {
   final Color backgroundColor;
@@ -81,7 +82,7 @@ class FavouriteButton extends StatelessWidget {
                         if (isProcessing) ...[
                           // القلب الخلفي (أكبر حجماً)
                           Icon(
-                            CupertinoIcons.heart_fill,
+                            LineIcons.heart,
                             color: Colors.grey.withValues(alpha: 0.3),
                             size: withBackground ? size + 1 : size + 3,
                           ),
@@ -99,14 +100,14 @@ class FavouriteButton extends StatelessWidget {
                         ] else if (isSaved) ...[
                           // إذا كان المنتج محفوظاً، اعرض القلب الأحمر
                           Icon(
-                            CupertinoIcons.heart_fill,
+                            LineIcons.heart,
                             color: Colors.red,
                             size: withBackground ? size - 5 : size,
                           ),
                         ] else ...[
                           // إذا لم يكن محفوظاً، اعرض القلب الأسود
                           Icon(
-                            CupertinoIcons.heart,
+                            LineIcons.heart,
                             color: Colors.black,
                             size: withBackground ? size - 5 : size,
                           ),

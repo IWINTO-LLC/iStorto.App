@@ -3,18 +3,24 @@
     "stateManagement": "GetX",
     "widgetStructure": "each UI component must be a separate StatelessWidget file unless stateful behavior is required",
     "avoid": "inline build methods or nested widgets inside one file",
+    "AppbarStyle":"use custom app bar instead of app bar",
     "repositoryPattern": "each feature has its own repository and controller",
     "routing": "use GetX named routes with centralized route management",
     "localization": "multi-language support using GetX Translations",
     "localizationStructure": "each language has its own file with keys grouped by feature",
     "uiLabels": "must use translation keys, not hardcoded strings",
-  "codeStyle": "clean, scalable, with Arabic comments",
-  "waiting style":"try use shimmer instaid of progress circle",
+    "codeStyle": "clean, scalable, with Arabic comments",
+    "waiting style":"try use shimmer instaid of progress circle",
     "namingConvention": "camelCase for variables and methods, PascalCase for classes and widgets",
     "folderStructure": "feature-based: each feature has its own folder with model, controller, repository, and views",
     "componentNaming": "descriptive and feature-based",
     "agentBehavior": "always follow this structure unless explicitly told otherwise",
     "language": "Arabic for comments and UI labels",
+    "searchSystem": {
+        "comprehensiveSearch": "البحث الشامل في المنتجات والتجار والفئات",
+        "customSearch": "البحث المخصص مع الفلترة المتقدمة",
+        "searchHistory": "حفظ وعرض كلمات البحث السابقة",
+        "filterOptions": "فلترة حسب الفئة، التاجر، التوفر، المميز، التحقق، السعر"
+    },
     "alwaysApply": true
 }
-  

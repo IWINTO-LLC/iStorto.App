@@ -6,6 +6,7 @@ enum BannerScope {
 class BannerModel {
   String? id;
   String image;
+
   String targetScreen;
   bool active;
   String? vendorId; // معرف التاجر (null للبنرات العامة)

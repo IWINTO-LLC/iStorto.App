@@ -56,7 +56,6 @@ class NestedScrollViewForHome extends GetView<VendorController> {
                                   MarketHeaderSection(
                                     userId: vendorId,
                                     editMode: editMode,
-                                    isVendor: true,
                                   ),
                                   Padding(
                                     padding: const EdgeInsets.only(top: 28.0),

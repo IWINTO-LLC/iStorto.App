@@ -358,7 +358,8 @@ class VendorRepository extends GetxController {
         userId: data['user_id'],
         organizationName: data['organization_name'] ?? '',
         organizationBio: data['organization_bio'] ?? '',
-        bannerImage: data['banner_image'] ?? '',
+        bannerImage: data['cover_image'] ?? '',
+
         organizationLogo: data['organization_logo'] ?? '',
         organizationCover: data['organization_cover'] ?? '',
         website: data['website'] ?? '',

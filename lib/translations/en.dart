@@ -15,7 +15,80 @@ class En {
     'search': 'Search',
     'filter': 'Filter',
     'sort': 'Sort',
+
+    // Search Filters
+    'search_filters': 'Search Filters',
+    'reset_filters': 'Reset',
+    'apply_filters': 'Apply Filters',
+    'filters_applied': 'Filters Applied',
+    'filters_applied_message': 'Selected filters have been applied',
+    'item_type': 'Item Type',
+    'all': 'All',
+    'products': 'Products',
+    'vendors': 'Vendors',
+    'categories_filter': 'Categories',
+    'price_range': 'Price Range',
+    'from': 'From',
+    'to': 'To',
+    'minimum_price': 'Minimum Price',
+    'maximum_price': 'Maximum Price',
+    'rating': 'Rating',
+    'stars_and_more': 'stars and more',
+    'additional_filters': 'Additional Filters',
+    'verified_vendors_only': 'Verified Vendors Only',
+    'featured_products_only': 'Featured Products Only',
+    'please_enter_search_first': 'Please enter a search term first',
+    'all_results': 'All Results',
     'continue': 'Continue',
+
+    // Category Vendors
+    'vendors_in_category': 'Vendors in this category',
+    'error_loading_vendors': 'Error loading vendors',
+    'retry': 'Retry',
+    'no_vendors_in_category': 'No vendors in this category',
+    'no_vendors_in_category_subtitle':
+        'No vendors found associated with this category',
+    'specialization_level': 'Specialization Level',
+    'primary': 'Primary',
+    'vendor_selected': 'Vendor selected',
+    'browse_categories_subtitle': 'Browse different categories',
+    'no_categories_available': 'No categories available',
+
+    // Product Rating
+    'product_rating': 'Product Rating',
+    'rate_product': 'Rate Product',
+    'rating_submitted': 'Rating Submitted',
+    'thank_you_for_rating': 'Thank you for your rating',
+    'submit_rating': 'Submit Rating',
+    'error_loading_ratings': 'Error loading ratings',
+    'out_of_5_stars': 'out of 5 stars',
+    'ratings': 'ratings',
+    'rate_this_product': 'Rate this product',
+    'write_review_placeholder': 'Write your review here...',
+    'failed_to_submit_rating': 'Failed to submit rating',
+
+    // Category Priority Management
+    'manage_category_priority': 'Manage Category Priority',
+    'drag_drop_instructions':
+        'Drag and drop categories to reorder their priorities',
+    'priority_level': 'Priority Level',
+    'category_priority_updated': 'Category priority updated successfully',
+    'error_updating_priority': 'Error updating priority order',
+    'no_changes_detected': 'No changes detected',
+    'database_index_error': 'Database index error',
+    'concurrent_update_error': 'Concurrent update error',
+    'saving': 'Saving...',
+    'save_changes': 'Save Changes',
+    'loading_categories': 'Loading categories...',
+    'loading_vendors': 'Loading vendors',
+    'loading_vendors_for': 'Loading vendors for',
+    'manage_all_banners': 'Manage all banners',
+    'banners': 'banners',
+    'add_first_banner': 'Add first banner',
+    'view_all': 'View All',
+    'view_all_products': 'View All Products',
+    'your_favorite_shops': 'Your Favorite Shops',
+    'all_products_will_be_shown': 'All products will be shown',
 
     // Navigation
     'home': 'Home',
@@ -44,7 +117,6 @@ class En {
     'remember_me': 'Remember Me',
 
     // Products
-    'products': 'Products',
     'product_details': 'Product Details',
     'add_to_cart': 'Add to Cart',
     'add_to_favorites': 'Add to Favorites',
@@ -147,7 +219,7 @@ class En {
     'quantity': 'Quantity',
     'description': 'Description',
     'reviews': 'Reviews',
-    'rating': 'Rating',
+
     'in_stock': 'In Stock',
     'out_of_stock': 'Out of Stock',
 
@@ -196,6 +268,20 @@ class En {
     'new_items': 'New Items',
     'top_sellers': 'Top Sellers',
     'no_vendors_available': 'No vendors available',
+    'latest_vendor': 'Latest Vendor',
+    'all_vendors': 'All Vendors',
+    'all_vendors_will_be_shown': 'All vendors will be shown',
+    'error_loading_vendor': 'Error loading vendor',
+    'check_back_later': 'Check back later',
+    'unknown_vendor': 'Unknown Vendor',
+    'visit_store': 'Visit Store',
+    'follow': 'Follow',
+    'visiting_store': 'Visiting Store',
+    'store_page': 'Store Page',
+    'following_vendor': 'Following Vendor',
+    'followed_successfully': 'Followed Successfully',
+    'store': 'Store',
+    'vendor': 'Vendor',
     'vendor_description': 'Professional store',
     'verified': 'Verified',
     'royal': 'Royal',
@@ -798,7 +884,6 @@ class En {
     'inactive': 'Inactive',
     'unknown': 'Unknown',
 
-    'all': 'All',
     'set_active': 'Set Active',
     'set_pending': 'Set Pending',
     'set_inactive': 'Set Inactive',
@@ -919,11 +1004,6 @@ class En {
     'admin_zone_settings': 'Settings',
     'admin_zone_settings_desc': 'General app settings',
 
-    // Category Section
-    'browse_categories_subtitle':
-        'Explore our wide range of product categories',
-    'no_categories_available': 'No categories available at the moment',
-
     // Personal Information
     'personal_information': 'Personal Information',
     'profile_photo': 'Profile Photo',
@@ -983,5 +1063,24 @@ class En {
     'banner_deleted_successfully': 'Banner deleted successfully',
     'failed_to_delete_banner': 'Failed to delete banner',
     'failed_to_load_banners': 'Failed to load banners',
+
+    // Banner Edit
+    'edit_banner': 'Edit Banner',
+    'title': 'Title',
+    'target_screen': 'Target Screen',
+    'convert_to_company': 'Convert to Company',
+    'convert_to_company_description': 'Convert this banner to a company banner',
+    'banner_updated_successfully': 'Banner updated successfully',
+    'company': 'Company',
+    'no_banners_available': 'No banners available',
+
+    // Category Creation
+    'category_image_required': 'Please select an image for the category',
+    'category_creation_error': 'Error occurred while creating category',
+
+    // Category Priority Management (duplicate section removed)
+
+    // Vendor Category
+    'create_first_category': 'Create First Category',
   };
 }

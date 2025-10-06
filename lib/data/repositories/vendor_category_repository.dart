@@ -14,13 +14,13 @@ class VendorCategoryRepository extends GetxController {
     AddVendorCategoryRequest request,
   ) async {
     try {
-      if (request.vendorId.isEmpty || request.majorCategoryId.isEmpty) {
+      if (request.vendorId.isEmpty) {
         throw 'Vendor ID and Category ID are required';
       }
 
       final response =
           await _client
-              .from('vendor_major_categories')
+              .from('vendor_categories') // ✅ استخدام اسم الجدول الصحيح
               .insert(request.toJson())
               .select()
               .single();
@@ -48,11 +48,8 @@ class VendorCategoryRepository extends GetxController {
       }
 
       final response = await _client
-          .from('vendor_major_categories')
-          .select('''
-            *,
-            major_categories:major_category_id(*)
-          ''')
+          .from('vendor_categories')
+          .select('*')
           .eq('vendor_id', vendorId)
           .eq('is_active', true)
           .order('is_primary', ascending: false)
@@ -60,14 +57,13 @@ class VendorCategoryRepository extends GetxController {
           .order('created_at', ascending: true);
 
       if (kDebugMode) {
-        print("=======Vendor Categories==============");
         print("Vendor ID: $vendorId");
         print(response.toString());
       }
 
       final resultList =
           (response as List)
-              .map((data) => VendorCategoryModel.fromJsonWithCategory(data))
+              .map((data) => VendorCategoryModel.fromJson(data))
               .toList();
 
       return resultList;
@@ -89,11 +85,8 @@ class VendorCategoryRepository extends GetxController {
 
       final response =
           await _client
-              .from('vendor_major_categories')
-              .select('''
-            *,
-            major_categories:major_category_id(*)
-          ''')
+              .from('vendor_categories')
+              .select()
               .eq('vendor_id', vendorId)
               .eq('is_primary', true)
               .eq('is_active', true)
@@ -109,7 +102,7 @@ class VendorCategoryRepository extends GetxController {
         print(response.toString());
       }
 
-      return VendorCategoryModel.fromJsonWithCategory(response);
+      return VendorCategoryModel.fromJson(response);
     } catch (e) {
       if (kDebugMode) {
         print("Error getting vendor primary category: $e");
@@ -136,10 +129,11 @@ class VendorCategoryRepository extends GetxController {
 
       final response =
           await _client
-              .from('vendor_major_categories')
+              .from('vendor_categories')
               .update(updatedData)
               .eq('id', id)
               .select()
+              .order('created_at', ascending: true)
               .single();
 
       if (kDebugMode) {
@@ -156,44 +150,6 @@ class VendorCategoryRepository extends GetxController {
     }
   }
 
-  // تحديث أولويات الفئات
-  // Update category priorities
-  Future<bool> updateCategoryPriorities(
-    UpdateCategoryPrioritiesRequest request,
-  ) async {
-    try {
-      if (request.vendorId.isEmpty) {
-        throw 'Vendor ID is required';
-      }
-
-      // تحديث كل فئة على حدة
-      // Update each category individually
-      for (final item in request.priorities) {
-        await _client
-            .from('vendor_major_categories')
-            .update({
-              'priority': item.priority,
-              'updated_at': DateTime.now().toIso8601String(),
-            })
-            .eq('vendor_id', request.vendorId)
-            .eq('major_category_id', item.majorCategoryId);
-      }
-
-      if (kDebugMode) {
-        print("=======Updated Category Priorities==============");
-        print("Vendor ID: ${request.vendorId}");
-        print("Priorities: ${request.priorities.length}");
-      }
-
-      return true;
-    } catch (e) {
-      if (kDebugMode) {
-        print("Error updating category priorities: $e");
-      }
-      throw 'Failed to update category priorities: ${e.toString()}';
-    }
-  }
-
   // إزالة فئة من التاجر
   // Remove category from vendor
   Future<bool> removeVendorCategory(
@@ -206,10 +162,10 @@ class VendorCategoryRepository extends GetxController {
       }
 
       await _client
-          .from('vendor_major_categories')
+          .from('vendor_categories')
           .delete()
           .eq('vendor_id', vendorId)
-          .eq('major_category_id', majorCategoryId);
+          .eq('id', majorCategoryId);
 
       if (kDebugMode) {
         print("=======Removed Vendor Category==============");
@@ -237,13 +193,13 @@ class VendorCategoryRepository extends GetxController {
       }
 
       await _client
-          .from('vendor_major_categories')
+          .from('vendor_categories')
           .update({
             'is_active': false,
             'updated_at': DateTime.now().toIso8601String(),
           })
           .eq('vendor_id', vendorId)
-          .eq('major_category_id', majorCategoryId);
+          .eq('id', majorCategoryId);
 
       if (kDebugMode) {
         print("=======Deactivated Vendor Category==============");
@@ -271,13 +227,13 @@ class VendorCategoryRepository extends GetxController {
       }
 
       await _client
-          .from('vendor_major_categories')
+          .from('vendor_categories')
           .update({
             'is_active': true,
             'updated_at': DateTime.now().toIso8601String(),
           })
           .eq('vendor_id', vendorId)
-          .eq('major_category_id', majorCategoryId);
+          .eq('id', majorCategoryId);
 
       if (kDebugMode) {
         print("=======Activated Vendor Category==============");
@@ -300,14 +256,14 @@ class VendorCategoryRepository extends GetxController {
     String majorCategoryId,
   ) async {
     try {
-      if (vendorId.isEmpty || majorCategoryId.isEmpty) {
+      if (vendorId.isEmpty) {
         throw 'Vendor ID and Category ID are required';
       }
 
       // إلغاء الفئة الأساسية الحالية
       // Remove current primary category
       await _client
-          .from('vendor_major_categories')
+          .from('vendor_categories')
           .update({
             'is_primary': false,
             'updated_at': DateTime.now().toIso8601String(),
@@ -318,17 +274,16 @@ class VendorCategoryRepository extends GetxController {
       // تعيين الفئة الجديدة كأساسية
       // Set new category as primary
       await _client
-          .from('vendor_major_categories')
+          .from('vendor_categories')
           .update({
             'is_primary': true,
             'updated_at': DateTime.now().toIso8601String(),
           })
           .eq('vendor_id', vendorId)
-          .eq('major_category_id', majorCategoryId);
+          .eq('id', majorCategoryId);
 
       if (kDebugMode) {
         print("=======Set Primary Category==============");
-        print("Vendor ID: $vendorId, Category ID: $majorCategoryId");
       }
 
       return true;
@@ -342,21 +297,17 @@ class VendorCategoryRepository extends GetxController {
 
   // التحقق من وجود فئة للتاجر
   // Check if vendor has category
-  Future<bool> hasVendorCategory(
-    String vendorId,
-    String majorCategoryId,
-  ) async {
+  Future<bool> hasVendorCategory(String vendorId) async {
     try {
-      if (vendorId.isEmpty || majorCategoryId.isEmpty) {
+      if (vendorId.isEmpty) {
         return false;
       }
 
       final response =
           await _client
-              .from('vendor_major_categories')
+              .from('vendor_categories')
               .select('id')
               .eq('vendor_id', vendorId)
-              .eq('major_category_id', majorCategoryId)
               .eq('is_active', true)
               .maybeSingle();
 
@@ -378,7 +329,7 @@ class VendorCategoryRepository extends GetxController {
       }
 
       final response = await _client
-          .from('vendor_major_categories')
+          .from('vendor_categories')
           .select('id')
           .eq('vendor_id', vendorId)
           .eq('is_active', true);
@@ -399,32 +350,37 @@ class VendorCategoryRepository extends GetxController {
     String query,
   ) async {
     try {
-      if (vendorId.isEmpty) {
-        throw 'Vendor ID is required';
+      if (query.isEmpty) {
+        throw 'Search query is required';
       }
 
-      final response = await _client
-          .from('vendor_major_categories')
-          .select('''
-            *,
-            major_categories:major_category_id(*)
-          ''')
-          .eq('vendor_id', vendorId)
+      // Build the query based on whether vendorId is provided
+      var queryBuilder = _client
+          .from('vendor_categories')
+          .select('*')
           .eq('is_active', true)
           .or('''
-            major_categories.name.ilike.%$query%,
-            major_categories.arabic_name.ilike.%$query%,
+            title.ilike.%$query%,
             custom_description.ilike.%$query%
           ''');
 
+      // Only filter by vendor_id if it's provided
+      if (vendorId.isNotEmpty) {
+        queryBuilder = queryBuilder.eq('vendor_id', vendorId);
+      }
+
+      final response = await queryBuilder;
+
       final resultList =
           (response as List)
-              .map((data) => VendorCategoryModel.fromJsonWithCategory(data))
+              .map((data) => VendorCategoryModel.fromJson(data))
               .toList();
 
       if (kDebugMode) {
         print("=======Search Vendor Categories==============");
-        print("Vendor ID: $vendorId, Query: $query");
+        print(
+          "Vendor ID: ${vendorId.isEmpty ? 'All' : vendorId}, Query: $query",
+        );
         print("Results: ${resultList.length}");
       }
 

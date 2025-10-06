@@ -1,465 +1,464 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:get/get.dart';
 import 'package:istoreto/controllers/translation_controller.dart';
-import 'package:istoreto/featured/product/cashed_network_image_free.dart';
 import 'package:istoreto/featured/product/controllers/favorite_product_controller.dart';
 import 'package:istoreto/featured/product/data/product_model.dart';
 import 'package:istoreto/featured/product/views/widgets/bottom_add_tocart.dart';
 import 'package:istoreto/featured/product/views/widgets/one_product_details.dart';
+import 'package:istoreto/featured/product/views/widgets/product_image_slider_mini.dart';
 import 'package:istoreto/featured/product/views/widgets/product_widget_horz.dart';
 import 'package:istoreto/featured/product/views/widgets/product_widget_medium.dart';
 import 'package:istoreto/featured/shop/controller/vendor_controller.dart';
+import 'package:istoreto/featured/shop/data/vendor_model.dart';
+import 'package:istoreto/featured/shop/follow/controller/follow_controller.dart';
+import 'package:istoreto/featured/shop/follow/screens/favorite_vendors.dart';
 import 'package:istoreto/utils/actions.dart';
 import 'package:istoreto/utils/common/styles/styles.dart';
 import 'package:istoreto/utils/common/widgets/custom_widgets.dart';
 import 'package:istoreto/utils/constants/color.dart';
 import 'package:sizer/sizer.dart';
 
-class FavoriteProductsPage extends StatefulWidget {
+class FavoriteProductsPage extends StatelessWidget {
   const FavoriteProductsPage({super.key});
 
   @override
-  State<FavoriteProductsPage> createState() => _FavoriteProductsPageState();
-}
-
-class _FavoriteProductsPageState extends State<FavoriteProductsPage> {
-  late final FavoriteProductsController controller;
-  final TextEditingController _searchController = TextEditingController();
-  final FocusNode _searchFocusNode = FocusNode();
-  Timer? _updateTimer;
-
-  bool _isSearchExpanded = false;
-  String _searchQuery = '';
-  int _viewMode = 1; // 0: قائمة، 1: شبكة 4 عناصر، 2: شبكة عنصرين
-
-  List<ProductModel> _filteredProducts = [];
-
-  @override
-  void initState() {
-    super.initState();
-    // تهيئة controller باستخدام Get.put
-    controller = Get.put(FavoriteProductsController());
-
-    _searchController.addListener(_onSearchChanged);
-
-    // تهيئة المنتجات المفلترة بعد بناء الواجهة
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _loadFavoriteProducts();
-    });
-
-    // بدء مؤقت لتحديث المنتجات كل ثانية
-    _startUpdateTimer();
-  }
-
-  void _loadFavoriteProducts() {
-    // تحديث المنتجات المفلترة
-    setState(() {
-      _filteredProducts = List.from(controller.favoriteProducts);
-    });
-
-    print('🔍 Loading favorite products...');
-    print(
-      '🔍 Controller products count: ${controller.favoriteProducts.length}',
-    );
-    print('🔍 Filtered products count: ${_filteredProducts.length}');
-
-    // إذا كانت المنتجات فارغة، حاول تحميلها مرة أخرى بعد فترة
-    if (_filteredProducts.isEmpty) {
-      Future.delayed(const Duration(milliseconds: 500), () {
-        if (mounted) {
-          setState(() {
-            _filteredProducts = List.from(controller.favoriteProducts);
-          });
-          print(
-            '🔍 After delay - Controller products count: ${controller.favoriteProducts.length}',
-          );
-          print(
-            '🔍 After delay - Filtered products count: ${_filteredProducts.length}',
-          );
-        }
-      });
-    }
-  }
-
-  @override
-  void dispose() {
-    _searchController.dispose();
-    _searchFocusNode.dispose();
-    _updateTimer?.cancel();
-    super.dispose();
-  }
-
-  void _startUpdateTimer() {
-    _updateTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      if (mounted && controller.favoriteProducts.isNotEmpty) {
-        setState(() {
-          _filteredProducts = List.from(controller.favoriteProducts);
-        });
-        // إيقاف المؤقت بعد التحديث
-        timer.cancel();
-      }
-    });
-  }
-
-  void _onSearchChanged() {
-    setState(() {
-      _searchQuery = _searchController.text;
-      _filterProducts();
-    });
-  }
-
-  void _filterProducts() {
-    List<ProductModel> filtered = List.from(controller.favoriteProducts);
-
-    if (_searchQuery.isNotEmpty) {
-      filtered =
-          filtered
-              .where(
-                (product) =>
-                    (product.title.toLowerCase().contains(
-                      _searchQuery.toLowerCase(),
-                    )) ||
-                    (product.description?.toLowerCase().contains(
-                          _searchQuery.toLowerCase(),
-                        ) ??
-                        false),
-              )
-              .toList();
-    }
-
-    setState(() {
-      _filteredProducts = filtered;
-    });
-  }
-
-  void _toggleSearch() {
-    setState(() {
-      _isSearchExpanded = !_isSearchExpanded;
-      if (_isSearchExpanded) {
-        _searchFocusNode.requestFocus();
-      } else {
-        _searchController.clear();
-        _searchQuery = '';
-        _filterProducts();
-        _searchFocusNode.unfocus();
-      }
-    });
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        elevation: 0,
-        backgroundColor: Colors.white,
-        title:
-            _isSearchExpanded
-                ? TextField(
-                  controller: _searchController,
-                  focusNode: _searchFocusNode,
-                  decoration: InputDecoration(
-                    hintText: 'search_in_favorites'.tr,
-                    border: InputBorder.none,
-                    hintStyle: TextStyle(color: Colors.grey[400], fontSize: 16),
-                  ),
-                  style: const TextStyle(fontSize: 16),
-                )
-                : Text(
-                  'favorite_products'.tr,
-                  style: titilliumBold.copyWith(
-                    fontSize: 18,
-                    color: Colors.black,
-                  ),
-                ),
-        centerTitle: true,
-        leading: IconButton(
-          onPressed: () => Navigator.of(context).pop(),
-          icon: Icon(
-            TranslationController.instance.isRTL
-                ? Icons.arrow_back
-                : Icons.arrow_back_ios,
-            color: Colors.black,
-          ),
-        ),
-        actions: [
-          // زر البحث
-          IconButton(
-            onPressed: _toggleSearch,
-            icon: Icon(
-              _isSearchExpanded ? Icons.close : Icons.search,
-              color: Colors.black,
-            ),
-          ),
-          // زر طرق العرض
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: PopupMenuButton<String>(
-              icon: const Icon(Icons.more_vert, color: Colors.black),
-              onSelected: (value) {
-                if (value == 'list_view') {
-                  setState(() {
-                    _viewMode = 0;
-                  });
-                } else if (value == 'grid_4') {
-                  setState(() {
-                    _viewMode = 1;
-                  });
-                } else if (value == 'grid_2') {
-                  setState(() {
-                    _viewMode = 2;
-                  });
-                }
-              },
-              itemBuilder:
-                  (BuildContext context) => [
-                    PopupMenuItem<String>(
-                      value: 'list_view',
-                      child: Row(
-                        children: [
-                          Icon(
-                            _viewMode == 0 ? Icons.check : Icons.view_list,
-                            size: 20,
-                            color: _viewMode == 0 ? Colors.green : null,
-                          ),
-                          const SizedBox(width: 8),
-                          Text(
-                            'list_view'.tr,
-                            style: TextStyle(
-                              color: _viewMode == 0 ? Colors.green : null,
-                              fontWeight:
-                                  _viewMode == 0 ? FontWeight.bold : null,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    PopupMenuItem<String>(
-                      value: 'grid_4',
-                      child: Row(
-                        children: [
-                          Icon(
-                            _viewMode == 1 ? Icons.check : Icons.grid_view,
-                            size: 20,
-                            color: _viewMode == 1 ? Colors.green : null,
-                          ),
-                          const SizedBox(width: 8),
-                          Text(
-                            'grid_4_items'.tr,
-                            style: TextStyle(
-                              color: _viewMode == 1 ? Colors.green : null,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    PopupMenuItem<String>(
-                      value: 'grid_2',
-                      child: Row(
-                        children: [
-                          Icon(
-                            _viewMode == 2 ? Icons.check : Icons.grid_view,
-                            size: 20,
-                            color: _viewMode == 2 ? Colors.green : null,
-                          ),
-                          const SizedBox(width: 8),
-                          Text(
-                            'grid_2_items'.tr,
-                            style: TextStyle(
-                              color: _viewMode == 2 ? Colors.green : null,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-            ),
+    final FavoriteProductsController controller =
+        Get.find<FavoriteProductsController>();
+
+    return SafeArea(
+      child: Column(
+        children: [
+          // AppBar Content
+          _AppBarContent(),
+
+          // Body Content
+          Expanded(
+            child: Obx(() {
+              final filteredProducts = controller.filteredProducts;
+
+              return filteredProducts.isEmpty
+                  ? _EmptyState(searchQuery: controller.searchQuery.value)
+                  : _MainContent(filteredProducts: filteredProducts);
+            }),
           ),
         ],
       ),
-      body: SafeArea(
-        child:
-            _filteredProducts.isEmpty
-                ? Center(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Image.asset(
-                        'assets/images/liquid_loading.gif',
-                        width: 70.w,
-                        height: 70.w,
+    );
+  }
+}
+
+class _AppBarContent extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final FavoriteProductsController controller =
+        Get.find<FavoriteProductsController>();
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.1),
+            spreadRadius: 1,
+            blurRadius: 3,
+            offset: const Offset(0, 1),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          // Back Button
+          IconButton(
+            onPressed: () => Get.back(),
+            icon: Icon(
+              TranslationController.instance.isRTL
+                  ? Icons.arrow_back
+                  : Icons.arrow_back_ios,
+              color: Colors.black,
+            ),
+          ),
+
+          // Title or Search Field
+          Expanded(
+            child: Obx(
+              () =>
+                  controller.isSearchExpanded.value
+                      ? TextField(
+                        controller: controller.searchController,
+                        focusNode: controller.searchFocusNode,
+                        decoration: InputDecoration(
+                          hintText: 'search_in_favorites'.tr,
+                          border: InputBorder.none,
+                          hintStyle: TextStyle(
+                            color: Colors.grey[400],
+                            fontSize: 16,
+                          ),
+                        ),
+                        style: const TextStyle(fontSize: 16),
+                      )
+                      : Center(
+                        child: Text(
+                          'favorite_products'.tr,
+                          style: titilliumBold.copyWith(
+                            fontSize: 18,
+                            color: Colors.black,
+                          ),
+                        ),
                       ),
-                      Text(
-                        _searchQuery.isNotEmpty
-                            ? "no_search_results".tr
-                            : "no_items_yet".tr,
-                        style: titilliumBold.copyWith(fontSize: 15),
-                      ),
-                    ],
+            ),
+          ),
+
+          // Search Toggle Button
+          IconButton(
+            onPressed: controller.toggleSearch,
+            icon: Obx(
+              () => Icon(
+                controller.isSearchExpanded.value ? Icons.close : Icons.search,
+                color: Colors.black,
+              ),
+            ),
+          ),
+
+          // View Mode Button
+          PopupMenuButton<String>(
+            icon: const Icon(Icons.more_vert, color: Colors.black),
+            onSelected: (value) {
+              switch (value) {
+                case 'list_view':
+                  controller.viewMode.value = 0;
+                  break;
+                case 'grid_4':
+                  controller.viewMode.value = 1;
+                  break;
+                case 'grid_2':
+                  controller.viewMode.value = 2;
+                  break;
+              }
+            },
+            itemBuilder: (BuildContext context) {
+              return [
+                PopupMenuItem<String>(
+                  value: 'list_view',
+                  child: Obx(
+                    () => Row(
+                      children: [
+                        Icon(
+                          controller.viewMode.value == 0
+                              ? Icons.check
+                              : Icons.view_list,
+                          size: 20,
+                          color:
+                              controller.viewMode.value == 0
+                                  ? Colors.green
+                                  : null,
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          'list_view'.tr,
+                          style: TextStyle(
+                            color:
+                                controller.viewMode.value == 0
+                                    ? Colors.green
+                                    : null,
+                            fontWeight:
+                                controller.viewMode.value == 0
+                                    ? FontWeight.bold
+                                    : null,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                )
-                : _buildProductView(),
+                ),
+                PopupMenuItem<String>(
+                  value: 'grid_4',
+                  child: Obx(
+                    () => Row(
+                      children: [
+                        Icon(
+                          controller.viewMode.value == 1
+                              ? Icons.check
+                              : Icons.grid_view,
+                          size: 20,
+                          color:
+                              controller.viewMode.value == 1
+                                  ? Colors.green
+                                  : null,
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          'grid_4_items'.tr,
+                          style: TextStyle(
+                            color:
+                                controller.viewMode.value == 1
+                                    ? Colors.green
+                                    : null,
+                            fontWeight:
+                                controller.viewMode.value == 1
+                                    ? FontWeight.bold
+                                    : null,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                PopupMenuItem<String>(
+                  value: 'grid_2',
+                  child: Obx(
+                    () => Row(
+                      children: [
+                        Icon(
+                          controller.viewMode.value == 2
+                              ? Icons.check
+                              : Icons.grid_view,
+                          size: 20,
+                          color:
+                              controller.viewMode.value == 2
+                                  ? Colors.green
+                                  : null,
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          'grid_2_items'.tr,
+                          style: TextStyle(
+                            color:
+                                controller.viewMode.value == 2
+                                    ? Colors.green
+                                    : null,
+                            fontWeight:
+                                controller.viewMode.value == 2
+                                    ? FontWeight.bold
+                                    : null,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ];
+            },
+          ),
+        ],
       ),
     );
   }
+}
 
-  Widget _buildProductView() {
-    switch (_viewMode) {
-      case 0:
-        return _buildListView();
-      case 1:
-        return _buildGridView4();
-      case 2:
-        return _buildGridView2();
-      default:
-        return _buildListView();
-    }
+class _EmptyState extends StatelessWidget {
+  final String searchQuery;
+
+  const _EmptyState({required this.searchQuery});
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Image.asset(
+            'assets/images/liquid_loading.gif',
+            width: 70.w,
+            height: 70.w,
+          ),
+          Text(
+            searchQuery.isNotEmpty ? "no_search_results".tr : "no_items_yet".tr,
+            style: titilliumBold.copyWith(fontSize: 15),
+          ),
+        ],
+      ),
+    );
   }
+}
 
-  Widget _buildListView() {
-    return ListView.builder(
-      padding: const EdgeInsets.all(16),
-      itemCount: _filteredProducts.length,
-      itemBuilder: (context, index) {
-        return Padding(
-          padding: const EdgeInsets.only(bottom: 16),
-          child: ActionsMethods.customLongMethode(
-            _filteredProducts[index],
-            context,
-            VendorController.instance.isVendor.value,
-            ProductWidgetHorzental(
-              product: _filteredProducts[index],
-              vendorId: _filteredProducts[index].vendorId ?? '',
-            ),
-            () => Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder:
-                    (context) => Scaffold(
-                      bottomSheet: BottomAddToCart(
-                        product: _filteredProducts[index],
-                      ),
+class _MainContent extends StatelessWidget {
+  final List<ProductModel> filteredProducts;
+
+  const _MainContent({required this.filteredProducts});
+
+  @override
+  Widget build(BuildContext context) {
+    final FavoriteProductsController controller =
+        Get.find<FavoriteProductsController>();
+
+    return Obx(() {
+      switch (controller.viewMode.value) {
+        case 0:
+          return _ListViewWithVendors(filteredProducts: filteredProducts);
+        case 1:
+          return _GridView4WithVendors(filteredProducts: filteredProducts);
+        case 2:
+          return _GridView2WithVendors(filteredProducts: filteredProducts);
+        default:
+          return _ListViewWithVendors(filteredProducts: filteredProducts);
+      }
+    });
+  }
+}
+
+class _ListViewWithVendors extends StatelessWidget {
+  final List<ProductModel> filteredProducts;
+
+  const _ListViewWithVendors({required this.filteredProducts});
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          _ProductView(filteredProducts: filteredProducts),
+          _FavoriteVendorsSection(),
+        ],
+      ),
+    );
+  }
+}
+
+class _GridView4WithVendors extends StatelessWidget {
+  final List<ProductModel> filteredProducts;
+
+  const _GridView4WithVendors({required this.filteredProducts});
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          _ProductView(filteredProducts: filteredProducts),
+          _FavoriteVendorsSection(),
+        ],
+      ),
+    );
+  }
+}
+
+class _GridView2WithVendors extends StatelessWidget {
+  final List<ProductModel> filteredProducts;
+
+  const _GridView2WithVendors({required this.filteredProducts});
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          _ProductView(filteredProducts: filteredProducts),
+          _FavoriteVendorsSection(),
+        ],
+      ),
+    );
+  }
+}
+
+class _ProductView extends StatelessWidget {
+  final List<ProductModel> filteredProducts;
+
+  const _ProductView({required this.filteredProducts});
+
+  @override
+  Widget build(BuildContext context) {
+    final FavoriteProductsController controller =
+        Get.find<FavoriteProductsController>();
+
+    return Obx(() {
+      switch (controller.viewMode.value) {
+        case 0:
+          return _ListView(filteredProducts: filteredProducts);
+        case 1:
+          return _GridView4(filteredProducts: filteredProducts);
+        case 2:
+          return _GridView2(filteredProducts: filteredProducts);
+        default:
+          return _ListView(filteredProducts: filteredProducts);
+      }
+    });
+  }
+}
+
+class _ListView extends StatelessWidget {
+  final List<ProductModel> filteredProducts;
+
+  const _ListView({required this.filteredProducts});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        ...filteredProducts
+            .map(
+              (product) => Container(
+                margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                child: ActionsMethods.customLongMethode(
+                  product,
+                  context,
+                  VendorController.instance.isVendor.value,
+                  ProductWidgetHorzental(
+                    product: product,
+                    vendorId: product.vendorId ?? '',
+                  ),
+                  () => Get.to(
+                    () => Scaffold(
+                      bottomSheet: BottomAddToCart(product: product),
                       body: SafeArea(
                         child: ProductDetailsPage(
-                          product: _filteredProducts[index],
+                          product: product,
                           edit: false,
-                          vendorId: _filteredProducts[index].vendorId ?? '',
+                          vendorId: product.vendorId ?? '',
                         ),
                       ),
                     ),
+                  ),
+                ),
               ),
-            ),
-
-            //  Navigator.of(context).push(
-            //   MaterialPageRoute(
-            //     builder: (context) => ProductDetails(
-            //       product: _filteredProducts[index],
-            //       selected: index,
-            //       vendorId: _filteredProducts[index].vendorId,
-            //       spotList: _filteredProducts,
-            //     ),
-            //   ),
-            // ),
-          ),
-        );
-      },
+            )
+            .toList(),
+      ],
     );
   }
+}
 
-  Widget _buildGridView4() {
+class _GridView4 extends StatelessWidget {
+  final List<ProductModel> filteredProducts;
+
+  const _GridView4({required this.filteredProducts});
+
+  @override
+  Widget build(BuildContext context) {
     return GridView.builder(
       padding: const EdgeInsets.all(16),
+      physics: const NeverScrollableScrollPhysics(),
+      shrinkWrap: true,
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 4,
         childAspectRatio: 0.6,
         crossAxisSpacing: 8,
         mainAxisSpacing: 8,
       ),
-      itemCount: _filteredProducts.length,
+      itemCount: filteredProducts.length,
       itemBuilder: (context, index) {
         return ActionsMethods.customLongMethode(
-          _filteredProducts[index],
+          filteredProducts[index],
           context,
           VendorController.instance.isVendor.value,
-          _buildGridItem(_filteredProducts[index]),
-          () => Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder:
-                  (context) => Scaffold(
-                    bottomSheet: BottomAddToCart(
-                      product: _filteredProducts[index],
-                    ),
-                    body: SafeArea(
-                      child: ProductDetailsPage(
-                        product: _filteredProducts[index],
-                        edit: false,
-                        vendorId: _filteredProducts[index].vendorId ?? '',
-                      ),
-                    ),
-                  ),
+          _buildGridItem(filteredProducts[index]),
+          () => Get.to(
+            () => Scaffold(
+              bottomSheet: BottomAddToCart(product: filteredProducts[index]),
+              body: SafeArea(
+                child: ProductDetailsPage(
+                  product: filteredProducts[index],
+                  edit: false,
+                  vendorId: filteredProducts[index].vendorId ?? '',
+                ),
+              ),
             ),
           ),
         );
       },
-    );
-  }
-
-  Widget _buildGridView2() {
-    return Padding(
-      padding: const EdgeInsets.only(
-        left: 18,
-        right: 18,
-        top: 18.0,
-        bottom: 30,
-      ),
-      child: MasonryGridView.count(
-        itemCount: _filteredProducts.length,
-        crossAxisCount: 2,
-        mainAxisSpacing: 16,
-        crossAxisSpacing: 16,
-        padding: const EdgeInsets.all(0),
-        physics: const NeverScrollableScrollPhysics(),
-        shrinkWrap: true,
-        itemBuilder:
-            (BuildContext context, int index) =>
-                ActionsMethods.customLongMethode(
-                  _filteredProducts[index],
-                  context,
-                  VendorController.instance.isVendor.value,
-                  ProductWidgetMedium(
-                    product: _filteredProducts[index],
-                    vendorId: _filteredProducts[index].vendorId ?? '',
-                    editMode: false,
-                    prefferHeight: 48.w * (4 / 3),
-                    prefferWidth: 48.w,
-                  ),
-                  () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder:
-                          (context) => Scaffold(
-                            bottomSheet: BottomAddToCart(
-                              product: _filteredProducts[index],
-                            ),
-                            body: SafeArea(
-                              child: ProductDetailsPage(
-                                product: _filteredProducts[index],
-                                edit: false,
-                                vendorId:
-                                    _filteredProducts[index].vendorId ?? '',
-                              ),
-                            ),
-                          ),
-                    ),
-                  ),
-                ),
-      ),
     );
   }
 
@@ -470,7 +469,7 @@ class _FavoriteProductsPageState extends State<FavoriteProductsPage> {
         borderRadius: BorderRadius.circular(8),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
+            color: Colors.grey.withValues(alpha: 0.1),
             spreadRadius: 1,
             blurRadius: 3,
             offset: const Offset(0, 1),
@@ -481,10 +480,18 @@ class _FavoriteProductsPageState extends State<FavoriteProductsPage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Expanded(
-            flex: 3,
-            child: FreeCaChedNetworkImage(
-              url: product.images.first,
-              raduis: BorderRadius.vertical(top: Radius.circular(8)),
+            flex: 5,
+            child: TProductImageSliderMini(
+              editMode: false,
+              product: product,
+              enableShadow: true,
+              radius: const BorderRadius.only(
+                topLeft: Radius.circular(15),
+                topRight: Radius.circular(15),
+              ),
+              prefferHeight: 48.w * (4 / 3),
+              prefferWidth: 48.w,
+              // prefferWidth: 174,
             ),
           ),
           Expanded(
@@ -516,5 +523,216 @@ class _FavoriteProductsPageState extends State<FavoriteProductsPage> {
         ],
       ),
     );
+  }
+}
+
+class _GridView2 extends StatelessWidget {
+  final List<ProductModel> filteredProducts;
+
+  const _GridView2({required this.filteredProducts});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(
+        left: 18,
+        right: 18,
+        top: 18.0,
+        bottom: 30,
+      ),
+      child: MasonryGridView.count(
+        itemCount: filteredProducts.length,
+        crossAxisCount: 2,
+        mainAxisSpacing: 16,
+        crossAxisSpacing: 16,
+        padding: const EdgeInsets.all(0),
+        physics: const NeverScrollableScrollPhysics(),
+        shrinkWrap: true,
+        itemBuilder:
+            (BuildContext context, int index) =>
+                ActionsMethods.customLongMethode(
+                  filteredProducts[index],
+                  context,
+                  VendorController.instance.isVendor.value,
+                  ProductWidgetMedium(
+                    product: filteredProducts[index],
+                    vendorId: filteredProducts[index].vendorId ?? '',
+                    editMode: false,
+                    prefferHeight: 48.w * (4 / 3),
+                    prefferWidth: 48.w,
+                  ),
+                  () => Get.to(
+                    () => Scaffold(
+                      bottomSheet: BottomAddToCart(
+                        product: filteredProducts[index],
+                      ),
+                      body: SafeArea(
+                        child: ProductDetailsPage(
+                          product: filteredProducts[index],
+                          edit: false,
+                          vendorId: filteredProducts[index].vendorId ?? '',
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+      ),
+    );
+  }
+}
+
+class _FavoriteVendorsSection extends StatelessWidget {
+  const _FavoriteVendorsSection();
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<List<VendorModel>>(
+      future: _getFavoriteVendors(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Container(
+            height: 200,
+            margin: const EdgeInsets.all(16),
+            child: const Center(child: CircularProgressIndicator()),
+          );
+        }
+
+        if (!snapshot.hasData || snapshot.data!.isEmpty) {
+          return const SizedBox.shrink();
+        }
+
+        final vendors = snapshot.data!;
+
+        return Container(
+          margin: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Section Header
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'your_favorite_shops'.tr,
+                    style: titilliumBold.copyWith(
+                      fontSize: 18,
+                      color: Colors.black,
+                    ),
+                  ),
+                  TextButton(
+                    onPressed:
+                        () => Get.to(
+                          () => FavoriteVendors(userId: _getCurrentUserId()),
+                        ),
+                    child: Text(
+                      'view_all'.tr,
+                      style: const TextStyle(
+                        color: TColors.primary,
+                        fontSize: 14,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+
+              // Vendors List
+              SizedBox(
+                height: 120,
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  itemCount:
+                      vendors.length > 5
+                          ? 5
+                          : vendors.length, // Show max 5 vendors
+                  itemBuilder: (context, index) {
+                    final vendor = vendors[index];
+                    return Container(
+                      width: 100,
+                      margin: const EdgeInsets.only(right: 12),
+                      child: Column(
+                        children: [
+                          // Vendor Avatar
+                          GestureDetector(
+                            onTap: () => _navigateToVendor(vendor),
+                            child: Container(
+                              width: 80,
+                              height: 80,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                border: Border.all(
+                                  color: Colors.grey.shade300,
+                                  width: 2,
+                                ),
+                                image:
+                                    vendor.organizationCover.isNotEmpty
+                                        ? DecorationImage(
+                                          image: NetworkImage(
+                                            vendor.organizationCover,
+                                          ),
+                                          fit: BoxFit.cover,
+                                          onError: (exception, stackTrace) {},
+                                        )
+                                        : null,
+                              ),
+                              child:
+                                  vendor.organizationCover.isEmpty
+                                      ? Icon(
+                                        Icons.store,
+                                        size: 40,
+                                        color: Colors.grey.shade400,
+                                      )
+                                      : null,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+
+                          // Vendor Name
+                          Text(
+                            vendor.organizationName.isNotEmpty
+                                ? vendor.organizationName
+                                : vendor.displayName,
+                            style: const TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w500,
+                            ),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            textAlign: TextAlign.center,
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Future<List<VendorModel>> _getFavoriteVendors() async {
+    try {
+      final followController = Get.find<FollowController>();
+      final userId = _getCurrentUserId();
+      return await followController.getFollowing(userId);
+    } catch (e) {
+      print('Error getting favorite vendors: $e');
+      return [];
+    }
+  }
+
+  String _getCurrentUserId() {
+    // You might need to get this from your auth controller
+    // For now, returning a placeholder
+    return 'current_user_id';
+  }
+
+  void _navigateToVendor(VendorModel vendor) {
+    // Navigate to vendor details page
+    // You might want to implement this based on your routing
+    print('Navigate to vendor: ${vendor.organizationName}');
   }
 }

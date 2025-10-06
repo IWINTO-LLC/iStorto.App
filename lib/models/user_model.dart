@@ -60,6 +60,32 @@ class UserModel {
     );
   }
 
+  // Factory constructor from auth.users JSON (for follow system)
+  factory UserModel.fromAuthUsersJson(Map<String, dynamic> json) {
+    final rawUserMetaData =
+        json['raw_user_meta_data'] as Map<String, dynamic>? ?? {};
+
+    return UserModel(
+      id: json['id'] as String,
+      userId: json['id'] as String, // In auth.users, id is the user_id
+      vendorId: null, // Not available in auth.users
+      username: rawUserMetaData['username'] as String?,
+      name: rawUserMetaData['name'] as String? ?? '',
+      email: json['email'] as String?,
+      phoneNumber: rawUserMetaData['phone_number'] as String?,
+      profileImage: rawUserMetaData['profile_image'] as String? ?? '',
+      bio: rawUserMetaData['bio'] as String? ?? '',
+      brief: rawUserMetaData['brief'] as String? ?? '',
+      defaultCurrency: rawUserMetaData['default_currency'] as String? ?? 'USD',
+      accountType: rawUserMetaData['account_type'] as int? ?? 0,
+      isActive: json['email_confirmed_at'] != null,
+      emailVerified: json['email_confirmed_at'] != null,
+      phoneVerified: rawUserMetaData['phone_verified'] as bool? ?? false,
+      createdAt: DateTime.parse(json['created_at'] as String),
+      updatedAt: DateTime.parse(json['updated_at'] as String),
+    );
+  }
+
   // Convert to JSON
   Map<String, dynamic> toJson() {
     return {

@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import '../../../../controllers/major_category_controller.dart';
 import '../../../../data/models/major_category_model.dart';
 import '../../../../utils/common/widgets/appbar/custom_app_bar.dart';
+import 'category_vendors_page.dart';
 
 class CategorySection extends StatelessWidget {
   const CategorySection({super.key});
@@ -11,9 +12,6 @@ class CategorySection extends StatelessWidget {
   Widget build(BuildContext context) {
     // Initialize controller
     final controller = Get.put(MajorCategoryController());
-
-    // Load active categories
-    controller.loadActiveCategories();
 
     return Scaffold(
       appBar: CustomAppBar(title: 'categories'.tr, centerTitle: true),
@@ -89,7 +87,23 @@ class CategorySection extends StatelessWidget {
                   if (controller.isLoading) {
                     return SizedBox(
                       height: 200,
-                      child: Center(child: CircularProgressIndicator()),
+                      child: Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const CircularProgressIndicator(),
+                            const SizedBox(height: 16),
+                            Text(
+                              'loading_categories'.tr,
+                              style: TextStyle(
+                                color: Colors.grey.shade600,
+                                fontSize: 14,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                     );
                   }
 
@@ -105,6 +119,7 @@ class CategorySection extends StatelessWidget {
                       child: Center(
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
+                          mainAxisSize: MainAxisSize.min,
                           children: [
                             Icon(
                               Icons.category_outlined,
@@ -127,6 +142,13 @@ class CategorySection extends StatelessWidget {
                                 color: Colors.grey.shade500,
                                 fontSize: 14,
                               ),
+                            ),
+                            const SizedBox(height: 16),
+                            ElevatedButton(
+                              onPressed: () {
+                                controller.loadActiveCategories();
+                              },
+                              child: Text('retry'.tr),
                             ),
                           ],
                         ),
@@ -222,14 +244,14 @@ class CategorySection extends StatelessWidget {
     }
 
     return GestureDetector(
-      onTap: () => _onCategoryTap(category),
+      onTap: () => Get.to(() => CategoryVendorsPage(category: category)),
       child: Container(
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.08),
+              color: Colors.black.withValues(alpha: .08),
               blurRadius: 10,
               offset: const Offset(0, 4),
             ),
@@ -317,17 +339,5 @@ class CategorySection extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  void _onCategoryTap(MajorCategoryModel category) {
-    // Navigate to category products page or show category details
-    Get.snackbar(
-      category.displayName,
-      'category_selected'.tr,
-      snackPosition: SnackPosition.BOTTOM,
-    );
-
-    // You can add navigation to category products page here
-    // Get.to(() => CategoryProductsPage(category: category));
   }
 }
