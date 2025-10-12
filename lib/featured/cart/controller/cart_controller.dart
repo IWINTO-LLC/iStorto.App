@@ -59,25 +59,48 @@ class CartController extends GetxController {
   }
 
   Future<void> updateQuantity(ProductModel product, int delta) async {
-    final index = cartItems.indexWhere((item) => item.product.id == product.id);
-    if (index != -1) {
-      cartItems[index].quantity += delta;
-      if (cartItems[index].quantity <= 0) {
-        cartItems.removeAt(index);
-        await _cartRepository.removeProductFromCart(product.id);
-      } else {
-        await _cartRepository.updateProductQuantity(
-          product.id,
-          cartItems[index].quantity,
-        );
-      }
-    } else if (delta > 0) {
-      cartItems.add(CartItem(product: product));
-      await _cartRepository.saveCartItems(cartItems);
-    }
+    try {
+      final index = cartItems.indexWhere(
+        (item) => item.product.id == product.id,
+      );
 
-    cartItems.refresh();
-    _afterCartChange(product);
+      if (index != -1) {
+        // المنتج موجود في السلة
+        final newQuantity = cartItems[index].quantity + delta;
+
+        if (newQuantity <= 0) {
+          // حذف المنتج من السلة
+          cartItems.removeAt(index);
+          productQuantities.remove(product.id);
+          selectedItems.remove(product.id);
+          await _cartRepository.removeProductFromCart(product.id);
+        } else {
+          // تحديث الكمية
+          cartItems[index].quantity = newQuantity;
+          productQuantities[product.id]?.value = newQuantity;
+          await _cartRepository.updateProductQuantity(product.id, newQuantity);
+        }
+      } else if (delta > 0) {
+        // إضافة منتج جديد
+        final newItem = CartItem(product: product, quantity: delta);
+        cartItems.add(newItem);
+        productQuantities[product.id] = delta.obs;
+        selectedItems[product.id] = true; // تحديد المنتج تلقائياً
+        await _cartRepository.saveCartItems(cartItems);
+      }
+
+      cartItems.refresh();
+      _afterCartChange(product);
+    } catch (e) {
+      debugPrint('❌ Error updating quantity: $e');
+      Get.snackbar(
+        'error'.tr,
+        'فشل تحديث الكمية',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red.shade100,
+        colorText: Colors.red.shade800,
+      );
+    }
   }
 
   Future<void> addToCart(ProductModel product) => updateQuantity(product, 1);

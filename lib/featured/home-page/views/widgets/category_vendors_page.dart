@@ -46,7 +46,7 @@ class _CategoryVendorsContent extends StatelessWidget {
             borderRadius: BorderRadius.circular(16),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.05),
+                color: Colors.black.withValues(alpha: 0.05),
                 blurRadius: 10,
                 offset: const Offset(0, 2),
               ),
@@ -59,7 +59,7 @@ class _CategoryVendorsContent extends StatelessWidget {
                 width: 80,
                 height: 80,
                 decoration: BoxDecoration(
-                  color: TColors.primary.withOpacity(0.1),
+                  color: TColors.primary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(40),
                 ),
                 child:
@@ -243,7 +243,7 @@ class _VendorCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.08),
+            color: Colors.black.withValues(alpha: 0.08),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -331,7 +331,7 @@ class _VendorCard extends StatelessWidget {
                               vertical: 2,
                             ),
                             decoration: BoxDecoration(
-                              color: Colors.green.withOpacity(0.1),
+                              color: Colors.green.withValues(alpha: 0.1),
                               borderRadius: BorderRadius.circular(12),
                             ),
                             child: Text(
@@ -352,8 +352,8 @@ class _VendorCard extends StatelessWidget {
                           decoration: BoxDecoration(
                             color:
                                 vendorCategory.isActive
-                                    ? Colors.blue.withOpacity(0.1)
-                                    : Colors.red.withOpacity(0.1),
+                                    ? Colors.blue.withValues(alpha: 0.1)
+                                    : Colors.red.withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: Text(

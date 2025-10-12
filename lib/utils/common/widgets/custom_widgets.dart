@@ -58,15 +58,37 @@ class TCustomWidgets {
     var curr =
         AuthController.instance.currentUser.value?.defaultCurrency ?? 'USD';
 
-    var s = "";
+    double convertedValue;
+    try {
+      convertedValue = CurrencyController.instance.convertToDefaultCurrency(
+        value,
+      );
+    } catch (e) {
+      debugPrint('Error converting currency in getPrice: $e');
+      convertedValue = value;
+      curr = 'USD';
+    }
 
-    s = "${TFormatter.formateNumber(CurrencyController.instance.convertToDefaultCurrency(value))} $curr";
-    return s;
+    return "${TFormatter.formateNumber(convertedValue)} $curr";
   }
 
   static Widget formattedPrice(double value, double size, Color fontColor) {
-    var curr = 'USD';
-    // AuthController.instance.currentUser.value?.defaultCurrency ?? 'USD';
+    // الحصول على العملة الافتراضية للمستخدم
+    var curr =
+        AuthController.instance.currentUser.value?.defaultCurrency ?? 'USD';
+
+    // تحويل السعر من الدولار إلى العملة الافتراضية
+    double convertedValue;
+    try {
+      convertedValue = CurrencyController.instance.convertToDefaultCurrency(
+        value,
+      );
+    } catch (e) {
+      // في حالة فشل التحويل، استخدم القيمة الأصلية واستخدم USD
+      debugPrint('Error converting currency: $e');
+      convertedValue = value;
+      curr = 'USD';
+    }
 
     return RichText(
       textDirection: TextDirection.ltr,
@@ -78,15 +100,7 @@ class TCustomWidgets {
           fontFamily: 'Poppins',
         ), // حجم الرقم الأساسي
         children: [
-          // TextSpan(
-          //   text: TFormatter.formateNumber(
-          //     CurrencyController.instance.convertToDefaultCurrency(value),
-          //   ),
-          // ),
-          TextSpan(text: value.toString()),
-
-          // TextSpan(text: "  "),
-          // TextSpan(text: formatNumberWithCommas(value)), // الرقم المنسق
+          TextSpan(text: TFormatter.formateNumber(convertedValue)),
           TextSpan(
             text: " $curr", // العملة
             style: TextStyle(
@@ -109,6 +123,17 @@ class TCustomWidgets {
     var curr =
         AuthController.instance.currentUser.value?.defaultCurrency ?? 'USD';
 
+    double convertedValue;
+    try {
+      convertedValue = CurrencyController.instance.convertToDefaultCurrency(
+        value,
+      );
+    } catch (e) {
+      debugPrint('Error converting currency in formattedCrossPrice: $e');
+      convertedValue = value;
+      curr = 'USD';
+    }
+
     return RichText(
       textDirection: TextDirection.ltr,
       text: TextSpan(
@@ -120,14 +145,7 @@ class TCustomWidgets {
         ), // حجم الرقم الأساسي
         children: [
           TextSpan(text: '('),
-          TextSpan(
-            text: TFormatter.formateNumber(
-              CurrencyController.instance.convertToDefaultCurrency(value),
-            ),
-          ),
-
-          // TextSpan(text: "  "),
-          // TextSpan(text: formatNumberWithCommas(value)), // الرقم المنسق
+          TextSpan(text: TFormatter.formateNumber(convertedValue)),
           TextSpan(
             text: " $curr", // العملة
             style: TextStyle(
@@ -147,6 +165,17 @@ class TCustomWidgets {
     var curr =
         AuthController.instance.currentUser.value?.defaultCurrency ?? 'USD';
 
+    double convertedValue;
+    try {
+      convertedValue = CurrencyController.instance.convertToDefaultCurrency(
+        value,
+      );
+    } catch (e) {
+      debugPrint('Error converting currency in formattedCartPrice: $e');
+      convertedValue = value;
+      curr = 'USD';
+    }
+
     return RichText(
       textDirection: TextDirection.ltr,
       text: TextSpan(
@@ -157,14 +186,7 @@ class TCustomWidgets {
           fontFamily: 'Poppins',
         ), // حجم الرقم الأساسي
         children: [
-          TextSpan(
-            text: TFormatter.formateNumber(
-              CurrencyController.instance.convertToDefaultCurrency(value),
-            ),
-          ),
-
-          // TextSpan(text: "  "),
-          // TextSpan(text: formatNumberWithCommas(value)), // الرقم المنسق
+          TextSpan(text: TFormatter.formateNumber(convertedValue)),
           TextSpan(
             text: " $curr", // العملة
             style: TextStyle(
@@ -180,20 +202,23 @@ class TCustomWidgets {
   }
 
   static Widget viewSalePrice(String text, double size) {
+    double convertedValue;
+    try {
+      convertedValue = CurrencyController.instance.convertToDefaultCurrency(
+        double.parse(text),
+      );
+    } catch (e) {
+      debugPrint('Error converting currency in viewSalePrice: $e');
+      convertedValue = double.tryParse(text) ?? 0.0;
+    }
+
     return Text(
-      TFormatter.formateNumber(
-        CurrencyController.instance.convertToDefaultCurrency(
-          double.parse(text),
-        ),
-      ),
-      // PriceConverter.convertPrice(
-      //     context, product.unitPrice),
+      TFormatter.formateNumber(convertedValue),
       style: titilliumBold.copyWith(
         color: TColors.darkGrey,
         fontFamily: 'Poppins',
         fontWeight: FontWeight.normal,
         decoration: TextDecoration.lineThrough,
-        //  decorationStyle: ,
         decorationThickness: 1.5,
         fontSize: size,
       ),

@@ -1,9 +1,16 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:istoreto/featured/product/cashed_network_image.dart';
 import 'package:istoreto/featured/product/controllers/product_controller.dart';
+import 'package:istoreto/featured/product/data/product_model.dart';
 import 'package:istoreto/featured/product/views/widgets/product_widget_medium.dart';
+import 'package:istoreto/featured/shop/view/widgets/dynamic_product_grid_widget.dart';
 import 'package:istoreto/utils/common/widgets/shimmers/shimmer.dart';
+import 'package:istoreto/utils/constants/sizes.dart';
+import 'package:sizer/sizer.dart';
+
+import 'small-widgets/view_all.dart';
 
 /// مكون عرض المنتجات الشائعة
 /// Popular products display component
@@ -76,7 +83,7 @@ class _PopularProductsHeader extends StatelessWidget {
             'popular_products'.tr,
             style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
-          _ViewAllButton(controller: controller),
+          ViewAll(onTap: () => _showAllProducts(context)),
         ],
       ),
     );
@@ -85,52 +92,15 @@ class _PopularProductsHeader extends StatelessWidget {
 
 /// زر عرض الكل
 /// View all button
-class _ViewAllButton extends StatelessWidget {
-  final ProductController controller;
-
-  const _ViewAllButton({required this.controller});
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () => _showAllProducts(context),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-        decoration: BoxDecoration(
-          color: Colors.black,
-          borderRadius: BorderRadius.circular(20),
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              'view_all'.tr,
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 12,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-            const SizedBox(width: 4),
-            const Icon(Icons.arrow_forward_ios, color: Colors.white, size: 12),
-          ],
-        ),
-      ),
-    );
-  }
-
-  /// عرض جميع المنتجات (يمكن تطويرها للتنقل إلى صفحة منفصلة)
-  /// Show all products (can be developed to navigate to separate page)
-  void _showAllProducts(BuildContext context) {
-    // TODO: إضافة navigation إلى صفحة عرض جميع المنتجات
-    Get.snackbar(
-      'view_all_products'.tr,
-      'all_products_will_be_shown'.tr,
-      snackPosition: SnackPosition.TOP,
-      backgroundColor: Colors.blue.shade100,
-      colorText: Colors.blue.shade800,
-    );
-  }
+void _showAllProducts(BuildContext context) {
+  // TODO: إضافة navigation إلى صفحة عرض جميع المنتجات
+  Get.snackbar(
+    'view_all_products'.tr,
+    'all_products_will_be_shown'.tr,
+    snackPosition: SnackPosition.TOP,
+    backgroundColor: Colors.blue.shade100,
+    colorText: Colors.blue.shade800,
+  );
 }
 
 /// مكون عرض المنتجات في شبكة 2 أعمدة
@@ -263,28 +233,204 @@ class _ProductsListGrid extends StatelessWidget {
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     final cardWidth = (screenWidth - 48) / 2; // 2 columns with padding
+    final List<ProductModel> list = products as List<ProductModel>;
+    return Column(
+      children: [
+        // PageView.builder(
+        //   itemCount: products.length,
+        //   itemBuilder: (context, index) {
+        //     final product = products[index];
+        //     return Padding(
+        //       padding: const EdgeInsets.all(16.0),
+        //       child: Column(
+        //         children: [
+        //           Expanded(
+        //             child: CustomCaChedNetworkImage(
+        //               width: 80.w,
+        //               height: 300,
+        //               url: product.images.first,
+        //               raduis: BorderRadius.circular(15),
+        //             ),
+        //           ),
+        //           const SizedBox(height: 12),
+        //           Text(
+        //             product.title,
+        //             style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+        //           ),
+        //           Text(
+        //             '\$${product.price.toStringAsFixed(2)}',
+        //             style: TextStyle(fontSize: 18, color: Colors.grey[700]),
+        //           ),
+        //           Row(
+        //             mainAxisAlignment: MainAxisAlignment.center,
+        //             children: List.generate(5, (i) {
+        //               return Icon(Icons.star, color: Colors.orange);
+        //             }),
+        //           ),
+        //           const SizedBox(height: 12),
+        //           ElevatedButton(
+        //             style: ElevatedButton.styleFrom(
+        //               backgroundColor: Colors.purple,
+        //               padding: EdgeInsets.symmetric(
+        //                 horizontal: 24,
+        //                 vertical: 12,
+        //               ),
+        //             ),
+        //             onPressed: () {
+        //               // تنفيذ الطلب
+        //             },
+        //             child: Text('ORDER NOW →'),
+        //           ),
+        //         ],
+        //       ),
+        //     );
+        //   },
+        // ),
+        GridView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            crossAxisSpacing: 16,
+            mainAxisSpacing: 16,
+            childAspectRatio: 0.5,
+          ),
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          itemCount: products.length,
+          itemBuilder: (context, index) {
+            final product = products[index];
+            return ProductWidgetMedium(
+              product: product,
+              vendorId: product.vendorId ?? '',
+              editMode: false,
+              prefferHeight: 250,
+              prefferWidth: cardWidth,
+            );
+          },
+        ),
 
-    return GridView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        crossAxisSpacing: 16,
-        mainAxisSpacing: 16,
-        childAspectRatio: 0.5,
-      ),
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      itemCount: products.length,
-      itemBuilder: (context, index) {
-        final product = products[index];
-        return ProductWidgetMedium(
-          product: product,
-          vendorId: product.vendorId ?? '',
-          editMode: false,
-          prefferHeight: 250,
-          prefferWidth: cardWidth,
-        );
-      },
+        SizedBox(height: TSizes.spaceBtWsections),
+        SizedBox(height: TSizes.spaceBtWsections),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Trendy Now'.tr,
+                style: const TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              ViewAll(onTap: () => _showAllProducts(context)),
+            ],
+          ),
+        ),
+        DynamicProductGridWidget(
+          cardHeight: 94.w * (8 / 6),
+          cardWidth: 94.w,
+          products: list,
+          withTitle: true,
+        ),
+
+        SizedBox(height: TSizes.spaceBtWsections),
+        SizedBox(height: TSizes.spaceBtWsections),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Top Rating'.tr,
+                style: const TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              ViewAll(onTap: () => _showAllProducts(context)),
+            ],
+          ),
+        ),
+        DynamicProductGridWidget(
+          cardWidth: 33.333.w,
+          cardHeight: 34.w * (4 / 3),
+          products: list,
+          withTitle: true,
+        ),
+        SizedBox(height: TSizes.spaceBtWsections),
+        SizedBox(height: TSizes.spaceBtWsections),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Order Now'.tr,
+                style: const TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              ViewAll(onTap: () => _showAllProducts(context)),
+            ],
+          ),
+        ),
+        DynamicProductGridWidget(
+          cardWidth: 70.w,
+          cardHeight: 70.w * 4 / 3,
+          products: list,
+          withTitle: true,
+        ),
+
+        SizedBox(height: TSizes.spaceBtWsections),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Summer Sales'.tr,
+                style: const TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              ViewAll(onTap: () => _showAllProducts(context)),
+            ],
+          ),
+        ),
+        DynamicProductGridWidget(
+          cardWidth: 55.w,
+          cardHeight: 55.w * (8 / 6),
+          products: list,
+          withTitle: true,
+        ),
+
+        SizedBox(height: TSizes.spaceBtWsections),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Trendy Now'.tr,
+                style: const TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              ViewAll(onTap: () => _showAllProducts(context)),
+            ],
+          ),
+        ),
+        DynamicProductGridWidget(
+          cardHeight: 94.w * (8 / 6),
+          cardWidth: 94.w,
+          products: list,
+          withTitle: true,
+        ),
+      ],
     );
   }
 }

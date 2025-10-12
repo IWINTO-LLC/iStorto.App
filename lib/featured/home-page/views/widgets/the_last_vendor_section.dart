@@ -1,6 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:istoreto/featured/home-page/views/widgets/all_vendors_page.dart';
+import 'package:istoreto/featured/home-page/views/widgets/small-widgets/view_all.dart';
 import 'package:istoreto/featured/shop/data/vendor_repository.dart';
 import 'package:istoreto/featured/shop/view/market_place_view.dart';
 import 'package:istoreto/utils/common/widgets/shimmers/shimmer.dart';
@@ -39,55 +41,9 @@ class _SectionHeader extends StatelessWidget {
             'latest_vendor'.tr,
             style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
-          _ViewAllVendorsButton(),
+          ViewAll(onTap: () => Get.to(() => const AllVendorsPage())),
         ],
       ),
-    );
-  }
-}
-
-/// زر عرض جميع التجار
-/// View all vendors button
-class _ViewAllVendorsButton extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () => _showAllVendors(context),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-        decoration: BoxDecoration(
-          color: Colors.black,
-          borderRadius: BorderRadius.circular(20),
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              'view_all'.tr,
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 12,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-            const SizedBox(width: 4),
-            const Icon(Icons.arrow_forward_ios, color: Colors.white, size: 12),
-          ],
-        ),
-      ),
-    );
-  }
-
-  /// عرض جميع التجار (يمكن تطويرها للتنقل إلى صفحة منفصلة)
-  /// Show all vendors (can be developed to navigate to separate page)
-  void _showAllVendors(BuildContext context) {
-    // TODO: إضافة navigation إلى صفحة عرض جميع التجار
-    Get.snackbar(
-      'all_vendors'.tr,
-      'all_vendors_will_be_shown'.tr,
-      snackPosition: SnackPosition.TOP,
-      backgroundColor: Colors.black.withOpacity(0.8),
-      colorText: Colors.white,
     );
   }
 }
@@ -288,7 +244,7 @@ class _VendorCardContent extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black.withValues(alpha: 0.1),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -354,7 +310,7 @@ class _VendorImage extends StatelessWidget {
                 borderRadius: BorderRadius.circular(20),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
+                    color: Colors.black.withValues(alpha: 0.1),
                     blurRadius: 4,
                     offset: const Offset(0, 2),
                   ),
@@ -518,7 +474,7 @@ class _VendorActions extends StatelessWidget {
       'following_vendor'.tr,
       '${vendor.organizationName ?? 'vendor'.tr} ${'followed_successfully'.tr}',
       snackPosition: SnackPosition.TOP,
-      backgroundColor: Colors.black.withOpacity(0.8),
+      backgroundColor: Colors.black.withValues(alpha: 0.8),
       colorText: Colors.white,
     );
   }

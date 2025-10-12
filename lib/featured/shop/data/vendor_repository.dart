@@ -142,12 +142,29 @@ class VendorRepository extends GetxController {
       }
 
       final updatedVendor = vendor.updateTimestamp();
+      final updateData = updatedVendor.toJson();
+
+      // Debug: Print what we're trying to update
+      if (kDebugMode) {
+        print("📤 Attempting to update vendor:");
+        print("Vendor ID: $vendorId");
+        print("User ID in data: ${updateData['user_id']}");
+        print("Update data: $updateData");
+      }
+
+      // Remove 'id' from update data to prevent conflicts
+      updateData.remove('id');
+
+      // Ensure user_id is present for RLS check
+      if (updateData['user_id'] == null) {
+        throw 'user_id is required for RLS policy check';
+      }
 
       // Update vendor basic info
       final response =
           await _client
               .from('vendors')
-              .update(updatedVendor.toJson())
+              .update(updateData)
               .eq('id', vendorId)
               .select()
               .single();
@@ -158,7 +175,7 @@ class VendorRepository extends GetxController {
       }
 
       if (kDebugMode) {
-        print("=======Updated Vendor Profile with Social Links==============");
+        print("✅ Updated Vendor Profile Successfully");
         print(response.toString());
       }
 
@@ -166,7 +183,7 @@ class VendorRepository extends GetxController {
       return await getVendorById(vendorId) ?? VendorModel.fromJson(response);
     } catch (e) {
       if (kDebugMode) {
-        print("Error updating vendor profile: $e");
+        print("❌ Error updating vendor profile: $e");
       }
       throw 'Failed to update vendor profile: ${e.toString()}';
     }
@@ -405,16 +422,33 @@ class VendorRepository extends GetxController {
         throw 'Vendor ID is required';
       }
 
+      // First, get the user_id from the vendor
+      final vendorResponse =
+          await _client
+              .from('vendors')
+              .select('user_id')
+              .eq('id', vendorId)
+              .maybeSingle();
+
+      if (vendorResponse == null) {
+        throw 'Vendor not found';
+      }
+
+      final userId = vendorResponse['user_id'];
+      if (userId == null) {
+        throw 'Vendor has no user_id';
+      }
+
       // Check if social links record exists
       final existingRecord =
           await _client
-              .from('vendor_social_links')
+              .from('social_links')
               .select('id')
-              .eq('vendor_id', vendorId)
+              .eq('user_id', userId)
               .maybeSingle();
 
       final socialLinkData = {
-        'vendor_id': vendorId,
+        'user_id': userId,
         'facebook': socialLink.facebook,
         'x': socialLink.x,
         'instagram': socialLink.instagram,
@@ -440,20 +474,31 @@ class VendorRepository extends GetxController {
       if (existingRecord != null) {
         // Update existing record
         await _client
-            .from('vendor_social_links')
+            .from('social_links')
             .update(socialLinkData)
-            .eq('vendor_id', vendorId);
+            .eq('user_id', userId);
+
+        if (kDebugMode) {
+          print("Social links updated for user_id: $userId");
+        }
       } else {
         // Insert new record
-        await _client.from('vendor_social_links').insert(socialLinkData);
+        await _client.from('social_links').insert(socialLinkData);
+
+        if (kDebugMode) {
+          print("Social links inserted for user_id: $userId");
+        }
       }
 
       if (kDebugMode) {
-        print("Vendor social links updated successfully: $vendorId");
+        print(
+          "✅ Vendor social links saved successfully: vendorId=$vendorId, userId=$userId",
+        );
+        print("Social link data: $socialLinkData");
       }
     } catch (e) {
       if (kDebugMode) {
-        print("Error updating vendor social links: $e");
+        print("❌ Error updating vendor social links: $e");
       }
       throw 'Failed to update vendor social links: ${e.toString()}';
     }
@@ -466,11 +511,28 @@ class VendorRepository extends GetxController {
         throw 'Vendor ID is required';
       }
 
+      // First, get the user_id from the vendor
+      final vendorResponse =
+          await _client
+              .from('vendors')
+              .select('user_id')
+              .eq('id', vendorId)
+              .maybeSingle();
+
+      if (vendorResponse == null) {
+        throw 'Vendor not found';
+      }
+
+      final userId = vendorResponse['user_id'];
+      if (userId == null) {
+        return null;
+      }
+
       final response =
           await _client
-              .from('vendor_social_links')
+              .from('social_links')
               .select()
-              .eq('vendor_id', vendorId)
+              .eq('user_id', userId)
               .maybeSingle();
 
       if (response == null) {
@@ -506,6 +568,143 @@ class VendorRepository extends GetxController {
         print("Error getting vendor social links: $e");
       }
       throw 'Failed to get vendor social links: ${e.toString()}';
+    }
+  }
+
+  /// جلب إحصائيات التاجر (عدد المنتجات، المتابعين، العروض)
+  Future<Map<String, int>> getVendorStats(String vendorId) async {
+    try {
+      if (vendorId.isEmpty) {
+        throw 'Vendor ID is required';
+      }
+
+      // جلب عدد المنتجات (غير المحذوفة)
+      final productsResponse = await _client
+          .from('products')
+          .select('id')
+          .eq('vendor_id', vendorId)
+          .eq('is_deleted', false);
+
+      // جلب عدد العروض (المنتجات التي لها old_price أكبر من price)
+      final offersResponse = await _client
+          .from('products')
+          .select('id')
+          .eq('vendor_id', vendorId)
+          .eq('is_deleted', false)
+          .gt('old_price', 0);
+
+      // جلب عدد المتابعين
+      final followersResponse = await _client
+          .from('user_follows')
+          .select('id')
+          .eq('vendor_id', vendorId);
+
+      final productsCount = (productsResponse as List).length;
+      final offersCount = (offersResponse as List).length;
+      final followersCount = (followersResponse as List).length;
+
+      if (kDebugMode) {
+        print(
+          'Vendor Stats - Products: $productsCount, Offers: $offersCount, Followers: $followersCount',
+        );
+      }
+
+      return {
+        'products_count': productsCount,
+        'offers_count': offersCount,
+        'followers_count': followersCount,
+      };
+    } catch (e) {
+      if (kDebugMode) {
+        print("Error getting vendor stats: $e");
+      }
+      return {'products_count': 0, 'offers_count': 0, 'followers_count': 0};
+    }
+  }
+
+  /// التحقق من متابعة المستخدم للتاجر
+  Future<bool> isFollowingVendor(String userId, String vendorId) async {
+    try {
+      final response =
+          await _client
+              .from('user_follows')
+              .select('id')
+              .eq('user_id', userId)
+              .eq('vendor_id', vendorId)
+              .maybeSingle();
+
+      return response != null;
+    } catch (e) {
+      if (kDebugMode) {
+        print("Error checking follow status: $e");
+      }
+      return false;
+    }
+  }
+
+  /// متابعة تاجر
+  Future<bool> followVendor(String userId, String vendorId) async {
+    try {
+      // التحقق من عدم وجود متابعة سابقة
+      final isAlreadyFollowing = await isFollowingVendor(userId, vendorId);
+      if (isAlreadyFollowing) {
+        return false; // Already following
+      }
+
+      await _client.from('user_follows').insert({
+        'user_id': userId,
+        'vendor_id': vendorId,
+      });
+
+      if (kDebugMode) {
+        print('User $userId followed vendor $vendorId');
+      }
+
+      return true;
+    } catch (e) {
+      if (kDebugMode) {
+        print("Error following vendor: $e");
+      }
+      return false;
+    }
+  }
+
+  /// إلغاء متابعة تاجر
+  Future<bool> unfollowVendor(String userId, String vendorId) async {
+    try {
+      await _client
+          .from('user_follows')
+          .delete()
+          .eq('user_id', userId)
+          .eq('vendor_id', vendorId);
+
+      if (kDebugMode) {
+        print('User $userId unfollowed vendor $vendorId');
+      }
+
+      return true;
+    } catch (e) {
+      if (kDebugMode) {
+        print("Error unfollowing vendor: $e");
+      }
+      return false;
+    }
+  }
+
+  /// جلب عدد المتابعين الفعلي للتاجر
+  Future<int> getFollowersCount(String vendorId) async {
+    try {
+      final response = await _client
+          .from('user_follows')
+          .select('id')
+          .eq('vendor_id', vendorId);
+
+      return (response as List).length;
+    } catch (e) {
+      if (kDebugMode) {
+        print("Error getting followers count: $e");
+      }
+      return 0;
     }
   }
 }

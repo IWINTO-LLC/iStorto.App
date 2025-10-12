@@ -4,6 +4,7 @@
     "widgetStructure": "each UI component must be a separate StatelessWidget file unless stateful behavior is required",
     "avoid": "inline build methods or nested widgets inside one file",
     "AppbarStyle":"use custom app bar instead of app bar",
+    "loadingState":"use shimmer instead of progress circle",
     "repositoryPattern": "each feature has its own repository and controller",
     "routing": "use GetX named routes with centralized route management",
     "localization": "multi-language support using GetX Translations",
@@ -21,6 +22,21 @@
         "customSearch": "البحث المخصص مع الفلترة المتقدمة",
         "searchHistory": "حفظ وعرض كلمات البحث السابقة",
         "filterOptions": "فلترة حسب الفئة، التاجر، التوفر، المميز، التحقق، السعر"
+    },
+    "profileEditSystem": {
+        "editProfileDialog": "نافذة تعديل الملف الشخصي باستخدام ModalBottomSheet",
+        "editMethods": {
+            "editCoverPhoto": "تعديل صورة الغلاف للحسابات التجارية",
+            "editProfilePhoto": "تعديل الصورة الشخصية لجميع المستخدمين",
+            "editPersonalInfo": "تعديل المعلومات الشخصية (الاسم، البريد، الهاتف)",
+            "editBio": "تعديل السيرة الذاتية والوصف الشخصي",
+            "editBrief": "تعديل النبذة المختصرة عن المستخدم"
+        },
+        "imageEditController": "استخدام ImageEditController لإدارة الصور",
+        "uploadFlow": "اختيار المصدر (كاميرا/معرض) -> قص الصورة -> رفع إلى Supabase -> تحديث قاعدة البيانات",
+        "businessAccountCheck": "التحقق من نوع الحساب قبل السماح بتعديل صورة الغلاف",
+        "dialogStyle": "استخدام ModalBottomSheet مع isScrollControlled: true للمحتوى الطويل",
+        "navigationPattern": "Navigator.pop قبل تنفيذ الإجراء لإغلاق النافذة"
     },
     "alwaysApply": true
 }

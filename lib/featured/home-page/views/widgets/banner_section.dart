@@ -4,6 +4,9 @@ import 'package:get/get.dart';
 import 'package:istoreto/featured/banner/controller/banner_controller.dart';
 import 'package:istoreto/featured/banner/data/banner_model.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:istoreto/utils/common/widgets/custom_shapes/containers/rounded_container.dart';
+import 'package:istoreto/utils/constants/color.dart';
+import 'package:sizer/sizer.dart';
 
 class BannerSection extends StatefulWidget {
   const BannerSection({super.key});
@@ -67,9 +70,12 @@ class _BannerSectionState extends State<BannerSection> {
 
   @override
   Widget build(BuildContext context) {
+    double width = 95.w;
+    double aspectRatio = 0.5882;
+    double height = width * aspectRatio;
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16),
-      height: 180,
+      height: height,
       child: Obx(() {
         final companyBanners =
             _bannerController.banners
@@ -134,7 +140,7 @@ class _BannerSectionState extends State<BannerSection> {
             // Page indicators
             if (companyBanners.length > 1)
               Positioned(
-                bottom: 10,
+                bottom: 25,
                 left: 0,
                 right: 0,
                 child: Row(
@@ -165,86 +171,75 @@ class _BannerSectionState extends State<BannerSection> {
   }
 
   Widget _buildBannerItem(BannerModel banner) {
-    // ألوان متدرجة مختلفة للبانرات
-    final gradients = [
-      const LinearGradient(
-        colors: [Color(0xFFFFD700), Color(0xFFFFA500)],
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
-      ),
-      const LinearGradient(
-        colors: [Color(0xFF6C63FF), Color(0xFF9C88FF)],
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
-      ),
-      const LinearGradient(
-        colors: [Color(0xFF4CAF50), Color(0xFF81C784)],
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
-      ),
-      const LinearGradient(
-        colors: [Color(0xFFE91E63), Color(0xFFF06292)],
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
-      ),
-      const LinearGradient(
-        colors: [Color(0xFF2196F3), Color(0xFF64B5F6)],
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
-      ),
-    ];
+    double width = 95.w;
 
-    final gradient = gradients[banner.hashCode % gradients.length];
-    final colors = gradient.colors;
-    final primaryColor = colors.first;
+    double aspectRatio = 0.5882;
+    double height = width * aspectRatio;
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 16.0),
+      child: GestureDetector(
+        onTap: () {
+          // يمكن إضافة التنقل إلى الشاشة المستهدفة هنا
+          if (banner.targetScreen.isNotEmpty) {
+            // Get.toNamed(banner.targetScreen);
+          }
+        },
 
-    return GestureDetector(
-      onTap: () {
-        // يمكن إضافة التنقل إلى الشاشة المستهدفة هنا
-        if (banner.targetScreen.isNotEmpty) {
-          // Get.toNamed(banner.targetScreen);
-        }
-      },
-      child: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 4),
-        decoration: BoxDecoration(
-          gradient: gradient,
-          borderRadius: BorderRadius.circular(20),
-          boxShadow: [
-            BoxShadow(
-              color: primaryColor.withOpacity(0.3),
-              blurRadius: 10,
-              offset: const Offset(0, 5),
-            ),
-          ],
-        ),
         child: Stack(
           children: [
+            Center(
+              child: TRoundedContainer(
+                radius: BorderRadius.circular(20),
+                width: width,
+                height: height,
+                enableShadow: true,
+                showBorder: true,
+                backgroundColor: TColors.white,
+                child:
+                    banner.image.isNotEmpty
+                        ? ClipRRect(
+                          borderRadius: BorderRadius.circular(20),
+                          child: CachedNetworkImage(
+                            imageUrl: banner.image,
+                            fit: BoxFit.cover,
+                            placeholder:
+                                (context, url) => Icon(
+                                  Icons.campaign,
+                                  color: Colors.white,
+                                  size: 40,
+                                ),
+                            errorWidget:
+                                (context, url, error) => Icon(
+                                  Icons.campaign,
+                                  color: Colors.white,
+                                  size: 40,
+                                ),
+                          ),
+                        )
+                        : Icon(Icons.campaign, color: Colors.white, size: 40),
+              ),
+            ),
+            TRoundedContainer(
+              radius: BorderRadius.circular(20),
+              width: width,
+              height: height,
+              enableShadow: true,
+              showBorder: true,
+              backgroundColor: TColors.black.withValues(alpha: .1),
+            ),
             // Background pattern
-            Positioned(
-              right: -40,
-              top: -40,
-              child: Container(
-                width: 120,
-                height: 120,
-                decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.1),
-                  shape: BoxShape.circle,
-                ),
-              ),
-            ),
-            Positioned(
-              left: -20,
-              bottom: -20,
-              child: Container(
-                width: 80,
-                height: 80,
-                decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: .1),
-                  shape: BoxShape.circle,
-                ),
-              ),
-            ),
+            // Positioned(
+            //   left: -20,
+            //   bottom: -20,
+            //   child: Container(
+            //     width: 80,
+            //     height: 80,
+            //     decoration: BoxDecoration(
+            //       color: Colors.white.withValues(alpha: .1),
+            //       shape: BoxShape.circle,
+            //     ),
+            //   ),
+            // ),
             // Content
             Padding(
               padding: const EdgeInsets.all(24),
@@ -298,44 +293,9 @@ class _BannerSectionState extends State<BannerSection> {
                       ],
                     ),
                   ),
+
+                  SizedBox(width: 100),
                   // Banner Image or Icon
-                  Container(
-                    width: 100,
-                    height: 100,
-                    decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.2),
-                      shape: BoxShape.circle,
-                      border: Border.all(
-                        color: Colors.white.withValues(alpha: 0.3),
-                        width: 2,
-                      ),
-                    ),
-                    child: ClipOval(
-                      child:
-                          banner.image.isNotEmpty
-                              ? CachedNetworkImage(
-                                imageUrl: banner.image,
-                                fit: BoxFit.cover,
-                                placeholder:
-                                    (context, url) => Icon(
-                                      Icons.campaign,
-                                      color: Colors.white,
-                                      size: 40,
-                                    ),
-                                errorWidget:
-                                    (context, url, error) => Icon(
-                                      Icons.campaign,
-                                      color: Colors.white,
-                                      size: 40,
-                                    ),
-                              )
-                              : Icon(
-                                Icons.campaign,
-                                color: Colors.white,
-                                size: 40,
-                              ),
-                    ),
-                  ),
                 ],
               ),
             ),

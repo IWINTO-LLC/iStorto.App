@@ -1,6 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:istoreto/controllers/auth_controller.dart';
+import 'package:istoreto/controllers/image_edit_controller.dart';
+import 'package:istoreto/featured/currency/controller/currency_controller.dart';
+import 'package:istoreto/services/supabase_service.dart';
+import 'package:istoreto/translations/translations.dart';
+import 'package:istoreto/utils/common/widgets/appbar/custom_app_bar.dart';
+import 'package:istoreto/utils/constants/color.dart';
+import 'package:istoreto/views/storage_management_page.dart';
 
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});
@@ -10,15 +17,8 @@ class SettingsPage extends StatelessWidget {
     final authController = Get.find<AuthController>();
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Settings'),
-        backgroundColor: Colors.white,
-        elevation: 0,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.grey.shade800),
-          onPressed: () => Get.back(),
-        ),
-      ),
+      appBar: CustomAppBar(title: 'settings.title'.tr, isBackButtonExist: true),
+
       body: SingleChildScrollView(
         padding: EdgeInsets.all(20),
         child: Column(
@@ -26,30 +26,30 @@ class SettingsPage extends StatelessWidget {
           children: [
             // Profile Settings Section
             _buildSection(
-              title: 'Profile Settings',
+              title: 'settings.profile_settings'.tr,
               children: [
                 _buildSettingsItem(
                   icon: Icons.person,
-                  title: 'Personal Information',
-                  subtitle: 'Update your personal details',
+                  title: 'settings.personal_information'.tr,
+                  subtitle: 'settings.personal_information_subtitle'.tr,
                   onTap: () => _showPersonalInfoDialog(),
                 ),
                 _buildSettingsItem(
                   icon: Icons.photo_camera,
-                  title: 'Profile Photo',
-                  subtitle: 'Change your profile picture',
+                  title: 'settings.profile_photo'.tr,
+                  subtitle: 'settings.profile_photo_subtitle'.tr,
                   onTap: () => _showProfilePhotoDialog(),
                 ),
                 _buildSettingsItem(
                   icon: Icons.photo_library,
-                  title: 'Cover Photo',
-                  subtitle: 'Change your cover image',
+                  title: 'settings.cover_photo'.tr,
+                  subtitle: 'settings.cover_photo_subtitle'.tr,
                   onTap: () => _showCoverPhotoDialog(),
                 ),
                 _buildSettingsItem(
                   icon: Icons.description,
-                  title: 'Bio & Description',
-                  subtitle: 'Update your biography and description',
+                  title: 'settings.bio_description'.tr,
+                  subtitle: 'settings.bio_description_subtitle'.tr,
                   onTap: () => _showBioDialog(),
                 ),
               ],
@@ -59,32 +59,33 @@ class SettingsPage extends StatelessWidget {
 
             // Account Settings Section
             _buildSection(
-              title: 'Account Settings',
+              title: 'settings.account_settings'.tr,
               children: [
                 _buildSettingsItem(
                   icon: Icons.email,
-                  title: 'Email & Password',
-                  subtitle: 'Change your email and password',
+                  title: 'settings.email_password'.tr,
+                  subtitle: 'settings.email_password_subtitle'.tr,
                   onTap: () => _showEmailPasswordDialog(),
                 ),
                 _buildSettingsItem(
                   icon: Icons.phone,
-                  title: 'Phone Number',
-                  subtitle: 'Update your phone number',
+                  title: 'settings.phone_number'.tr,
+                  subtitle: 'settings.phone_number_subtitle'.tr,
                   onTap: () => _showPhoneDialog(),
                 ),
                 _buildSettingsItem(
                   icon: Icons.location_on,
-                  title: 'Location',
-                  subtitle: 'Update your location',
+                  title: 'settings.location'.tr,
+                  subtitle: 'settings.location_subtitle'.tr,
                   onTap: () => _showLocationDialog(),
                 ),
                 _buildSettingsItem(
                   icon: Icons.business,
-                  title: 'Business Account',
-                  subtitle: authController.currentUser.value?.accountType == 1
-                      ? 'Manage your business account'
-                      : 'Upgrade to business account',
+                  title: 'settings.business_account'.tr,
+                  subtitle:
+                      authController.currentUser.value?.accountType == 1
+                          ? 'settings.business_account_subtitle_vendor'.tr
+                          : 'settings.business_account_subtitle_user'.tr,
                   onTap: () => _showBusinessAccountDialog(),
                 ),
               ],
@@ -94,30 +95,30 @@ class SettingsPage extends StatelessWidget {
 
             // Privacy & Security Section
             _buildSection(
-              title: 'Privacy & Security',
+              title: 'settings.privacy_security'.tr,
               children: [
                 _buildSettingsItem(
                   icon: Icons.privacy_tip,
-                  title: 'Privacy Settings',
-                  subtitle: 'Control your privacy preferences',
+                  title: 'settings.privacy_settings'.tr,
+                  subtitle: 'settings.privacy_settings_subtitle'.tr,
                   onTap: () => _showPrivacyDialog(),
                 ),
                 _buildSettingsItem(
                   icon: Icons.security,
-                  title: 'Security',
-                  subtitle: 'Manage your security settings',
+                  title: 'settings.security'.tr,
+                  subtitle: 'settings.security_subtitle'.tr,
                   onTap: () => _showSecurityDialog(),
                 ),
                 _buildSettingsItem(
                   icon: Icons.notifications,
-                  title: 'Notifications',
-                  subtitle: 'Configure notification preferences',
+                  title: 'settings.notifications'.tr,
+                  subtitle: 'settings.notifications_subtitle'.tr,
                   onTap: () => _showNotificationsDialog(),
                 ),
                 _buildSettingsItem(
                   icon: Icons.block,
-                  title: 'Blocked Users',
-                  subtitle: 'Manage blocked users',
+                  title: 'settings.blocked_users'.tr,
+                  subtitle: 'settings.blocked_users_subtitle'.tr,
                   onTap: () => _showBlockedUsersDialog(),
                 ),
               ],
@@ -127,30 +128,65 @@ class SettingsPage extends StatelessWidget {
 
             // App Settings Section
             _buildSection(
-              title: 'App Settings',
+              title: 'settings.app_settings'.tr,
               children: [
                 _buildSettingsItem(
                   icon: Icons.language,
-                  title: 'Language',
-                  subtitle: 'Change app language',
+                  title: 'settings.language'.tr,
+                  subtitle: 'settings.language_subtitle'.tr,
                   onTap: () => _showLanguageDialog(),
                 ),
+                Obx(() {
+                  final currencyController = Get.find<CurrencyController>();
+                  final currentCurrency =
+                      currencyController.userCurrency.value.isNotEmpty
+                          ? currencyController.userCurrency.value
+                          : 'USD';
+
+                  return _buildSettingsItem(
+                    icon: Icons.currency_exchange,
+                    title: 'settings.currency'.tr,
+                    subtitle: 'settings.currency_subtitle'.tr,
+                    trailing: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 6,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.green.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(
+                          color: Colors.green.withOpacity(0.3),
+                        ),
+                      ),
+                      child: Text(
+                        currentCurrency,
+                        style: const TextStyle(
+                          color: Colors.green,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ),
+                    onTap: () => _showCurrencyDialog(),
+                  );
+                }),
                 _buildSettingsItem(
                   icon: Icons.palette,
-                  title: 'Theme',
-                  subtitle: 'Change app theme',
+                  title: 'settings.theme'.tr,
+                  subtitle: 'settings.theme_subtitle'.tr,
                   onTap: () => _showThemeDialog(),
                 ),
                 _buildSettingsItem(
                   icon: Icons.storage,
-                  title: 'Storage',
-                  subtitle: 'Manage app storage',
+                  title: 'settings.storage'.tr,
+                  subtitle: 'settings.storage_subtitle'.tr,
                   onTap: () => _showStorageDialog(),
                 ),
                 _buildSettingsItem(
                   icon: Icons.update,
-                  title: 'App Updates',
-                  subtitle: 'Check for app updates',
+                  title: 'settings.app_updates'.tr,
+                  subtitle: 'settings.app_updates_subtitle'.tr,
                   onTap: () => _showUpdatesDialog(),
                 ),
               ],
@@ -160,30 +196,30 @@ class SettingsPage extends StatelessWidget {
 
             // Support Section
             _buildSection(
-              title: 'Support',
+              title: 'settings.support'.tr,
               children: [
                 _buildSettingsItem(
                   icon: Icons.help,
-                  title: 'Help Center',
-                  subtitle: 'Get help and support',
+                  title: 'settings.help_center'.tr,
+                  subtitle: 'settings.help_center_subtitle'.tr,
                   onTap: () => _showHelpDialog(),
                 ),
                 _buildSettingsItem(
                   icon: Icons.feedback,
-                  title: 'Send Feedback',
-                  subtitle: 'Share your feedback with us',
+                  title: 'settings.send_feedback'.tr,
+                  subtitle: 'settings.send_feedback_subtitle'.tr,
                   onTap: () => _showFeedbackDialog(),
                 ),
                 _buildSettingsItem(
                   icon: Icons.info,
-                  title: 'About',
-                  subtitle: 'App version and information',
+                  title: 'settings.about'.tr,
+                  subtitle: 'settings.about_subtitle'.tr,
                   onTap: () => _showAboutDialog(),
                 ),
                 _buildSettingsItem(
                   icon: Icons.contact_support,
-                  title: 'Contact Us',
-                  subtitle: 'Get in touch with our team',
+                  title: 'settings.contact_us'.tr,
+                  subtitle: 'settings.contact_us_subtitle'.tr,
                   onTap: () => _showContactDialog(),
                 ),
               ],
@@ -193,19 +229,19 @@ class SettingsPage extends StatelessWidget {
 
             // Danger Zone
             _buildSection(
-              title: 'Danger Zone',
+              title: 'settings.danger_zone'.tr,
               children: [
                 _buildSettingsItem(
                   icon: Icons.delete_forever,
-                  title: 'Delete Account',
-                  subtitle: 'Permanently delete your account',
+                  title: 'settings.delete_account'.tr,
+                  subtitle: 'settings.delete_account_subtitle'.tr,
                   onTap: () => _showDeleteAccountDialog(),
                   isDestructive: true,
                 ),
                 _buildSettingsItem(
                   icon: Icons.logout,
-                  title: 'Sign Out',
-                  subtitle: 'Sign out of your account',
+                  title: 'settings.sign_out'.tr,
+                  subtitle: 'settings.sign_out_subtitle'.tr,
                   onTap: () => _showSignOutDialog(authController),
                   isDestructive: true,
                 ),
@@ -247,6 +283,7 @@ class SettingsPage extends StatelessWidget {
     required String subtitle,
     required VoidCallback onTap,
     bool isDestructive = false,
+    Widget? trailing,
   }) {
     return Container(
       margin: EdgeInsets.only(bottom: 8),
@@ -256,7 +293,7 @@ class SettingsPage extends StatelessWidget {
         border: Border.all(color: Colors.grey.shade200),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 4,
             offset: Offset(0, 2),
           ),
@@ -266,14 +303,15 @@ class SettingsPage extends StatelessWidget {
         leading: Container(
           padding: EdgeInsets.all(8),
           decoration: BoxDecoration(
-            color: isDestructive
-                ? Colors.red.withOpacity(0.1)
-                : Colors.blue.withOpacity(0.1),
+            color:
+                isDestructive
+                    ? Colors.red.withValues(alpha: 0.1)
+                    : Colors.black.withValues(alpha: .1),
             borderRadius: BorderRadius.circular(8),
           ),
           child: Icon(
             icon,
-            color: isDestructive ? Colors.red : Colors.blue,
+            color: Colors.black, // جميع الأيقونات سوداء
             size: 20,
           ),
         ),
@@ -286,16 +324,15 @@ class SettingsPage extends StatelessWidget {
         ),
         subtitle: Text(
           subtitle,
-          style: TextStyle(
-            fontSize: 12,
-            color: Colors.grey.shade600,
-          ),
+          style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
         ),
-        trailing: Icon(
-          Icons.arrow_forward_ios,
-          color: Colors.grey.shade400,
-          size: 16,
-        ),
+        trailing:
+            trailing ??
+            Icon(
+              Icons.arrow_forward_ios,
+              color: Colors.grey.shade400,
+              size: 16,
+            ),
         onTap: onTap,
       ),
     );
@@ -303,15 +340,354 @@ class SettingsPage extends StatelessWidget {
 
   // Dialog Methods
   void _showPersonalInfoDialog() {
-    _showComingSoonDialog('Personal Information');
+    final authController = Get.find<AuthController>();
+    final currentUser = authController.currentUser.value;
+
+    if (currentUser == null) {
+      Get.snackbar(
+        'error'.tr,
+        'settings.user_not_found'.tr,
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red.shade100,
+        colorText: Colors.red.shade800,
+      );
+      return;
+    }
+
+    // Initialize text controllers with current values
+    final nameController = TextEditingController(text: currentUser.name);
+    final usernameController = TextEditingController(
+      text: currentUser.username ?? '',
+    );
+    final phoneController = TextEditingController(
+      text: currentUser.phoneNumber ?? '',
+    );
+
+    final formKey = GlobalKey<FormState>();
+    final RxBool isSaving = false.obs;
+
+    showDialog(
+      context: Get.context!,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Row(
+            children: [
+              Icon(Icons.person, color: Colors.blue),
+              SizedBox(width: 10),
+              Text('settings.personal_information'.tr),
+            ],
+          ),
+          content: Obx(
+            () => SingleChildScrollView(
+              child: Form(
+                key: formKey,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // Name Field
+                    TextFormField(
+                      controller: nameController,
+                      decoration: InputDecoration(
+                        labelText: 'settings.name'.tr,
+                        hintText: 'settings.enter_your_name'.tr,
+                        prefixIcon: Icon(Icons.person_outline),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        filled: true,
+                        fillColor: Colors.grey.shade50,
+                      ),
+                      validator: (value) {
+                        if (value == null || value.trim().isEmpty) {
+                          return 'settings.name_required'.tr;
+                        }
+                        if (value.trim().length < 2) {
+                          return 'settings.name_too_short'.tr;
+                        }
+                        return null;
+                      },
+                      enabled: !isSaving.value,
+                    ),
+                    SizedBox(height: 16),
+
+                    // Username Field
+                    TextFormField(
+                      controller: usernameController,
+                      decoration: InputDecoration(
+                        labelText: 'settings.username'.tr,
+                        hintText: 'settings.enter_username'.tr,
+                        prefixIcon: Icon(Icons.alternate_email),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        filled: true,
+                        fillColor: Colors.grey.shade50,
+                      ),
+                      validator: (value) {
+                        if (value != null &&
+                            value.isNotEmpty &&
+                            value.length < 3) {
+                          return 'settings.username_too_short'.tr;
+                        }
+                        return null;
+                      },
+                      enabled: !isSaving.value,
+                    ),
+                    SizedBox(height: 16),
+
+                    // Phone Field
+                    TextFormField(
+                      controller: phoneController,
+                      keyboardType: TextInputType.phone,
+                      decoration: InputDecoration(
+                        labelText: 'settings.phone'.tr,
+                        hintText: 'settings.enter_phone'.tr,
+                        prefixIcon: Icon(Icons.phone_outlined),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        filled: true,
+                        fillColor: Colors.grey.shade50,
+                      ),
+                      validator: (value) {
+                        if (value != null &&
+                            value.isNotEmpty &&
+                            !GetUtils.isPhoneNumber(value)) {
+                          return 'settings.phone_invalid'.tr;
+                        }
+                        return null;
+                      },
+                      enabled: !isSaving.value,
+                    ),
+                    SizedBox(height: 16),
+
+                    // Email Field (Read-only)
+                    TextFormField(
+                      initialValue: currentUser.email ?? '',
+                      decoration: InputDecoration(
+                        labelText: 'settings.email'.tr,
+                        prefixIcon: Icon(Icons.email_outlined),
+                        suffixIcon: Icon(Icons.lock_outline, size: 18),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        filled: true,
+                        fillColor: Colors.grey.shade200,
+                      ),
+                      enabled: false,
+                    ),
+                    SizedBox(height: 8),
+
+                    // Email note
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.info_outline,
+                          size: 14,
+                          color: Colors.grey.shade600,
+                        ),
+                        SizedBox(width: 4),
+                        Expanded(
+                          child: Text(
+                            'settings.email_cannot_be_changed'.tr,
+                            style: TextStyle(
+                              fontSize: 11,
+                              color: Colors.grey.shade600,
+                              fontStyle: FontStyle.italic,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+
+                    // Loading indicator
+                    if (isSaving.value) ...[
+                      SizedBox(height: 20),
+                      Center(
+                        child: Column(
+                          children: [
+                            CircularProgressIndicator(),
+                            SizedBox(height: 10),
+                            Text(
+                              'settings.saving_changes'.tr,
+                              style: TextStyle(color: Colors.grey.shade600),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                if (!isSaving.value) {
+                  Navigator.of(context).pop();
+                  nameController.dispose();
+                  usernameController.dispose();
+                  phoneController.dispose();
+                }
+              },
+              child: Text('settings.cancel'.tr),
+            ),
+            Obx(
+              () => ElevatedButton(
+                onPressed:
+                    isSaving.value
+                        ? null
+                        : () async {
+                          if (formKey.currentState!.validate()) {
+                            isSaving.value = true;
+
+                            try {
+                              // Prepare updates
+                              final updates = <String, dynamic>{};
+                              if (nameController.text.trim() !=
+                                  currentUser.name) {
+                                updates['name'] = nameController.text.trim();
+                              }
+                              if (usernameController.text.trim() !=
+                                      (currentUser.username ?? '') &&
+                                  usernameController.text.trim().isNotEmpty) {
+                                updates['username'] =
+                                    usernameController.text.trim();
+                              }
+                              if (phoneController.text.trim() !=
+                                      (currentUser.phoneNumber ?? '') &&
+                                  phoneController.text.trim().isNotEmpty) {
+                                updates['phone_number'] =
+                                    phoneController.text.trim();
+                              }
+
+                              if (updates.isEmpty) {
+                                Get.snackbar(
+                                  'settings.no_changes'.tr,
+                                  'settings.no_changes_message'.tr,
+                                  snackPosition: SnackPosition.BOTTOM,
+                                  backgroundColor: Colors.orange.shade100,
+                                  colorText: Colors.orange.shade800,
+                                  duration: Duration(seconds: 2),
+                                );
+                                isSaving.value = false;
+                                return;
+                              }
+
+                              // Update in database
+                              await authController.updateProfile(
+                                name: updates['name'],
+                                username: updates['username'],
+                                phoneNumber: updates['phone_number'],
+                              );
+
+                              Get.snackbar(
+                                'success'.tr,
+                                'settings.personal_info_updated'.tr,
+                                snackPosition: SnackPosition.BOTTOM,
+                                backgroundColor: Colors.green.shade100,
+                                colorText: Colors.green.shade800,
+                                duration: Duration(seconds: 2),
+                                icon: Icon(
+                                  Icons.check_circle,
+                                  color: Colors.green,
+                                ),
+                              );
+
+                              Navigator.of(context).pop();
+                              nameController.dispose();
+                              usernameController.dispose();
+                              phoneController.dispose();
+                            } catch (e) {
+                              print('Error updating personal info: $e');
+                              Get.snackbar(
+                                'error'.tr,
+                                'settings.update_failed'.tr,
+                                snackPosition: SnackPosition.BOTTOM,
+                                backgroundColor: Colors.red.shade100,
+                                colorText: Colors.red.shade800,
+                                duration: Duration(seconds: 3),
+                              );
+                            } finally {
+                              isSaving.value = false;
+                            }
+                          }
+                        },
+                style: ElevatedButton.styleFrom(backgroundColor: Colors.blue),
+                child: Text(
+                  'settings.save_changes'.tr,
+                  style: TextStyle(color: Colors.white),
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   void _showProfilePhotoDialog() {
-    _showComingSoonDialog('Profile Photo');
+    final imageController = Get.put(ImageEditController());
+    imageController.showImageSourceDialog(
+      title: 'settings.select_profile_photo_source'.tr,
+      onCamera: () async {
+        await imageController.pickFromCamera(isProfile: true);
+        if (imageController.profileImage != null) {
+          await imageController.saveProfileImageToDatabase(
+            imageController.profileImage!,
+          );
+        }
+      },
+      onGallery: () async {
+        await imageController.pickFromGallery(isProfile: true);
+        if (imageController.profileImage != null) {
+          await imageController.saveProfileImageToDatabase(
+            imageController.profileImage!,
+          );
+        }
+      },
+    );
   }
 
   void _showCoverPhotoDialog() {
-    _showComingSoonDialog('Cover Photo');
+    final authController = Get.find<AuthController>();
+    final currentUser = authController.currentUser.value;
+
+    // Check if user is a vendor (business account)
+    if (currentUser?.accountType != 1) {
+      Get.snackbar(
+        'settings.business_account_required'.tr,
+        'settings.cover_photo_vendor_only'.tr,
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.orange.shade100,
+        colorText: Colors.orange.shade800,
+        duration: Duration(seconds: 3),
+        icon: Icon(Icons.info, color: Colors.orange),
+      );
+      return;
+    }
+
+    final imageController = Get.put(ImageEditController());
+    imageController.showImageSourceDialog(
+      title: 'settings.select_cover_photo_source'.tr,
+      onCamera: () async {
+        await imageController.pickFromCamera(isProfile: false);
+        if (imageController.coverImage != null) {
+          await imageController.saveCoverImageToDatabase(
+            imageController.coverImage!,
+          );
+        }
+      },
+      onGallery: () async {
+        await imageController.pickFromGallery(isProfile: false);
+        if (imageController.coverImage != null) {
+          await imageController.saveCoverImageToDatabase(
+            imageController.coverImage!,
+          );
+        }
+      },
+    );
   }
 
   void _showBioDialog() {
@@ -351,7 +727,273 @@ class SettingsPage extends StatelessWidget {
   }
 
   void _showLanguageDialog() {
-    _showComingSoonDialog('Language');
+    showDialog(
+      context: Get.context!,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('settings.select_language'.tr),
+          content: Container(
+            width: double.maxFinite,
+            constraints: BoxConstraints(
+              maxHeight: MediaQuery.of(context).size.height * 0.6,
+            ),
+            child: ListView.builder(
+              shrinkWrap: true,
+              itemCount: AppLanguages.languages.length,
+              itemBuilder: (context, index) {
+                final language = AppLanguages.languages[index];
+                final languageCode = language['code']!;
+                final languageName = language['nativeName']!;
+                final isSelected = Get.locale?.languageCode == languageCode;
+
+                return ListTile(
+                  leading: Icon(
+                    Icons.language,
+                    color: isSelected ? Colors.blue : Colors.grey,
+                  ),
+                  title: Text(
+                    languageName,
+                    style: TextStyle(
+                      fontWeight:
+                          isSelected ? FontWeight.bold : FontWeight.normal,
+                      color: isSelected ? Colors.blue : Colors.black87,
+                    ),
+                  ),
+                  trailing:
+                      isSelected
+                          ? Icon(Icons.check_circle, color: Colors.blue)
+                          : null,
+                  onTap: () {
+                    Get.updateLocale(Locale(languageCode));
+                    Navigator.of(context).pop();
+                    Get.snackbar(
+                      'settings.language'.tr,
+                      'language_changed'.tr,
+                      snackPosition: SnackPosition.BOTTOM,
+                      backgroundColor: Colors.green.shade100,
+                      colorText: Colors.green.shade800,
+                      duration: Duration(seconds: 2),
+                      margin: EdgeInsets.all(10),
+                      borderRadius: 8,
+                    );
+                  },
+                );
+              },
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text('settings.cancel'.tr),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _showCurrencyDialog() {
+    final currencyController = Get.find<CurrencyController>();
+    final authController = Get.find<AuthController>();
+    final currentCurrency =
+        currencyController.userCurrency.value.isNotEmpty
+            ? currencyController.userCurrency.value
+            : 'USD';
+
+    final List<Map<String, String>> currencies = [
+      {'code': 'USD', 'name': 'US Dollar', 'symbol': '\$'},
+      {'code': 'EUR', 'name': 'Euro', 'symbol': '€'},
+      {'code': 'SAR', 'name': 'Saudi Riyal', 'symbol': 'ر.س'},
+      {'code': 'AED', 'name': 'UAE Dirham', 'symbol': 'د.إ'},
+      {'code': 'EGP', 'name': 'Egyptian Pound', 'symbol': 'ج.م'},
+      {'code': 'JOD', 'name': 'Jordanian Dinar', 'symbol': 'د.ا'},
+      {'code': 'KWD', 'name': 'Kuwaiti Dinar', 'symbol': 'د.ك'},
+      {'code': 'QAR', 'name': 'Qatari Riyal', 'symbol': 'ر.ق'},
+    ];
+
+    showModalBottomSheet(
+      context: Get.context!,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (context) {
+        return Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+          ),
+          padding: EdgeInsets.all(20),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Handle bar
+              Container(
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade300,
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              SizedBox(height: 20),
+
+              // العنوان
+              Row(
+                children: [
+                  Icon(Icons.currency_exchange, color: Colors.black),
+                  SizedBox(width: 12),
+                  Text(
+                    'settings.select_currency'.tr,
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.grey.shade800,
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 8),
+              Text(
+                'settings.currency_description'.tr,
+                style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
+              ),
+              SizedBox(height: 20),
+
+              // قائمة العملات
+              Container(
+                constraints: BoxConstraints(
+                  maxHeight: MediaQuery.of(context).size.height * 0.5,
+                ),
+                child: SingleChildScrollView(
+                  child: Column(
+                    children:
+                        currencies.map((currency) {
+                          final isSelected =
+                              currentCurrency == currency['code'];
+
+                          return Container(
+                            margin: EdgeInsets.only(bottom: 8),
+                            decoration: BoxDecoration(
+                              color:
+                                  isSelected
+                                      ? TColors.primary.withOpacity(0.1)
+                                      : Colors.grey.shade50,
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(
+                                color:
+                                    isSelected
+                                        ? TColors.primary
+                                        : Colors.grey.shade200,
+                                width: isSelected ? 2 : 1,
+                              ),
+                            ),
+                            child: ListTile(
+                              leading: Container(
+                                width: 50,
+                                height: 50,
+                                decoration: BoxDecoration(
+                                  color:
+                                      isSelected
+                                          ? TColors.primary
+                                          : Colors.grey.shade200,
+                                  borderRadius: BorderRadius.circular(25),
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    currency['symbol']!,
+                                    style: TextStyle(
+                                      color:
+                                          isSelected
+                                              ? Colors.white
+                                              : Colors.grey.shade700,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 18,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              title: Text(
+                                currency['name']!,
+                                style: TextStyle(
+                                  fontWeight:
+                                      isSelected
+                                          ? FontWeight.bold
+                                          : FontWeight.w600,
+                                  color:
+                                      isSelected
+                                          ? TColors.primary
+                                          : Colors.grey.shade800,
+                                ),
+                              ),
+                              subtitle: Text(
+                                currency['code']!,
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: Colors.grey.shade600,
+                                ),
+                              ),
+                              trailing:
+                                  isSelected
+                                      ? Icon(
+                                        Icons.check_circle,
+                                        color: TColors.primary,
+                                        size: 28,
+                                      )
+                                      : null,
+                              onTap: () async {
+                                try {
+                                  // تحديث العملة المحلية
+                                  currencyController.userCurrency.value =
+                                      currency['code']!;
+
+                                  // تحديث في قاعدة البيانات
+                                  final userId =
+                                      authController.currentUser.value?.userId;
+                                  if (userId != null) {
+                                    await SupabaseService.client
+                                        .from('user_profiles')
+                                        .update({
+                                          'default_currency': currency['code']!,
+                                        })
+                                        .eq('user_id', userId);
+
+                                    debugPrint(
+                                      '✅ Currency updated to: ${currency['code']}',
+                                    );
+                                  }
+
+                                  Navigator.pop(context);
+
+                                  Get.snackbar(
+                                    'success'.tr,
+                                    '${'settings.currency_updated'.tr} ${currency['name']}',
+                                    snackPosition: SnackPosition.BOTTOM,
+                                    backgroundColor: Colors.green.shade100,
+                                    colorText: Colors.green.shade800,
+                                    duration: Duration(seconds: 2),
+                                  );
+                                } catch (e) {
+                                  debugPrint('❌ Error updating currency: $e');
+
+                                  Get.snackbar(
+                                    'error'.tr,
+                                    'settings.currency_update_failed'.tr,
+                                    snackPosition: SnackPosition.BOTTOM,
+                                    backgroundColor: Colors.red.shade100,
+                                    colorText: Colors.red.shade800,
+                                  );
+                                }
+                              },
+                            ),
+                          );
+                        }).toList(),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
   }
 
   void _showThemeDialog() {
@@ -359,7 +1001,11 @@ class SettingsPage extends StatelessWidget {
   }
 
   void _showStorageDialog() {
-    _showComingSoonDialog('Storage');
+    Get.to(
+      () => const StorageManagementPage(),
+      transition: Transition.rightToLeftWithFade,
+      duration: const Duration(milliseconds: 900),
+    );
   }
 
   void _showUpdatesDialog() {
@@ -379,24 +1025,27 @@ class SettingsPage extends StatelessWidget {
       context: Get.context!,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('About'),
+          title: Text('settings.about_app'.tr),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('App Name: iStoreTo'),
+              Text('settings.app_name'.tr),
               SizedBox(height: 8),
-              Text('Version: 1.0.0'),
+              Text('settings.version'.tr),
               SizedBox(height: 8),
-              Text('Build: 2024.01.01'),
+              Text('settings.build'.tr),
               SizedBox(height: 8),
-              Text('Developer: iStoreTo Team'),
+              Text('settings.developer'.tr),
             ],
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: Text('OK'),
+              child: Text(
+                'settings.ok'.tr,
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
             ),
           ],
         );
@@ -413,23 +1062,21 @@ class SettingsPage extends StatelessWidget {
       context: Get.context!,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Delete Account'),
-          content: Text(
-            'Are you sure you want to delete your account? This action cannot be undone.',
-          ),
+          title: Text('settings.delete_account_confirm'.tr),
+          content: Text('settings.delete_account_message'.tr),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: Text('Cancel'),
+              child: Text('settings.cancel'.tr),
             ),
             ElevatedButton(
               onPressed: () {
                 Navigator.of(context).pop();
-                _showComingSoonDialog('Delete Account');
+                _showComingSoonDialog('settings.delete_account'.tr);
               },
               style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
               child: Text(
-                'Delete',
+                'settings.delete'.tr,
                 style: TextStyle(color: Colors.white),
               ),
             ),
@@ -444,12 +1091,12 @@ class SettingsPage extends StatelessWidget {
       context: Get.context!,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Sign Out'),
-          content: Text('Are you sure you want to sign out?'),
+          title: Text('settings.sign_out_confirm'.tr),
+          content: Text('settings.sign_out_message'.tr),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: Text('Cancel'),
+              child: Text('settings.cancel'.tr),
             ),
             ElevatedButton(
               onPressed: () {
@@ -458,7 +1105,7 @@ class SettingsPage extends StatelessWidget {
               },
               style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
               child: Text(
-                'Sign Out',
+                'settings.sign_out'.tr,
                 style: TextStyle(color: Colors.white),
               ),
             ),
@@ -471,7 +1118,7 @@ class SettingsPage extends StatelessWidget {
   void _showComingSoonDialog(String feature) {
     Get.snackbar(
       feature,
-      '$feature feature coming soon!',
+      '$feature ${'settings.coming_soon_feature'.tr}',
       snackPosition: SnackPosition.BOTTOM,
       backgroundColor: Colors.blue.shade100,
       colorText: Colors.blue.shade800,

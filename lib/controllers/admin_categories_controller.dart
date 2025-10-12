@@ -16,6 +16,9 @@ class AdminCategoriesController extends GetxController {
   final RxBool isUploading = false.obs;
   final RxDouble uploadProgress = 0.0.obs;
 
+  // Filter tracking
+  final RxString currentFilter = 'all'.obs;
+
   // Form controllers
   final searchController = TextEditingController();
   final nameController = TextEditingController();
@@ -83,21 +86,67 @@ class AdminCategoriesController extends GetxController {
 
   // Filter by status
   void filterByStatus(String status) {
+    currentFilter.value = status;
+
     switch (status) {
       case 'active':
         filteredCategories.value =
             categories.where((c) => c.status == 1).toList();
         break;
       case 'pending':
+        // الفئات المعلقة تشمل: status = 2 (معلق) و status = 3 (معطل مؤقتاً)
         filteredCategories.value =
-            categories.where((c) => c.status == 2).toList();
+            categories.where((c) => c.status == 2 || c.status == 3).toList();
         break;
       case 'inactive':
+        // الفئات المعطلة نهائياً: status = 0 أو أي حالة أخرى
         filteredCategories.value =
-            categories.where((c) => c.status == 3).toList();
+            categories.where((c) => c.status == 0).toList();
         break;
       default:
         filteredCategories.value = categories;
+    }
+  }
+
+  // Get current filter display name
+  String get currentFilterName {
+    switch (currentFilter.value) {
+      case 'active':
+        return 'admin_active_categories'.tr;
+      case 'pending':
+        return 'admin_pending_categories'.tr;
+      case 'inactive':
+        return 'admin_inactive_categories'.tr;
+      default:
+        return 'admin_all_categories'.tr;
+    }
+  }
+
+  // Get current filter icon
+  IconData get currentFilterIcon {
+    switch (currentFilter.value) {
+      case 'active':
+        return Icons.check_circle;
+      case 'pending':
+        return Icons.schedule;
+      case 'inactive':
+        return Icons.cancel;
+      default:
+        return Icons.filter_list;
+    }
+  }
+
+  // Get current filter color
+  Color get currentFilterColor {
+    switch (currentFilter.value) {
+      case 'active':
+        return Colors.green;
+      case 'pending':
+        return Colors.orange;
+      case 'inactive':
+        return Colors.red;
+      default:
+        return Colors.blue;
     }
   }
 
@@ -171,7 +220,7 @@ class AdminCategoriesController extends GetxController {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         // Category Image
-                        _buildImageSelector(),
+                        Center(child: _buildImageSelector()),
                         const SizedBox(height: 20),
 
                         // Category Name (English)
@@ -283,7 +332,7 @@ class AdminCategoriesController extends GetxController {
   // Build image selector
   Widget _buildImageSelector() {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Text(
           'admin_category_image'.tr,
@@ -294,90 +343,96 @@ class AdminCategoriesController extends GetxController {
           final hasImage =
               selectedImage.value != null || imageUrl.value.isNotEmpty;
 
-          return Container(
-            width: 120,
-            height: 120,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              border: Border.all(color: Colors.grey.shade300, width: 2),
-            ),
-            child:
-                hasImage
-                    ? Stack(
-                      children: [
-                        ClipOval(
-                          child:
-                              selectedImage.value != null
-                                  ? Image.file(
-                                    File(selectedImage.value!.path),
-                                    width: 120,
-                                    height: 120,
-                                    fit: BoxFit.cover,
-                                  )
-                                  : Image.network(
-                                    imageUrl.value,
-                                    width: 120,
-                                    height: 120,
-                                    fit: BoxFit.cover,
-                                    errorBuilder: (context, error, stackTrace) {
-                                      return Container(
-                                        color: Colors.grey.shade200,
-                                        child: const Icon(
-                                          Icons.category,
-                                          size: 40,
-                                        ),
-                                      );
-                                    },
-                                  ),
-                        ),
-                        Positioned(
-                          top: 4,
-                          right: 4,
-                          child: GestureDetector(
-                            onTap: _removeImage,
-                            child: Container(
-                              padding: const EdgeInsets.all(4),
-                              decoration: BoxDecoration(
-                                color: Colors.red,
-                                shape: BoxShape.circle,
-                              ),
-                              child: const Icon(
-                                Icons.close,
-                                color: Colors.white,
-                                size: 16,
+          return Center(
+            child: Container(
+              width: 120,
+              height: 120,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(color: Colors.grey.shade300, width: 2),
+              ),
+              child:
+                  hasImage
+                      ? Stack(
+                        children: [
+                          ClipOval(
+                            child:
+                                selectedImage.value != null
+                                    ? Image.file(
+                                      File(selectedImage.value!.path),
+                                      width: 120,
+                                      height: 120,
+                                      fit: BoxFit.cover,
+                                    )
+                                    : Image.network(
+                                      imageUrl.value,
+                                      width: 120,
+                                      height: 120,
+                                      fit: BoxFit.cover,
+                                      errorBuilder: (
+                                        context,
+                                        error,
+                                        stackTrace,
+                                      ) {
+                                        return Container(
+                                          color: Colors.grey.shade200,
+                                          child: const Icon(
+                                            Icons.category,
+                                            size: 40,
+                                          ),
+                                        );
+                                      },
+                                    ),
+                          ),
+                          Positioned(
+                            top: 4,
+                            right: 4,
+                            child: GestureDetector(
+                              onTap: _removeImage,
+                              child: Container(
+                                padding: const EdgeInsets.all(4),
+                                decoration: BoxDecoration(
+                                  color: Colors.red,
+                                  shape: BoxShape.circle,
+                                ),
+                                child: const Icon(
+                                  Icons.close,
+                                  color: Colors.white,
+                                  size: 16,
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                      ],
-                    )
-                    : GestureDetector(
-                      onTap: _showImageSourceDialog,
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: Colors.grey.shade100,
-                          shape: BoxShape.circle,
-                        ),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.add_photo_alternate,
-                              size: 40,
-                              color: Colors.grey.shade600,
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              'admin_add_image'.tr,
-                              style: TextStyle(
-                                fontSize: 12,
+                        ],
+                      )
+                      : GestureDetector(
+                        onTap: _showImageSourceDialog,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Colors.grey.shade100,
+                            shape: BoxShape.circle,
+                          ),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.add_photo_alternate,
+                                size: 40,
                                 color: Colors.grey.shade600,
                               ),
-                            ),
-                          ],
+                              const SizedBox(height: 4),
+                              Text(
+                                'admin_add_image'.tr,
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: Colors.grey.shade600,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
-                    ),
+            ),
           );
         }),
       ],
@@ -570,7 +625,13 @@ class AdminCategoriesController extends GetxController {
       if (editingCategory.value == null) {
         // Add new category
         categoryData['created_at'] = DateTime.now().toIso8601String();
-        await MajorCategoryRepository.createCategory(categoryData);
+        final newCategory = await MajorCategoryRepository.createCategory(
+          categoryData,
+        );
+
+        // إضافة الفئة الجديدة إلى القائمة محلياً
+        _addCategoryToList(newCategory);
+
         Get.snackbar(
           'Success',
           'Category added successfully!',
@@ -580,10 +641,14 @@ class AdminCategoriesController extends GetxController {
         );
       } else {
         // Update existing category
-        await MajorCategoryRepository.updateCategory(
+        final updatedCategory = await MajorCategoryRepository.updateCategory(
           editingCategory.value!.id!,
           categoryData,
         );
+
+        // تحديث الفئة في القائمة محلياً
+        _updateCategoryInList(editingCategory.value!.id!, updatedCategory);
+
         Get.snackbar(
           'Success',
           'Category updated successfully!',
@@ -595,7 +660,6 @@ class AdminCategoriesController extends GetxController {
 
       uploadProgress.value = 1.0;
       Get.back();
-      loadCategories();
     } catch (e) {
       Get.snackbar(
         'Error',
@@ -613,10 +677,14 @@ class AdminCategoriesController extends GetxController {
   // Toggle feature status
   Future<void> toggleFeatureStatus(MajorCategoryModel category) async {
     try {
+      final newFeatureStatus = !category.isFeature;
       await MajorCategoryRepository.updateCategory(category.id!, {
-        'is_feature': !category.isFeature,
+        'is_feature': newFeatureStatus,
         'updated_at': DateTime.now().toIso8601String(),
       });
+
+      // تحديث القائمة محلياً
+      _updateCategoryFeatureInList(category.id!, newFeatureStatus);
 
       Get.snackbar(
         'Success',
@@ -627,8 +695,6 @@ class AdminCategoriesController extends GetxController {
         backgroundColor: Colors.green,
         colorText: Colors.white,
       );
-
-      loadCategories();
     } catch (e) {
       Get.snackbar(
         'Error',
@@ -644,21 +710,22 @@ class AdminCategoriesController extends GetxController {
   Future<void> toggleStatus(MajorCategoryModel category) async {
     try {
       final newStatus =
-          category.status == 1 ? 3 : 1; // Toggle between active and inactive
+          category.status == 1 ? 2 : 1; // Toggle between active and pending
       await MajorCategoryRepository.updateCategory(category.id!, {
         'status': newStatus,
         'updated_at': DateTime.now().toIso8601String(),
       });
 
+      // تحديث القائمة محلياً بدلاً من إعادة التحميل
+      _updateCategoryStatusInList(category.id!, newStatus);
+
       Get.snackbar(
         'Success',
-        newStatus == 1 ? 'Category activated' : 'Category deactivated',
+        newStatus == 1 ? 'Category activated' : 'Category suspended',
         snackPosition: SnackPosition.TOP,
         backgroundColor: Colors.green,
         colorText: Colors.white,
       );
-
-      loadCategories();
     } catch (e) {
       Get.snackbar(
         'Error',
@@ -667,6 +734,77 @@ class AdminCategoriesController extends GetxController {
         backgroundColor: Colors.red,
         colorText: Colors.white,
       );
+    }
+  }
+
+  // تحديث حالة فئة في القائمة محلياً
+  void _updateCategoryStatusInList(String categoryId, int newStatus) {
+    // البحث عن الفئة في القائمة الرئيسية
+    final categoryIndex = categories.indexWhere((c) => c.id == categoryId);
+    if (categoryIndex != -1) {
+      // تحديث الحالة
+      categories[categoryIndex] = categories[categoryIndex].copyWith(
+        status: newStatus,
+        updatedAt: DateTime.now(),
+      );
+
+      // تحديث القائمة المفلترة
+      _applyCurrentFilter();
+    }
+  }
+
+  // تحديث حالة المميز للفئة في القائمة محلياً
+  void _updateCategoryFeatureInList(String categoryId, bool newFeatureStatus) {
+    // البحث عن الفئة في القائمة الرئيسية
+    final categoryIndex = categories.indexWhere((c) => c.id == categoryId);
+    if (categoryIndex != -1) {
+      // تحديث حالة المميز
+      categories[categoryIndex] = categories[categoryIndex].copyWith(
+        isFeature: newFeatureStatus,
+        updatedAt: DateTime.now(),
+      );
+
+      // تحديث القائمة المفلترة
+      _applyCurrentFilter();
+    }
+  }
+
+  // تطبيق الفلتر الحالي على القائمة
+  void _applyCurrentFilter() {
+    filterByStatus(currentFilter.value);
+  }
+
+  // حذف فئة من القائمة محلياً
+  void _removeCategoryFromList(String categoryId) {
+    // حذف الفئة من القائمة الرئيسية
+    categories.removeWhere((c) => c.id == categoryId);
+
+    // تحديث القائمة المفلترة
+    _applyCurrentFilter();
+  }
+
+  // إضافة فئة جديدة إلى القائمة محلياً
+  void _addCategoryToList(MajorCategoryModel newCategory) {
+    // إضافة الفئة الجديدة إلى بداية القائمة
+    categories.insert(0, newCategory);
+
+    // تحديث القائمة المفلترة
+    _applyCurrentFilter();
+  }
+
+  // تحديث فئة كاملة في القائمة محلياً
+  void _updateCategoryInList(
+    String categoryId,
+    MajorCategoryModel updatedCategory,
+  ) {
+    // البحث عن الفئة في القائمة الرئيسية
+    final categoryIndex = categories.indexWhere((c) => c.id == categoryId);
+    if (categoryIndex != -1) {
+      // استبدال الفئة بالنسخة المحدثة
+      categories[categoryIndex] = updatedCategory;
+
+      // تحديث القائمة المفلترة
+      _applyCurrentFilter();
     }
   }
 
@@ -696,6 +834,9 @@ class AdminCategoriesController extends GetxController {
     try {
       await MajorCategoryRepository.deleteCategory(category.id!);
 
+      // حذف الفئة من القائمة محلياً
+      _removeCategoryFromList(category.id!);
+
       Get.snackbar(
         'Success',
         'Category deleted successfully!',
@@ -703,8 +844,6 @@ class AdminCategoriesController extends GetxController {
         backgroundColor: Colors.green,
         colorText: Colors.white,
       );
-
-      loadCategories();
     } catch (e) {
       Get.snackbar(
         'Error',

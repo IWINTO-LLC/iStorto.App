@@ -33,7 +33,7 @@ class AddToCartWidget extends StatelessWidget {
           borderWidth: 1.5,
 
           borderColor: TColors.white,
-          radius: BorderRadius.circular(40),
+          radius: BorderRadius.circular(12),
           backgroundColor:
               quantity.value > 0 ? Colors.black : Colors.grey.shade100,
           child: AnimatedSwitcher(

@@ -310,3 +310,11 @@ await controller.moveSelectedProductsToCategory(category);
 
 
 
+
+
+
+
+
+
+
+

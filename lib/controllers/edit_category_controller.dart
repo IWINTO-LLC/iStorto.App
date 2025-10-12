@@ -8,13 +8,11 @@ import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:istoreto/controllers/auth_controller.dart';
 import 'package:istoreto/controllers/category_controller.dart';
-import 'package:istoreto/data/models/upload_result.dart';
 import 'package:istoreto/featured/category/view/create_category/widget/image_uploader.dart';
 import 'package:istoreto/utils/constants/color.dart';
-import 'package:istoreto/utils/constants/constant.dart';
 import 'package:istoreto/utils/constants/enums.dart';
 import 'package:istoreto/utils/constants/image_strings.dart';
-import 'package:istoreto/utils/upload.dart';
+import 'package:istoreto/services/image_upload_service.dart';
 import '../data/models/category_model.dart';
 import '../data/repositories/category_repository.dart';
 import '../utils/loader/loaders.dart';
@@ -80,18 +78,34 @@ class EditCategoryController extends GetxController {
 
     File img = File(localImage.value);
     if (kDebugMode) {
-      print("================= befor ==upload category=======");
+      print("================= uploading category image to Supabase =======");
       print(img.path);
     }
-    UploadResult uploadResult = await UploadService.instance
-        .uploadMediaToServer(img);
-    var s = uploadResult.fileUrl;
-    imageUrl.value = "$mediaPath$s";
-    if (kDebugMode) {
-      print("uploading url===${imageUrl.value}");
-      message.value = "uploading url====${imageUrl.value} ";
+
+    try {
+      // Use Supabase ImageUploadService
+      final result = await ImageUploadService.instance.uploadImage(
+        imageFile: img,
+        folderName: 'categories',
+        customFileName: 'category_${DateTime.now().millisecondsSinceEpoch}',
+      );
+
+      if (result['success'] == true) {
+        imageUrl.value = result['url'] ?? '';
+        if (kDebugMode) {
+          print("Upload successful! URL: ${imageUrl.value}");
+          message.value = "uploading url====${imageUrl.value}";
+        }
+      } else {
+        throw Exception(result['error'] ?? 'Upload failed');
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print("Upload error: $e");
+      }
+      message.value = "upload_error".tr;
+      throw e;
     }
-    return;
   }
 
   Future<void> updateCategory(CategoryModel category) async {

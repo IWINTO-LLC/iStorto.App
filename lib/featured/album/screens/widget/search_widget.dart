@@ -23,7 +23,7 @@ class SearchAndSort extends StatelessWidget {
           padding: const EdgeInsets.all(16),
           margin: const EdgeInsets.symmetric(horizontal: 16),
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.2),
+            color: Colors.white.withValues(alpha: 0.2),
             borderRadius: BorderRadius.circular(24),
             border: Border.all(color: Colors.white30),
           ),
@@ -37,7 +37,7 @@ class SearchAndSort extends StatelessWidget {
                   hintStyle: const TextStyle(color: Colors.white70),
                   prefixIcon: const Icon(Icons.search, color: Colors.white70),
                   filled: true,
-                  fillColor: Colors.white.withOpacity(0.1),
+                  fillColor: Colors.white.withValues(alpha: 0.1),
                   contentPadding: const EdgeInsets.symmetric(
                     horizontal: 16,
                     vertical: 14,
@@ -52,14 +52,14 @@ class SearchAndSort extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 12),
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.1),
+                  color: Colors.white.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(16),
                 ),
                 child: DropdownButton<String>(
                   value: sortBy,
                   isExpanded: true,
                   underline: const SizedBox(),
-                  dropdownColor: Colors.black.withOpacity(0.85),
+                  dropdownColor: Colors.black.withValues(alpha: 0.85),
                   style: const TextStyle(color: Colors.white),
                   iconEnabledColor: Colors.white,
                   items: const [

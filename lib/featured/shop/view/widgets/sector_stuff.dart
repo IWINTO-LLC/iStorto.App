@@ -68,23 +68,21 @@ Container getEmptyEdit(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Visibility(
-                visible: withTitle,
-                child: Flexible(
+              if (withTitle)
+                Flexible(
                   child: BuildSectorTitle(name: sectorName, vendorId: vendorId),
                 ),
-              ),
-              GestureDetector(
-                onTap:
-                    () => showEditDialog(
-                      context,
-                      SectorController.instance.sectors
-                          .where((s) => s.name == sectorName)
-                          .first,
-                    ),
-                child: Visibility(
-                  visible: editMode,
+              if (editMode)
+                GestureDetector(
+                  onTap:
+                      () => showEditDialog(
+                        context,
+                        SectorController.instance.sectors
+                            .where((s) => s.name == sectorName)
+                            .first,
+                      ),
                   child: Padding(
                     padding: const EdgeInsets.only(left: 8.0, right: 8),
                     child: TRoundedContainer(
@@ -100,7 +98,6 @@ Container getEmptyEdit(
                     ),
                   ),
                 ),
-              ),
             ],
           ),
           // Visibility(
@@ -314,11 +311,10 @@ Row titleWithEdit(
   bool editMode,
 ) {
   return Row(
-    mainAxisSize: MainAxisSize.min,
     children: [
-      Visibility(
-        visible: withTitle,
-        child: Flexible(
+      Flexible(
+        child: Visibility(
+          visible: withTitle,
           child: BuildSectorTitle(name: sectorName, vendorId: vendorId),
         ),
       ),

@@ -6,7 +6,6 @@ import 'package:istoreto/data/models/category_model.dart';
 import 'package:istoreto/utils/common/styles/styles.dart';
 import 'package:istoreto/utils/common/widgets/shimmers/shimmer.dart';
 import 'package:istoreto/utils/constants/color.dart';
-import 'package:istoreto/utils/constants/sizes.dart';
 
 class TCategoryGridItem extends StatelessWidget {
   const TCategoryGridItem({
@@ -23,18 +22,18 @@ class TCategoryGridItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
-      // crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisSize: MainAxisSize.min, // تقليل المساحة المطلوبة
       children: [
         Container(
-          width: 72,
-          height: 72,
+          width: 60, // تقليل الحجم لتفادي overflow
+          height: 60,
           decoration: BoxDecoration(
             boxShadow: [
               BoxShadow(
                 color: TColors.grey,
                 spreadRadius: 1,
                 blurRadius: 2,
-                offset: Offset(0, 3),
+                offset: const Offset(0, 3),
               ),
             ],
             border: Border.all(
@@ -49,125 +48,92 @@ class TCategoryGridItem extends StatelessWidget {
               fit: BoxFit.fill,
               imageUrl: category.icon!,
               imageBuilder:
-                  (context, imageProvider) =>
-                  //  GestureDetector(
-                  //       onTap: () => Navigator.push(
-                  //           context,
-                  //           MaterialPageRoute(
-                  //               builder: (context) => AllProducts(
-                  //                     title: Get.locale?.languageCode == 'en'
-                  //                         ? category.name
-                  //                         : category.arabicName,
-                  //                     categoryId: category.id!,
-                  //                     editMode: editMode,
-                  //                     vendorId: vendorId,
-                  //                     futureMethode: CategoryController
-                  //                         .instance
-                  //                         .getCategoryProduct(
-                  //                             categoryId: category.id!,
-                  //                             userId: FirebaseAuth
-                  //                                 .instance.currentUser!.uid,
-                  //                             limit: -1),
-                  //                   ))),
-                  //       child:
-                  Container(
-                    // width: 80,
-                    // height: 80,
+                  (context, imageProvider) => Container(
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(100),
+                      borderRadius: BorderRadius.circular(25),
                       image: DecorationImage(image: imageProvider),
                     ),
                   ),
               progressIndicatorBuilder:
                   (context, url, downloadProgress) => ClipRRect(
-                    //  borderRadius: BorderRadius.circular(0),
                     child: TShimmerEffect(
                       raduis: BorderRadius.circular(100),
-                      width: 65,
-                      height: 65,
+                      width: 50,
+                      height: 50,
                     ),
                   ),
               errorWidget:
-                  (context, url, error) => const Icon(Icons.error, size: 50),
+                  (context, url, error) =>
+                      const Icon(Icons.error, size: 40), // تقليل الحجم
             ),
           ),
         ),
-        const SizedBox(height: TSizes.spaceBtWItems / 2),
-        Wrap(
-          children: [
-            Container(
-              width: 85,
-
-              //   height: 60,
-              child: Align(
-                alignment: Alignment.topCenter,
-                child: Container(
-                  decoration:
-                      selected
-                          ? BoxDecoration(
-                            border: Border(
-                              bottom: BorderSide(
-                                color: Colors.black, // لون الحد
-                                width: 2, // سمك الحد
+        const SizedBox(height: 4), // تقليل المسافة
+        SizedBox(
+          // استخدام SizedBox لتجنب أخطاء ParentDataWidget داخل القوائم
+          width: 85,
+          child: Align(
+            alignment: Alignment.topCenter,
+            child: Container(
+              decoration:
+                  selected
+                      ? BoxDecoration(
+                        border: Border(
+                          bottom: BorderSide(color: Colors.black, width: 2),
+                        ),
+                      )
+                      : null,
+              child: Obx(
+                () =>
+                    TranslateController
+                            .instance
+                            .enableTranslateProductDetails
+                            .value
+                        ? FutureBuilder<String>(
+                          future: TranslateController.instance
+                              .getTranslatedText(
+                                text: category.title,
+                                targetLangCode:
+                                    Localizations.localeOf(
+                                      context,
+                                    ).languageCode,
                               ),
-                            ),
-                          )
-                          : null,
-                  child: Obx(
-                    () =>
-                        TranslateController
-                                .instance
-                                .enableTranslateProductDetails
-                                .value
-                            ? FutureBuilder<String>(
-                              future: TranslateController.instance
-                                  .getTranslatedText(
-                                    text: category.title,
-                                    targetLangCode:
-                                        Localizations.localeOf(
-                                          context,
-                                        ).languageCode,
-                                  ),
-                              builder: (context, snapshot) {
-                                final displayText =
-                                    snapshot.connectionState ==
-                                                ConnectionState.done &&
-                                            snapshot.hasData
-                                        ? snapshot.data!
-                                        : category.title;
-                                return Text(
-                                  displayText,
-                                  maxLines: 2,
-                                  textAlign: TextAlign.center,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: titilliumRegular.copyWith(
-                                    fontSize: selected ? 15 : 13,
-                                    fontWeight:
-                                        selected
-                                            ? FontWeight.w600
-                                            : FontWeight.normal,
-                                  ),
-                                );
-                              },
-                            )
-                            : Text(
-                              category.title,
+                          builder: (context, snapshot) {
+                            final displayText =
+                                snapshot.connectionState ==
+                                            ConnectionState.done &&
+                                        snapshot.hasData
+                                    ? snapshot.data!
+                                    : category.title;
+                            return Text(
+                              displayText,
                               maxLines: 2,
                               textAlign: TextAlign.center,
                               overflow: TextOverflow.ellipsis,
                               style: titilliumRegular.copyWith(
-                                fontSize: selected ? 15 : 13,
+                                fontSize: selected ? 14 : 12, // تقليل حجم الخط
                                 fontWeight:
                                     selected
                                         ? FontWeight.w600
                                         : FontWeight.normal,
                               ),
-                            ),
-                  ),
-                ),
+                            );
+                          },
+                        )
+                        : Text(
+                          category.title,
+                          maxLines: 2,
+                          textAlign: TextAlign.center,
+                          overflow: TextOverflow.ellipsis,
+                          style: titilliumRegular.copyWith(
+                            fontSize: selected ? 13 : 11, // تقليل حجم الخط
+                            fontWeight:
+                                selected ? FontWeight.w600 : FontWeight.normal,
+                          ),
+                        ),
               ),
             ),
-          ],
+          ),
         ),
       ],
     );

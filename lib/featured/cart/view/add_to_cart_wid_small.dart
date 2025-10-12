@@ -17,10 +17,12 @@ class AddToCartWidgetSmall extends StatelessWidget {
     final cartController = CartController.instance;
 
     return Obx(() {
-      final quantity = cartController.productQuantities[product.id] ?? 0.obs;
+      // الحصول على الكمية الفعلية
+      final quantity = cartController.productQuantities[product.id]?.value ?? 0;
 
       return GestureDetector(
         onTap: () {
+          // إضافة المنتج للسلة
           cartController.addToCart(product);
         },
         child: TRoundedContainer(
@@ -30,21 +32,24 @@ class AddToCartWidgetSmall extends StatelessWidget {
           showBorder: true,
           borderWidth: 1.5,
           borderColor: Colors.white,
-          // borderColor: Colors.black,
           enableShadow: true,
           backgroundColor: Colors.black,
           child: AnimatedSwitcher(
             duration: const Duration(milliseconds: 300),
+            transitionBuilder: (child, animation) {
+              return ScaleTransition(scale: animation, child: child);
+            },
             child:
-                quantity.value > 0
+                quantity > 0
                     ? Center(
                       key: ValueKey('count-${product.id}'),
                       child: Text(
-                        '${quantity.value}',
+                        '$quantity',
                         style: titilliumBold.copyWith(
                           fontFamily: numberFonts,
                           fontSize: 14,
                           color: Colors.white,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
                     )

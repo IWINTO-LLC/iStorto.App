@@ -1,8 +1,13 @@
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
+import 'package:istoreto/services/storage_service.dart';
+import 'package:istoreto/translations/translations.dart';
 
 class TranslationController extends GetxController {
   static TranslationController get instance => Get.find();
+
+  // مفتاح تخزين اللغة
+  static const String _languageKey = 'app_language';
 
   // Current language code
   final RxString _currentLanguage = 'ar'.obs;
@@ -20,14 +25,30 @@ class TranslationController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    // Initialize with Arabic as default
-    _currentLanguage.value = 'ar';
+    // استعادة اللغة المحفوظة أو استخدام العربية كلغة افتراضية
+    _loadSavedLanguage();
+  }
+
+  // تحميل اللغة المحفوظة
+  void _loadSavedLanguage() {
+    final savedLanguage = StorageService.instance.read(_languageKey);
+    if (savedLanguage != null && savedLanguage.isNotEmpty) {
+      _currentLanguage.value = savedLanguage;
+      // تحديث اللغة في GetX
+      Get.updateLocale(Locale(savedLanguage));
+    } else {
+      // استخدام العربية كلغة افتراضية
+      _currentLanguage.value = 'ar';
+    }
   }
 
   // Change language method
   void changeLanguage(String languageCode) {
     if (_currentLanguage.value != languageCode) {
       _currentLanguage.value = languageCode;
+
+      // حفظ اللغة في التخزين المحلي
+      StorageService.instance.write(_languageKey, languageCode);
 
       // Update GetX locale
       Get.updateLocale(Locale(languageCode));
@@ -49,42 +70,11 @@ class TranslationController extends GetxController {
     }
   }
 
-  // Get language name by code
+  // الحصول على اسم اللغة من الكود - Get language name by code
   String getLanguageName(String code) {
-    switch (code) {
-      case 'ar':
-        return 'العربية';
-      case 'en':
-        return 'English';
-      case 'es':
-        return 'Español';
-      case 'hi':
-        return 'हिन्दी';
-      case 'fr':
-        return 'Français';
-      case 'ko':
-        return '한국어';
-      case 'de':
-        return 'Deutsch';
-      case 'tr':
-        return 'Türkçe';
-      case 'ru':
-        return 'Русский';
-      default:
-        return 'English';
-    }
+    return AppLanguages.getLanguageName(code);
   }
 
-  // Get all available languages
-  List<Map<String, String>> get availableLanguages => [
-    {'code': 'ar', 'name': 'العربية', 'nativeName': 'العربية'},
-    {'code': 'en', 'name': 'English', 'nativeName': 'English'},
-    {'code': 'es', 'name': 'Spanish', 'nativeName': 'Español'},
-    {'code': 'hi', 'name': 'Hindi', 'nativeName': 'हिन्दी'},
-    {'code': 'fr', 'name': 'French', 'nativeName': 'Français'},
-    {'code': 'ko', 'name': 'Korean', 'nativeName': '한국어'},
-    {'code': 'de', 'name': 'German', 'nativeName': 'Deutsch'},
-    {'code': 'tr', 'name': 'Turkish', 'nativeName': 'Türkçe'},
-    {'code': 'ru', 'name': 'Russian', 'nativeName': 'Русский'},
-  ];
+  // الحصول على جميع اللغات المتاحة - Get all available languages
+  List<Map<String, String>> get availableLanguages => AppLanguages.languages;
 }

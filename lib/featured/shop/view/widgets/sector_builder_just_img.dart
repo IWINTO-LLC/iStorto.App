@@ -655,7 +655,7 @@ class _SectorBuilderJustImgState extends State<SectorBuilderJustImg> {
                       color:
                           isActive
                               ? TColors.primary
-                              : Colors.grey.withOpacity(0.5),
+                              : Colors.grey.withValues(alpha: 0.5),
                       borderRadius: BorderRadius.circular(4),
                     ),
                   );
@@ -673,6 +673,8 @@ class _SectorBuilderJustImgState extends State<SectorBuilderJustImg> {
               right: TranslationController.instance.isRTL ? null : 47,
               left: TranslationController.instance.isRTL ? 47 : null,
               child: CustomFloatActionButton(
+                heroTag:
+                    'menu_${widget.vendorId}_${widget.sectorName}', // heroTag فريد
                 icon: Icons.menu_open_rounded,
                 onTap: () {
                   showExcelBottomSheet(context, spotList, widget.vendorId);
@@ -699,6 +701,8 @@ class _SectorBuilderJustImgState extends State<SectorBuilderJustImg> {
             child: Visibility(
               visible: spotList.length > 2,
               child: CustomFloatActionButton(
+                heroTag:
+                    'add_product_${widget.vendorId}_${widget.sectorName}', // heroTag فريد
                 onTap: () {
                   var controller = Get.put(ProductController());
                   controller.deleteTempItems();

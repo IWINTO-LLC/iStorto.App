@@ -1,6 +1,5 @@
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
-import 'package:istoreto/featured/shop/controller/vendor_controller.dart';
 import 'package:istoreto/featured/currency/controller/currency_controller.dart';
 import 'package:istoreto/featured/product/services/product_currency_service.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -405,7 +404,7 @@ class ProductRepository extends GetxController {
 
   // Create new product
   Future<ProductModel> createProduct(ProductModel product) async {
-    product.vendorId = VendorController.instance.profileData.value.id;
+    //  product.vendorId = VendorController.instance.profileData.value.id;
     try {
       if (!product.isValid) {
         throw 'Product data is invalid';
@@ -976,6 +975,43 @@ class ProductRepository extends GetxController {
         print("Error bulk updating products currency: $e");
       }
       throw 'Failed to bulk update products currency: ${e.toString()}';
+    }
+  }
+
+  /// جلب جميع عروض التاجر (المنتجات التي لها خصم)
+  Future<List<ProductModel>> getVendorOffers(String vendorId) async {
+    try {
+      if (vendorId.isEmpty) {
+        throw 'Vendor ID is required';
+      }
+
+      final response = await _client
+          .from('products')
+          .select()
+          .eq('vendor_id', vendorId)
+          .eq('is_deleted', false)
+          .gt('old_price', 0) // المنتجات التي لها سعر قديم (عليها خصم)
+          .order('created_at', ascending: false);
+
+      if ((response as List).isEmpty) {
+        return [];
+      }
+
+      final products =
+          (response as List)
+              .map((json) => ProductModel.fromJson(json))
+              .toList();
+
+      if (kDebugMode) {
+        print('Fetched ${products.length} offers for vendor $vendorId');
+      }
+
+      return products;
+    } catch (e) {
+      if (kDebugMode) {
+        print("Error fetching vendor offers: $e");
+      }
+      throw 'Failed to fetch vendor offers: ${e.toString()}';
     }
   }
 }

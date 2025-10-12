@@ -39,7 +39,7 @@ class VendorSettingsPage extends StatelessWidget {
     //         .translate('store_settings_store_has_orders'),
     //     AppLocalizations.of(context)
     //         .translate('store_settings_store_has_orders_message'),
-    //     backgroundColor: Colors.orange.withOpacity(0.1),
+    //     backgroundColor: Colors.orange.withValues(alpha: 0.1),
     //     colorText: Colors.orange,
     //     duration: const Duration(seconds: 4),
     //     snackPosition: SnackPosition.TOP,
@@ -311,7 +311,7 @@ class VendorSettingsPage extends StatelessWidget {
                     backgroundColor:
                         VendorSettingsPage.hasChanges.value
                             ? Colors.black
-                            : Colors.grey.withOpacity(0.3),
+                            : Colors.grey.withValues(alpha: 0.3),
                     foregroundColor:
                         VendorSettingsPage.hasChanges.value
                             ? Colors.white
@@ -338,7 +338,9 @@ class VendorSettingsPage extends StatelessWidget {
                           )
                           : Text(
                             'store_settings_save'.tr,
-                            style: titilliumBold.copyWith(
+                            style: Theme.of(
+                              context,
+                            ).textTheme.bodyMedium!.copyWith(
                               fontSize: 15,
                               fontWeight: FontWeight.w900,
                               color:
@@ -575,48 +577,53 @@ class VendorSettingsPage extends StatelessWidget {
                                 const SizedBox(
                                   height: TSizes.spaceBtwInputFields / 2,
                                 ),
-                                SwitchListTile(
-                                  contentPadding: EdgeInsets.zero,
-                                  title: Text(
-                                    "store_settings_cod_hint".tr,
-                                    style: titilliumBold.copyWith(
-                                      fontSize: _getSwitchTextSize(),
-                                    ),
-                                  ),
-                                  value: controller.enableCOD.value,
-                                  onChanged: (val) {
-                                    controller.enableCOD.value = val;
-                                    VendorSettingsPage.updateChangesStatus(
-                                      controller,
-                                    );
-                                  },
-                                  activeColor: TColors.primary,
-                                  activeTrackColor: TColors.primary.withOpacity(
-                                    0.4,
-                                  ),
-                                  materialTapTargetSize:
-                                      MaterialTapTargetSize.padded,
-                                ),
-                                SwitchListTile(
-                                  contentPadding: EdgeInsets.zero,
-                                  title: Directionality(
-                                    textDirection: TextDirection.ltr,
-                                    child: Text(
-                                      "store_settings_enable_iwinto_wallet".tr,
+                                Obx(
+                                  () => SwitchListTile(
+                                    contentPadding: EdgeInsets.zero,
+                                    title: Text(
+                                      "store_settings_cod_hint".tr,
                                       style: titilliumBold.copyWith(
                                         fontSize: _getSwitchTextSize(),
                                       ),
                                     ),
+                                    value: controller.enableCOD.value,
+                                    onChanged: (val) {
+                                      controller.enableCOD.value = val;
+                                      VendorSettingsPage.updateChangesStatus(
+                                        controller,
+                                      );
+                                    },
+                                    activeColor: TColors.primary,
+                                    activeTrackColor: TColors.primary
+                                        .withValues(alpha: 0.4),
+                                    materialTapTargetSize:
+                                        MaterialTapTargetSize.padded,
                                   ),
-                                  value: controller.enableIwintoPayment.value,
-                                  onChanged: (val) {
-                                    controller.enableIwintoPayment.value = val;
-                                    VendorSettingsPage.updateChangesStatus(
-                                      controller,
-                                    );
-                                  },
-                                  materialTapTargetSize:
-                                      MaterialTapTargetSize.padded,
+                                ),
+                                Obx(
+                                  () => SwitchListTile(
+                                    contentPadding: EdgeInsets.zero,
+                                    title: Directionality(
+                                      textDirection: TextDirection.ltr,
+                                      child: Text(
+                                        "store_settings_enable_iwinto_wallet"
+                                            .tr,
+                                        style: titilliumBold.copyWith(
+                                          fontSize: _getSwitchTextSize(),
+                                        ),
+                                      ),
+                                    ),
+                                    value: controller.enableIwintoPayment.value,
+                                    onChanged: (val) {
+                                      controller.enableIwintoPayment.value =
+                                          val;
+                                      VendorSettingsPage.updateChangesStatus(
+                                        controller,
+                                      );
+                                    },
+                                    materialTapTargetSize:
+                                        MaterialTapTargetSize.padded,
+                                  ),
                                 ),
                               ],
                             )
@@ -676,26 +683,30 @@ class VendorSettingsPage extends StatelessWidget {
                                         ),
                                         Transform.scale(
                                           scale: _getSwitchScale(),
-                                          child: Switch(
-                                            value: socialLink.visiblePhones,
-                                            onChanged: (val) {
-                                              final updated = socialLink
-                                                  .copyWith(visiblePhones: val);
-                                              controller
-                                                  .profileData
-                                                  .value = controller
-                                                  .profileData
-                                                  .value
-                                                  .copyWith(
-                                                    socialLink: updated,
-                                                  );
-                                              // تحديث فوري لحالة التغييرات
-                                              VendorSettingsPage._safeUpdateChangesWithValue(
-                                                true,
-                                              );
-                                            },
-                                            materialTapTargetSize:
-                                                MaterialTapTargetSize.padded,
+                                          child: Obx(
+                                            () => Switch(
+                                              value: socialLink.visiblePhones,
+                                              onChanged: (val) {
+                                                final updated = socialLink
+                                                    .copyWith(
+                                                      visiblePhones: val,
+                                                    );
+                                                controller
+                                                    .profileData
+                                                    .value = controller
+                                                    .profileData
+                                                    .value
+                                                    .copyWith(
+                                                      socialLink: updated,
+                                                    );
+                                                // تحديث فوري لحالة التغييرات
+                                                VendorSettingsPage._safeUpdateChangesWithValue(
+                                                  true,
+                                                );
+                                              },
+                                              materialTapTargetSize:
+                                                  MaterialTapTargetSize.padded,
+                                            ),
                                           ),
                                         ),
                                       ],
@@ -946,15 +957,26 @@ class VendorSettingsPage extends StatelessWidget {
                                                   '',
                                             ),
                                             onChanged: (val) {
-                                              final updated = controller
-                                                  .profileData
-                                                  .value
-                                                  .socialLink
-                                                  ?.copyWith(website: val);
+                                              final currentSocialLink =
+                                                  controller
+                                                      .profileData
+                                                      .value
+                                                      .socialLink ??
+                                                  const SocialLink();
+                                              final updated = currentSocialLink
+                                                  .copyWith(website: val);
                                               controller
                                                   .profileData
                                                   .value = controller
                                                   .profileData
+                                                  .value
+                                                  .copyWith(
+                                                    socialLink: updated,
+                                                  );
+                                              controller
+                                                  .vendorData
+                                                  .value = controller
+                                                  .vendorData
                                                   .value
                                                   .copyWith(
                                                     socialLink: updated,
@@ -980,36 +1002,38 @@ class VendorSettingsPage extends StatelessWidget {
                                         ),
                                         Transform.scale(
                                           scale: _getSwitchScale(),
-                                          child: Switch(
-                                            value:
-                                                controller
+                                          child: Obx(
+                                            () => Switch(
+                                              value:
+                                                  controller
+                                                      .profileData
+                                                      .value
+                                                      .socialLink
+                                                      ?.visibleWebsite ??
+                                                  false,
+                                              onChanged: (val) {
+                                                final updated = controller
                                                     .profileData
                                                     .value
                                                     .socialLink
-                                                    ?.visibleWebsite ??
-                                                false,
-                                            onChanged: (val) {
-                                              final updated = controller
-                                                  .profileData
-                                                  .value
-                                                  .socialLink
-                                                  ?.copyWith(
-                                                    visibleWebsite: val,
-                                                  );
-                                              controller
-                                                  .profileData
-                                                  .value = controller
-                                                  .profileData
-                                                  .value
-                                                  .copyWith(
-                                                    socialLink: updated,
-                                                  );
-                                              VendorSettingsPage._safeUpdateChangesWithValue(
-                                                true,
-                                              );
-                                            },
-                                            materialTapTargetSize:
-                                                MaterialTapTargetSize.padded,
+                                                    ?.copyWith(
+                                                      visibleWebsite: val,
+                                                    );
+                                                controller
+                                                    .profileData
+                                                    .value = controller
+                                                    .profileData
+                                                    .value
+                                                    .copyWith(
+                                                      socialLink: updated,
+                                                    );
+                                                VendorSettingsPage._safeUpdateChangesWithValue(
+                                                  true,
+                                                );
+                                              },
+                                              materialTapTargetSize:
+                                                  MaterialTapTargetSize.padded,
+                                            ),
                                           ),
                                         ),
                                       ],
@@ -1057,15 +1081,26 @@ class VendorSettingsPage extends StatelessWidget {
                                                   '',
                                             ),
                                             onChanged: (val) {
-                                              final updated = controller
-                                                  .profileData
-                                                  .value
-                                                  .socialLink
-                                                  ?.copyWith(facebook: val);
+                                              final currentSocialLink =
+                                                  controller
+                                                      .profileData
+                                                      .value
+                                                      .socialLink ??
+                                                  const SocialLink();
+                                              final updated = currentSocialLink
+                                                  .copyWith(facebook: val);
                                               controller
                                                   .profileData
                                                   .value = controller
                                                   .profileData
+                                                  .value
+                                                  .copyWith(
+                                                    socialLink: updated,
+                                                  );
+                                              controller
+                                                  .vendorData
+                                                  .value = controller
+                                                  .vendorData
                                                   .value
                                                   .copyWith(
                                                     socialLink: updated,
@@ -1091,36 +1126,38 @@ class VendorSettingsPage extends StatelessWidget {
                                         ),
                                         Transform.scale(
                                           scale: _getSwitchScale(),
-                                          child: Switch(
-                                            value:
-                                                controller
+                                          child: Obx(
+                                            () => Switch(
+                                              value:
+                                                  controller
+                                                      .profileData
+                                                      .value
+                                                      .socialLink
+                                                      ?.visibleFacebook ??
+                                                  false,
+                                              onChanged: (val) {
+                                                final updated = controller
                                                     .profileData
                                                     .value
                                                     .socialLink
-                                                    ?.visibleFacebook ??
-                                                false,
-                                            onChanged: (val) {
-                                              final updated = controller
-                                                  .profileData
-                                                  .value
-                                                  .socialLink
-                                                  ?.copyWith(
-                                                    visibleFacebook: val,
-                                                  );
-                                              controller
-                                                  .profileData
-                                                  .value = controller
-                                                  .profileData
-                                                  .value
-                                                  .copyWith(
-                                                    socialLink: updated,
-                                                  );
-                                              VendorSettingsPage._safeUpdateChangesWithValue(
-                                                true,
-                                              );
-                                            },
-                                            materialTapTargetSize:
-                                                MaterialTapTargetSize.padded,
+                                                    ?.copyWith(
+                                                      visibleFacebook: val,
+                                                    );
+                                                controller
+                                                    .profileData
+                                                    .value = controller
+                                                    .profileData
+                                                    .value
+                                                    .copyWith(
+                                                      socialLink: updated,
+                                                    );
+                                                VendorSettingsPage._safeUpdateChangesWithValue(
+                                                  true,
+                                                );
+                                              },
+                                              materialTapTargetSize:
+                                                  MaterialTapTargetSize.padded,
+                                            ),
                                           ),
                                         ),
                                       ],
@@ -1168,15 +1205,26 @@ class VendorSettingsPage extends StatelessWidget {
                                                   '',
                                             ),
                                             onChanged: (val) {
-                                              final updated = controller
-                                                  .profileData
-                                                  .value
-                                                  .socialLink
-                                                  ?.copyWith(instagram: val);
+                                              final currentSocialLink =
+                                                  controller
+                                                      .profileData
+                                                      .value
+                                                      .socialLink ??
+                                                  const SocialLink();
+                                              final updated = currentSocialLink
+                                                  .copyWith(instagram: val);
                                               controller
                                                   .profileData
                                                   .value = controller
                                                   .profileData
+                                                  .value
+                                                  .copyWith(
+                                                    socialLink: updated,
+                                                  );
+                                              controller
+                                                  .vendorData
+                                                  .value = controller
+                                                  .vendorData
                                                   .value
                                                   .copyWith(
                                                     socialLink: updated,
@@ -1202,36 +1250,38 @@ class VendorSettingsPage extends StatelessWidget {
                                         ),
                                         Transform.scale(
                                           scale: _getSwitchScale(),
-                                          child: Switch(
-                                            value:
-                                                controller
+                                          child: Obx(
+                                            () => Switch(
+                                              value:
+                                                  controller
+                                                      .profileData
+                                                      .value
+                                                      .socialLink
+                                                      ?.visibleInstagram ??
+                                                  false,
+                                              onChanged: (val) {
+                                                final updated = controller
                                                     .profileData
                                                     .value
                                                     .socialLink
-                                                    ?.visibleInstagram ??
-                                                false,
-                                            onChanged: (val) {
-                                              final updated = controller
-                                                  .profileData
-                                                  .value
-                                                  .socialLink
-                                                  ?.copyWith(
-                                                    visibleInstagram: val,
-                                                  );
-                                              controller
-                                                  .profileData
-                                                  .value = controller
-                                                  .profileData
-                                                  .value
-                                                  .copyWith(
-                                                    socialLink: updated,
-                                                  );
-                                              VendorSettingsPage._safeUpdateChangesWithValue(
-                                                true,
-                                              );
-                                            },
-                                            materialTapTargetSize:
-                                                MaterialTapTargetSize.padded,
+                                                    ?.copyWith(
+                                                      visibleInstagram: val,
+                                                    );
+                                                controller
+                                                    .profileData
+                                                    .value = controller
+                                                    .profileData
+                                                    .value
+                                                    .copyWith(
+                                                      socialLink: updated,
+                                                    );
+                                                VendorSettingsPage._safeUpdateChangesWithValue(
+                                                  true,
+                                                );
+                                              },
+                                              materialTapTargetSize:
+                                                  MaterialTapTargetSize.padded,
+                                            ),
                                           ),
                                         ),
                                       ],
@@ -1278,15 +1328,26 @@ class VendorSettingsPage extends StatelessWidget {
                                                   '',
                                             ),
                                             onChanged: (val) {
-                                              final updated = controller
-                                                  .profileData
-                                                  .value
-                                                  .socialLink
-                                                  ?.copyWith(whatsapp: val);
+                                              final currentSocialLink =
+                                                  controller
+                                                      .profileData
+                                                      .value
+                                                      .socialLink ??
+                                                  const SocialLink();
+                                              final updated = currentSocialLink
+                                                  .copyWith(whatsapp: val);
                                               controller
                                                   .profileData
                                                   .value = controller
                                                   .profileData
+                                                  .value
+                                                  .copyWith(
+                                                    socialLink: updated,
+                                                  );
+                                              controller
+                                                  .vendorData
+                                                  .value = controller
+                                                  .vendorData
                                                   .value
                                                   .copyWith(
                                                     socialLink: updated,
@@ -1312,36 +1373,38 @@ class VendorSettingsPage extends StatelessWidget {
                                         ),
                                         Transform.scale(
                                           scale: _getSwitchScale(),
-                                          child: Switch(
-                                            value:
-                                                controller
+                                          child: Obx(
+                                            () => Switch(
+                                              value:
+                                                  controller
+                                                      .profileData
+                                                      .value
+                                                      .socialLink
+                                                      ?.visibleWhatsapp ??
+                                                  false,
+                                              onChanged: (val) {
+                                                final updated = controller
                                                     .profileData
                                                     .value
                                                     .socialLink
-                                                    ?.visibleWhatsapp ??
-                                                false,
-                                            onChanged: (val) {
-                                              final updated = controller
-                                                  .profileData
-                                                  .value
-                                                  .socialLink
-                                                  ?.copyWith(
-                                                    visibleWhatsapp: val,
-                                                  );
-                                              controller
-                                                  .profileData
-                                                  .value = controller
-                                                  .profileData
-                                                  .value
-                                                  .copyWith(
-                                                    socialLink: updated,
-                                                  );
-                                              VendorSettingsPage._safeUpdateChangesWithValue(
-                                                true,
-                                              );
-                                            },
-                                            materialTapTargetSize:
-                                                MaterialTapTargetSize.padded,
+                                                    ?.copyWith(
+                                                      visibleWhatsapp: val,
+                                                    );
+                                                controller
+                                                    .profileData
+                                                    .value = controller
+                                                    .profileData
+                                                    .value
+                                                    .copyWith(
+                                                      socialLink: updated,
+                                                    );
+                                                VendorSettingsPage._safeUpdateChangesWithValue(
+                                                  true,
+                                                );
+                                              },
+                                              materialTapTargetSize:
+                                                  MaterialTapTargetSize.padded,
+                                            ),
                                           ),
                                         ),
                                       ],
@@ -1389,15 +1452,26 @@ class VendorSettingsPage extends StatelessWidget {
                                                   '',
                                             ),
                                             onChanged: (val) {
-                                              final updated = controller
-                                                  .profileData
-                                                  .value
-                                                  .socialLink
-                                                  ?.copyWith(tiktok: val);
+                                              final currentSocialLink =
+                                                  controller
+                                                      .profileData
+                                                      .value
+                                                      .socialLink ??
+                                                  const SocialLink();
+                                              final updated = currentSocialLink
+                                                  .copyWith(tiktok: val);
                                               controller
                                                   .profileData
                                                   .value = controller
                                                   .profileData
+                                                  .value
+                                                  .copyWith(
+                                                    socialLink: updated,
+                                                  );
+                                              controller
+                                                  .vendorData
+                                                  .value = controller
+                                                  .vendorData
                                                   .value
                                                   .copyWith(
                                                     socialLink: updated,
@@ -1423,36 +1497,38 @@ class VendorSettingsPage extends StatelessWidget {
                                         ),
                                         Transform.scale(
                                           scale: _getSwitchScale(),
-                                          child: Switch(
-                                            value:
-                                                controller
+                                          child: Obx(
+                                            () => Switch(
+                                              value:
+                                                  controller
+                                                      .profileData
+                                                      .value
+                                                      .socialLink
+                                                      ?.visibleTiktok ??
+                                                  false,
+                                              onChanged: (val) {
+                                                final updated = controller
                                                     .profileData
                                                     .value
                                                     .socialLink
-                                                    ?.visibleTiktok ??
-                                                false,
-                                            onChanged: (val) {
-                                              final updated = controller
-                                                  .profileData
-                                                  .value
-                                                  .socialLink
-                                                  ?.copyWith(
-                                                    visibleTiktok: val,
-                                                  );
-                                              controller
-                                                  .profileData
-                                                  .value = controller
-                                                  .profileData
-                                                  .value
-                                                  .copyWith(
-                                                    socialLink: updated,
-                                                  );
-                                              VendorSettingsPage._safeUpdateChangesWithValue(
-                                                true,
-                                              );
-                                            },
-                                            materialTapTargetSize:
-                                                MaterialTapTargetSize.padded,
+                                                    ?.copyWith(
+                                                      visibleTiktok: val,
+                                                    );
+                                                controller
+                                                    .profileData
+                                                    .value = controller
+                                                    .profileData
+                                                    .value
+                                                    .copyWith(
+                                                      socialLink: updated,
+                                                    );
+                                                VendorSettingsPage._safeUpdateChangesWithValue(
+                                                  true,
+                                                );
+                                              },
+                                              materialTapTargetSize:
+                                                  MaterialTapTargetSize.padded,
+                                            ),
                                           ),
                                         ),
                                       ],
@@ -1500,15 +1576,26 @@ class VendorSettingsPage extends StatelessWidget {
                                                   '',
                                             ),
                                             onChanged: (val) {
-                                              final updated = controller
-                                                  .profileData
-                                                  .value
-                                                  .socialLink
-                                                  ?.copyWith(youtube: val);
+                                              final currentSocialLink =
+                                                  controller
+                                                      .profileData
+                                                      .value
+                                                      .socialLink ??
+                                                  const SocialLink();
+                                              final updated = currentSocialLink
+                                                  .copyWith(youtube: val);
                                               controller
                                                   .profileData
                                                   .value = controller
                                                   .profileData
+                                                  .value
+                                                  .copyWith(
+                                                    socialLink: updated,
+                                                  );
+                                              controller
+                                                  .vendorData
+                                                  .value = controller
+                                                  .vendorData
                                                   .value
                                                   .copyWith(
                                                     socialLink: updated,
@@ -1534,36 +1621,38 @@ class VendorSettingsPage extends StatelessWidget {
                                         ),
                                         Transform.scale(
                                           scale: _getSwitchScale(),
-                                          child: Switch(
-                                            value:
-                                                controller
+                                          child: Obx(
+                                            () => Switch(
+                                              value:
+                                                  controller
+                                                      .profileData
+                                                      .value
+                                                      .socialLink
+                                                      ?.visibleYoutube ??
+                                                  false,
+                                              onChanged: (val) {
+                                                final updated = controller
                                                     .profileData
                                                     .value
                                                     .socialLink
-                                                    ?.visibleYoutube ??
-                                                false,
-                                            onChanged: (val) {
-                                              final updated = controller
-                                                  .profileData
-                                                  .value
-                                                  .socialLink
-                                                  ?.copyWith(
-                                                    visibleYoutube: val,
-                                                  );
-                                              controller
-                                                  .profileData
-                                                  .value = controller
-                                                  .profileData
-                                                  .value
-                                                  .copyWith(
-                                                    socialLink: updated,
-                                                  );
-                                              VendorSettingsPage._safeUpdateChangesWithValue(
-                                                true,
-                                              );
-                                            },
-                                            materialTapTargetSize:
-                                                MaterialTapTargetSize.padded,
+                                                    ?.copyWith(
+                                                      visibleYoutube: val,
+                                                    );
+                                                controller
+                                                    .profileData
+                                                    .value = controller
+                                                    .profileData
+                                                    .value
+                                                    .copyWith(
+                                                      socialLink: updated,
+                                                    );
+                                                VendorSettingsPage._safeUpdateChangesWithValue(
+                                                  true,
+                                                );
+                                              },
+                                              materialTapTargetSize:
+                                                  MaterialTapTargetSize.padded,
+                                            ),
                                           ),
                                         ),
                                       ],
@@ -1609,15 +1698,26 @@ class VendorSettingsPage extends StatelessWidget {
                                                   '',
                                             ),
                                             onChanged: (val) {
-                                              final updated = controller
-                                                  .profileData
-                                                  .value
-                                                  .socialLink
-                                                  ?.copyWith(x: val);
+                                              final currentSocialLink =
+                                                  controller
+                                                      .profileData
+                                                      .value
+                                                      .socialLink ??
+                                                  const SocialLink();
+                                              final updated = currentSocialLink
+                                                  .copyWith(x: val);
                                               controller
                                                   .profileData
                                                   .value = controller
                                                   .profileData
+                                                  .value
+                                                  .copyWith(
+                                                    socialLink: updated,
+                                                  );
+                                              controller
+                                                  .vendorData
+                                                  .value = controller
+                                                  .vendorData
                                                   .value
                                                   .copyWith(
                                                     socialLink: updated,
@@ -1643,34 +1743,36 @@ class VendorSettingsPage extends StatelessWidget {
                                         ),
                                         Transform.scale(
                                           scale: _getSwitchScale(),
-                                          child: Switch(
-                                            value:
-                                                controller
+                                          child: Obx(
+                                            () => Switch(
+                                              value:
+                                                  controller
+                                                      .profileData
+                                                      .value
+                                                      .socialLink
+                                                      ?.visibleX ??
+                                                  false,
+                                              onChanged: (val) {
+                                                final updated = controller
                                                     .profileData
                                                     .value
                                                     .socialLink
-                                                    ?.visibleX ??
-                                                false,
-                                            onChanged: (val) {
-                                              final updated = controller
-                                                  .profileData
-                                                  .value
-                                                  .socialLink
-                                                  ?.copyWith(visibleX: val);
-                                              controller
-                                                  .profileData
-                                                  .value = controller
-                                                  .profileData
-                                                  .value
-                                                  .copyWith(
-                                                    socialLink: updated,
-                                                  );
-                                              VendorSettingsPage._safeUpdateChangesWithValue(
-                                                true,
-                                              );
-                                            },
-                                            materialTapTargetSize:
-                                                MaterialTapTargetSize.padded,
+                                                    ?.copyWith(visibleX: val);
+                                                controller
+                                                    .profileData
+                                                    .value = controller
+                                                    .profileData
+                                                    .value
+                                                    .copyWith(
+                                                      socialLink: updated,
+                                                    );
+                                                VendorSettingsPage._safeUpdateChangesWithValue(
+                                                  true,
+                                                );
+                                              },
+                                              materialTapTargetSize:
+                                                  MaterialTapTargetSize.padded,
+                                            ),
                                           ),
                                         ),
                                       ],
@@ -1716,15 +1818,26 @@ class VendorSettingsPage extends StatelessWidget {
                                                   '',
                                             ),
                                             onChanged: (val) {
-                                              final updated = controller
-                                                  .profileData
-                                                  .value
-                                                  .socialLink
-                                                  ?.copyWith(linkedin: val);
+                                              final currentSocialLink =
+                                                  controller
+                                                      .profileData
+                                                      .value
+                                                      .socialLink ??
+                                                  const SocialLink();
+                                              final updated = currentSocialLink
+                                                  .copyWith(linkedin: val);
                                               controller
                                                   .profileData
                                                   .value = controller
                                                   .profileData
+                                                  .value
+                                                  .copyWith(
+                                                    socialLink: updated,
+                                                  );
+                                              controller
+                                                  .vendorData
+                                                  .value = controller
+                                                  .vendorData
                                                   .value
                                                   .copyWith(
                                                     socialLink: updated,
@@ -1750,36 +1863,38 @@ class VendorSettingsPage extends StatelessWidget {
                                         ),
                                         Transform.scale(
                                           scale: _getSwitchScale(),
-                                          child: Switch(
-                                            value:
-                                                controller
+                                          child: Obx(
+                                            () => Switch(
+                                              value:
+                                                  controller
+                                                      .profileData
+                                                      .value
+                                                      .socialLink
+                                                      ?.visibleLinkedin ??
+                                                  false,
+                                              onChanged: (val) {
+                                                final updated = controller
                                                     .profileData
                                                     .value
                                                     .socialLink
-                                                    ?.visibleLinkedin ??
-                                                false,
-                                            onChanged: (val) {
-                                              final updated = controller
-                                                  .profileData
-                                                  .value
-                                                  .socialLink
-                                                  ?.copyWith(
-                                                    visibleLinkedin: val,
-                                                  );
-                                              controller
-                                                  .profileData
-                                                  .value = controller
-                                                  .profileData
-                                                  .value
-                                                  .copyWith(
-                                                    socialLink: updated,
-                                                  );
-                                              VendorSettingsPage._safeUpdateChangesWithValue(
-                                                true,
-                                              );
-                                            },
-                                            materialTapTargetSize:
-                                                MaterialTapTargetSize.padded,
+                                                    ?.copyWith(
+                                                      visibleLinkedin: val,
+                                                    );
+                                                controller
+                                                    .profileData
+                                                    .value = controller
+                                                    .profileData
+                                                    .value
+                                                    .copyWith(
+                                                      socialLink: updated,
+                                                    );
+                                                VendorSettingsPage._safeUpdateChangesWithValue(
+                                                  true,
+                                                );
+                                              },
+                                              materialTapTargetSize:
+                                                  MaterialTapTargetSize.padded,
+                                            ),
                                           ),
                                         ),
                                       ],
@@ -1832,15 +1947,26 @@ class VendorSettingsPage extends StatelessWidget {
                                                   '',
                                             ),
                                             onChanged: (val) {
-                                              final updated = controller
-                                                  .profileData
-                                                  .value
-                                                  .socialLink
-                                                  ?.copyWith(location: val);
+                                              final currentSocialLink =
+                                                  controller
+                                                      .profileData
+                                                      .value
+                                                      .socialLink ??
+                                                  const SocialLink();
+                                              final updated = currentSocialLink
+                                                  .copyWith(location: val);
                                               controller
                                                   .profileData
                                                   .value = controller
                                                   .profileData
+                                                  .value
+                                                  .copyWith(
+                                                    socialLink: updated,
+                                                  );
+                                              controller
+                                                  .vendorData
+                                                  .value = controller
+                                                  .vendorData
                                                   .value
                                                   .copyWith(
                                                     socialLink: updated,
@@ -2252,10 +2378,10 @@ class VendorSettingsPage extends StatelessWidget {
                                   //     width: 60.w,
                                   //     padding: const EdgeInsets.all(16),
                                   //     decoration: BoxDecoration(
-                                  //       color: Colors.orange.withOpacity(0.1),
+                                  //       color: Colors.orange.withValues(alpha: 0.1),
                                   //       borderRadius: BorderRadius.circular(8),
                                   //       border: Border.all(
-                                  //         color: Colors.orange.withOpacity(0.3),
+                                  //         color: Colors.orange.withValues(alpha: 0.3),
                                   //       ),
                                   //     ),
                                   //     child: Column(
@@ -2281,7 +2407,7 @@ class VendorSettingsPage extends StatelessWidget {
                                   //               'store_settings_store_has_orders_message'),
                                   //           style: titilliumRegular.copyWith(
                                   //             fontSize: 12,
-                                  //             color: Colors.orange.withOpacity(0.8),
+                                  //             color: Colors.orange.withValues(alpha: 0.8),
                                   //           ),
                                   //           textAlign: TextAlign.center,
                                   //         ),

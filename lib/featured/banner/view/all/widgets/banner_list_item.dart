@@ -56,7 +56,7 @@ class TBannerItem extends StatelessWidget {
                 flex: 2,
                 borderRadius: BorderRadius.circular(10),
                 autoClose: true,
-                // backgroundColor: TColors.primary.withOpacity(.2),
+                // backgroundColor: TColors.primary.withValues(alpha: .2),
                 foregroundColor:
                     banner.active == true ? Colors.red : Colors.green,
                 padding: const EdgeInsets.all(10),
@@ -82,7 +82,7 @@ class TBannerItem extends StatelessWidget {
                         );
                       },
                     ),
-                //backgroundColor: TColors.red.withOpacity(.3),
+                //backgroundColor: TColors.red.withValues(alpha: .3),
                 foregroundColor: Colors.red,
                 borderRadius: BorderRadius.circular(10),
                 padding: const EdgeInsets.all(3),

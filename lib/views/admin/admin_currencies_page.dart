@@ -134,7 +134,7 @@ class AdminCurrenciesPage extends StatelessWidget {
             borderRadius: BorderRadius.circular(12),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.1),
+                color: Colors.black.withValues(alpha: 0.1),
                 blurRadius: 8,
                 offset: const Offset(0, 2),
               ),
@@ -185,7 +185,7 @@ class AdminCurrenciesPage extends StatelessWidget {
         Container(
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
-            color: color.withOpacity(0.1),
+            color: color.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(8),
           ),
           child: Icon(icon, color: color, size: 20),
@@ -245,7 +245,7 @@ class AdminCurrenciesPage extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 12),
       child: ListTile(
         leading: CircleAvatar(
-          backgroundColor: TColors.primary.withOpacity(0.1),
+          backgroundColor: TColors.primary.withValues(alpha: 0.1),
           child: Text(
             currency.iso,
             style: const TextStyle(

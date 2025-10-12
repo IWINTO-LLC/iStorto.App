@@ -141,7 +141,7 @@ class TProductItem extends StatelessWidget {
                   elevation: 0,
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: Image.asset(TImages.editIcon, color: Colors.black),
+                    child: Icon(Icons.edit, color: Colors.black),
                   ),
                   onTap: () {
                     EditProductController.instance.init(product);
@@ -172,7 +172,7 @@ class TProductItem extends StatelessWidget {
                   elevation: 0,
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: Image.asset(TImages.delete, color: Colors.black),
+                    child: Icon(Icons.delete, color: Colors.black),
                   ),
                   onTap: () async {
                     ReusableAlertDialog.show(

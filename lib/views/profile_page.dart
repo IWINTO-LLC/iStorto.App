@@ -10,18 +10,20 @@ class ProfilePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            // رأس الملف الشخصي
-            const ProfileHeaderWidget(),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              // رأس الملف الشخصي
+              const ProfileHeaderWidget(),
 
-            // محتوى الملف الشخصي
-            const ProfileContentWidget(),
+              // محتوى الملف الشخصي
+              const ProfileContentWidget(),
 
-            // قائمة الملف الشخصي
-            const ProfileMenuWidget(),
-          ],
+              // قائمة الملف الشخصي
+              const ProfileMenuWidget(),
+            ],
+          ),
         ),
       ),
     );

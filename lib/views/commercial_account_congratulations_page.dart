@@ -148,7 +148,7 @@ class _CommercialAccountCongratulationsPageState
                   width: 120,
                   height: 120,
                   decoration: BoxDecoration(
-                    color: TColors.primary.withOpacity(0.1),
+                    color: TColors.primary.withValues(alpha: 0.1),
                     shape: BoxShape.circle,
                   ),
                   child: Icon(
@@ -205,7 +205,7 @@ class _CommercialAccountCongratulationsPageState
                         width: 60,
                         height: 60,
                         decoration: BoxDecoration(
-                          color: TColors.primary.withOpacity(0.1),
+                          color: TColors.primary.withValues(alpha: 0.1),
                           shape: BoxShape.circle,
                         ),
                         child: Icon(
@@ -249,7 +249,7 @@ class _CommercialAccountCongratulationsPageState
                   width: 60,
                   height: 60,
                   decoration: BoxDecoration(
-                    color: Colors.green.withOpacity(0.1),
+                    color: Colors.green.withValues(alpha: 0.1),
                     shape: BoxShape.circle,
                   ),
                   child: Icon(
@@ -279,7 +279,7 @@ class _CommercialAccountCongratulationsPageState
                 opacity: _fadeAnimation,
                 child: TRoundedContainer(
                   padding: const EdgeInsets.all(16),
-                  backgroundColor: Colors.blue.withOpacity(0.05),
+                  backgroundColor: Colors.blue.withValues(alpha: 0.05),
                   child: Column(
                     children: [
                       Icon(

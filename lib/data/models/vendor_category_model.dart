@@ -6,6 +6,7 @@ class VendorCategoryModel {
   int priority; // 0 = أعلى أولوية
   int specializationLevel; // 1-5
   String? customDescription;
+  String? icon;
   bool isActive;
   DateTime? createdAt;
   DateTime? updatedAt;
@@ -18,22 +19,20 @@ class VendorCategoryModel {
     this.priority = 0,
     this.specializationLevel = 1,
     this.customDescription,
+    this.icon,
     this.isActive = true,
     this.createdAt,
   });
 
   Map<String, dynamic> toJson() {
+    // Keep only columns that are guaranteed to exist in current schema
     return {
       'id': id,
       'vendor_id': vendorId,
       'title': title,
-      'is_primary': isPrimary,
-      'priority': priority,
-      'specialization_level': specializationLevel,
-      'custom_description': customDescription,
-      'is_active': isActive,
-      'created_at': createdAt?.toIso8601String(),
-      'updated_at': updatedAt?.toIso8601String(),
+      // 'custom_description': customDescription,
+      // 'is_active': isActive,
+      // timestamps are managed by DB defaults/triggers
     };
   }
 
@@ -46,6 +45,7 @@ class VendorCategoryModel {
       priority: json['priority'] ?? 0,
       specializationLevel: json['specialization_level'] ?? 1,
       customDescription: json['custom_description'],
+      icon: json['icon'],
       isActive: json['is_active'] ?? true,
       createdAt:
           json['created_at'] != null
@@ -85,6 +85,7 @@ class VendorCategoryModel {
     int? priority,
     int? specializationLevel,
     String? customDescription,
+    String? icon,
     bool? isActive,
     DateTime? createdAt,
     DateTime? updatedAt,
@@ -97,6 +98,7 @@ class VendorCategoryModel {
       priority: priority ?? this.priority,
       specializationLevel: specializationLevel ?? this.specializationLevel,
       customDescription: customDescription ?? this.customDescription,
+      icon: icon ?? this.icon,
       isActive: isActive ?? this.isActive,
       createdAt: createdAt ?? this.createdAt,
     );
@@ -193,6 +195,7 @@ class AddVendorCategoryRequest {
   int priority;
   int specializationLevel;
   String? customDescription;
+  String? icon;
 
   AddVendorCategoryRequest({
     required this.vendorId,
@@ -201,16 +204,16 @@ class AddVendorCategoryRequest {
     this.priority = 0,
     this.specializationLevel = 1,
     this.customDescription,
+    this.icon,
   });
 
   Map<String, dynamic> toJson() {
+    // Keep only columns that are guaranteed to exist in current schema
     return {
       'vendor_id': vendorId,
       'title': title,
-      'is_primary': isPrimary,
-      'priority': priority,
-      'specialization_level': specializationLevel,
-      //'custom_description': customDescription,
+      if (icon != null && icon!.isNotEmpty) 'icon': icon,
+      // 'custom_description': customDescription,
     };
   }
 }

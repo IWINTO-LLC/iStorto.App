@@ -62,7 +62,7 @@
 //                                     colors: [
 //                                       Colors
 //                                           .transparent, // Fully transparent at bottom
-//                                       Colors.white.withOpacity(
+//                                       Colors.white.withValues(alpha:
 //                                           0.6), // Light fade in the middle
 //                                       Colors.white, // Fully visible at top
 //                                     ],

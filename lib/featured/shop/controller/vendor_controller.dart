@@ -21,12 +21,22 @@ class VendorController extends GetxController {
   var enableIwintoPayment = false.obs;
   var website = ''.obs;
   var organizationBio = ''.obs;
+  var organizationbrief = ''.obs;
   var organizationName = ''.obs;
   var storeMessage = ''.obs;
   var organizationDeleted = false.obs;
   var organizationActivated = true.obs;
   late String userId;
   RxBool isVendor = false.obs;
+
+  // Statistics
+  RxInt productsCount = 0.obs;
+  RxInt followersCount = 0.obs;
+  RxInt offersCount = 0.obs;
+
+  // Follow status
+  RxBool isFollowing = false.obs;
+  RxBool isFollowLoading = false.obs;
   // Text controllers for form fields
   late TextEditingController organizationBioController;
   late TextEditingController organizationNameController;
@@ -91,11 +101,126 @@ class VendorController extends GetxController {
         }
         userId = vendorId;
         initializeFromProfile(vendor, userId);
+
+        // جلب الإحصائيات
+        await fetchVendorStats(vendorId);
       }
     } catch (e) {
       debugPrint('fetchVendorData error: $e');
     } finally {
       isLoading.value = false;
+    }
+  }
+
+  /// جلب إحصائيات التاجر
+  Future<void> fetchVendorStats(String vendorId) async {
+    try {
+      // جلب عدد المنتجات
+      final stats = await repository.getVendorStats(vendorId);
+      productsCount.value = stats['products_count'] ?? 0;
+      followersCount.value = stats['followers_count'] ?? 0;
+      offersCount.value = stats['offers_count'] ?? 0;
+
+      debugPrint(
+        'Vendor Stats: Products=$productsCount, Followers=$followersCount, Offers=$offersCount',
+      );
+
+      // التحقق من حالة المتابعة
+      await checkFollowStatus(vendorId);
+    } catch (e) {
+      debugPrint('fetchVendorStats error: $e');
+      productsCount.value = 0;
+      followersCount.value = 0;
+      offersCount.value = 0;
+    }
+  }
+
+  /// التحقق من حالة المتابعة
+  Future<void> checkFollowStatus(String vendorId) async {
+    try {
+      final currentUser = Get.find<AuthController>().currentUser.value;
+      if (currentUser != null && currentUser.userId.isNotEmpty) {
+        isFollowing.value = await repository.isFollowingVendor(
+          currentUser.userId,
+          vendorId,
+        );
+        debugPrint('Follow status for vendor $vendorId: $isFollowing');
+      }
+    } catch (e) {
+      debugPrint('checkFollowStatus error: $e');
+      isFollowing.value = false;
+    }
+  }
+
+  /// متابعة/إلغاء متابعة تاجر
+  Future<void> toggleFollow(String vendorId) async {
+    try {
+      final currentUser = Get.find<AuthController>().currentUser.value;
+      if (currentUser == null || currentUser.userId.isEmpty) {
+        Get.snackbar(
+          'error'.tr,
+          'please_login_first'.tr,
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.orange.shade100,
+          colorText: Colors.orange.shade800,
+        );
+        return;
+      }
+
+      isFollowLoading.value = true;
+
+      if (isFollowing.value) {
+        // إلغاء المتابعة
+        final success = await repository.unfollowVendor(
+          currentUser.userId,
+          vendorId,
+        );
+
+        if (success) {
+          isFollowing.value = false;
+          followersCount.value--;
+
+          Get.snackbar(
+            'success'.tr,
+            'unfollowed_successfully'.tr,
+            snackPosition: SnackPosition.BOTTOM,
+            backgroundColor: Colors.grey.shade100,
+            colorText: Colors.grey.shade800,
+            duration: const Duration(seconds: 2),
+          );
+        }
+      } else {
+        // متابعة
+        final success = await repository.followVendor(
+          currentUser.userId,
+          vendorId,
+        );
+
+        if (success) {
+          isFollowing.value = true;
+          followersCount.value++;
+
+          Get.snackbar(
+            'success'.tr,
+            'followed_successfully'.tr,
+            snackPosition: SnackPosition.BOTTOM,
+            backgroundColor: Colors.green.shade100,
+            colorText: Colors.green.shade800,
+            duration: const Duration(seconds: 2),
+          );
+        }
+      }
+    } catch (e) {
+      debugPrint('toggleFollow error: $e');
+      Get.snackbar(
+        'error'.tr,
+        'operation_failed'.tr,
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red.shade100,
+        colorText: Colors.red.shade800,
+      );
+    } finally {
+      isFollowLoading.value = false;
     }
   }
 
@@ -115,6 +240,7 @@ class VendorController extends GetxController {
     website.value = profile.website;
     organizationBio.value = profile.organizationBio;
     organizationName.value = profile.organizationName;
+    organizationbrief.value = profile.brief;
     storeMessage.value = profile.storeMessage;
     organizationDeleted.value = profile.organizationDeleted;
     organizationActivated.value = profile.organizationActivated;
@@ -126,8 +252,7 @@ class VendorController extends GetxController {
       organizationBioController.text = profile.organizationBio;
       organizationNameController.text = profile.organizationName;
       storeMessageController.text = profile.storeMessage;
-      briefController.text =
-          profile.organizationBio; // Use bio as brief for now
+      briefController.text = profile.brief; // Use bio as brief for now
       debugPrint("Text controllers updated successfully");
     } catch (e) {
       debugPrint("Error updating text controllers: $e");
@@ -143,6 +268,9 @@ class VendorController extends GetxController {
       );
       briefController = TextEditingController(text: profile.organizationBio);
     }
+
+    // Debug: Print social links info
+    debugPrint("Social links initialized: ${profile.socialLink?.toJson()}");
   }
 
   void clearProfileData() {
@@ -165,28 +293,21 @@ class VendorController extends GetxController {
   Future<void> saveVendorUpdates(String vendorId) async {
     isUpdate.value = true;
     try {
-      // Controllers are already initialized in onInit()
-
-      // Debug: Print current values
-      debugPrint(
-        "Current organizationBio value: ${organizationBioController.text}",
-      );
-      debugPrint(
-        "Current organizationName value: ${organizationNameController.text}",
-      );
-      debugPrint("Current storeMessage value: ${storeMessageController.text}");
+      // Ensure both profileData and vendorData have the same social links
+      final currentSocialLink =
+          profileData.value.socialLink ?? vendorData.value.socialLink;
 
       // إنشاء نسخة محدثة من بيانات المتجر مع القيم المعدلة
       final updatedVendor = profileData.value.copyWith(
         enableCod: enableCOD.value,
         enableIwintoPayment: enableIwintoPayment.value,
-        website: website.value.trim(),
+        // NOTE: website is NOT included - it's saved in social_links table
         organizationBio: organizationBioController.text.trim(),
         organizationName: organizationNameController.text.trim(),
         storeMessage: storeMessageController.text.trim(),
         organizationDeleted: organizationDeleted.value,
         organizationActivated: organizationActivated.value,
-        socialLink: profileData.value.socialLink, // الحفاظ على روابط السوشال
+        socialLink: currentSocialLink, // الحفاظ على روابط السوشال
       );
 
       // Debug: Print the updated vendor
@@ -196,9 +317,23 @@ class VendorController extends GetxController {
       debugPrint("Updated vendor toJson: ${updatedVendor.toJson()}");
 
       await repository.updateVendorProfile(vendorId, updatedVendor);
+
+      // Update social links if they exist - this is the critical part
+      if (currentSocialLink != null) {
+        debugPrint("📤 Saving social links to database...");
+        debugPrint("Social link data: ${currentSocialLink.toJson()}");
+
+        await repository.updateVendorSocialLinks(vendorId, currentSocialLink);
+
+        debugPrint("✅ Social links saved successfully!");
+      } else {
+        debugPrint("⚠️ No social links to save");
+      }
+
       await fetchVendorData(vendorId);
     } catch (e) {
-      debugPrint("saveVendorUpdates error: $e");
+      debugPrint("❌ saveVendorUpdates error: $e");
+      rethrow;
     } finally {
       isUpdate.value = false;
     }

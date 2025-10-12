@@ -3,12 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:istoreto/featured/cart/controller/saved_controller.dart';
 import 'package:istoreto/controllers/translation_controller.dart';
-
 import 'package:istoreto/featured/product/views/widgets/product_details.dart';
 import 'package:istoreto/featured/product/views/widgets/product_widget_horz.dart';
 import 'package:istoreto/utils/common/widgets/anime_empty_logo.dart';
 import 'package:istoreto/utils/common/widgets/appbar/custom_app_bar.dart';
-import 'package:istoreto/utils/common/widgets/custom_shapes/containers/rounded_container.dart';
 import 'package:istoreto/utils/constants/color.dart';
 
 class SavedProductsPage extends StatelessWidget {
@@ -19,7 +17,7 @@ class SavedProductsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(title: 'Saved Product'),
+      appBar: CustomAppBar(title: 'saved_products'.tr, isBackButtonExist: true),
       body: SafeArea(child: SavedProductContent()),
     );
   }

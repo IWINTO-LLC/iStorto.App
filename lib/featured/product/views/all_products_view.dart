@@ -556,7 +556,7 @@ class _GridView4 extends StatelessWidget {
           borderRadius: BorderRadius.circular(8),
           boxShadow: [
             BoxShadow(
-              color: Colors.grey.withOpacity(0.1),
+              color: Colors.grey.withValues(alpha: 0.1),
               spreadRadius: 1,
               blurRadius: 3,
               offset: const Offset(0, 1),
@@ -710,7 +710,7 @@ void _showProductOverlay(ProductModel product) {
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.3),
+              color: Colors.black.withValues(alpha: 0.3),
               spreadRadius: 2,
               blurRadius: 10,
               offset: const Offset(0, 4),

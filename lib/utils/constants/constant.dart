@@ -3,7 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:istoreto/featured/sector/model/sector_model.dart';
 
 const String appName = 'iStorto';
-String mediaPath = 'https://iwinto.cloud/uploads/';
+//String mediaPath = 'https://iwinto.cloud/uploads/';
 const String supabaseUrl = 'https://jfveosdooutphhjyvcis.supabase.co';
 const String supabaseAnonKey =
     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpmdmVvc2Rvb3V0cGhoanl2Y2lzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTgxOTQyOTMsImV4cCI6MjA3Mzc3MDI5M30.GFx5obizbjERtgoqt_iBvHZAH0qgUmWABLwK-YoXg5E';

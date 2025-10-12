@@ -17,7 +17,7 @@ class CreateCategory extends StatelessWidget {
               : TextDirection.ltr,
       child: Scaffold(
         appBar: CustomAppBar(title: 'addNewCategory'.tr),
-        body: SafeArea(child: CreateCategoryForm()),
+        body: SafeArea(child: CreateCategoryForm(vendorId: vendorId)),
       ),
     );
   }

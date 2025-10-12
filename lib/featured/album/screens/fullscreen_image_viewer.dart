@@ -4,6 +4,7 @@ import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:get/get.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:http/http.dart' as http;
 import 'package:image/image.dart' as img;
@@ -47,6 +48,7 @@ class FullscreenImageViewer extends StatefulWidget {
   final int initialIndex;
   final bool showDeleteButton;
   final bool showEditButton;
+  final bool hideControls; // إخفاء جميع عناصر التحكم والإبقاء على الزووم فقط
   final Function(int)? onDelete;
   final Function(File, int)? onSave; // دالة حفظ الصورة المعدلة
 
@@ -56,6 +58,7 @@ class FullscreenImageViewer extends StatefulWidget {
     this.initialIndex = 0,
     this.showDeleteButton = false,
     this.showEditButton = false,
+    this.hideControls = false,
     this.onDelete,
     this.onSave,
   });
@@ -493,34 +496,32 @@ class _FullscreenImageViewerState extends State<FullscreenImageViewer> {
 
   // عرض مربع حوار إدخال النص
   void _showTextInputDialog() {
-    showDialog(
-      context: context,
-      builder:
-          (context) => AlertDialog(
-            title: const Text('إضافة نص'),
-            content: TextField(
-              autofocus: true,
-              decoration: const InputDecoration(hintText: 'اكتب النص هنا...'),
-              onChanged: (value) {
-                _textInput = value;
-              },
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: const Text('إلغاء'),
-              ),
-              ElevatedButton(
-                onPressed: () {
-                  if (_textInput.isNotEmpty && _textPosition != null) {
-                    _addText(_textInput, _textPosition!);
-                  }
-                  Navigator.pop(context);
-                },
-                child: const Text('إضافة'),
-              ),
-            ],
+    Get.dialog(
+      AlertDialog(
+        title: Text('title'.tr),
+        content: TextField(
+          autofocus: true,
+          decoration: InputDecoration(hintText: 'description'.tr),
+          onChanged: (value) {
+            _textInput = value;
+          },
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Get.back(),
+            child: Text('general_cancel'.tr),
           ),
+          ElevatedButton(
+            onPressed: () {
+              if (_textInput.isNotEmpty && _textPosition != null) {
+                _addText(_textInput, _textPosition!);
+              }
+              Get.back();
+            },
+            child: Text('album.create'.tr),
+          ),
+        ],
+      ),
     );
   }
 
@@ -1096,449 +1097,154 @@ class _FullscreenImageViewerState extends State<FullscreenImageViewer> {
               ),
 
             // شريط التحكم العلوي
-            Positioned(
-              top: 0,
-              left: 0,
-              right: 0,
-              child: AnimatedOpacity(
-                opacity: _showControls ? 1.0 : 0.0,
-                duration: const Duration(milliseconds: 300),
-                child: Container(
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: [
-                        Colors.black.withOpacity(0.7),
-                        Colors.transparent,
-                      ],
+            if (!widget.hideControls)
+              Positioned(
+                top: 0,
+                left: 0,
+                right: 0,
+                child: AnimatedOpacity(
+                  opacity: _showControls ? 1.0 : 0.0,
+                  duration: const Duration(milliseconds: 300),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          Colors.black.withOpacity(0.7),
+                          Colors.transparent,
+                        ],
+                      ),
                     ),
-                  ),
-                  child: SafeArea(
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          // زر الرجوع
-                          Material(
-                            color: Colors.transparent,
-                            child: InkWell(
-                              onTap: () {
-                                // إظهار رسالة تأكيد الخروج إذا كان هناك تعديلات
-                                if (_processedImages.isNotEmpty ||
-                                    _isDrawingMode ||
-                                    _isTextMode) {
-                                  showDialog(
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return AlertDialog(
-                                        title: Text('تأكيد الخروج'),
-                                        content: Text(
-                                          'هل تريد الخروج بدون حفظ التعديلات؟',
-                                        ),
+                    child: SafeArea(
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            // زر الرجوع
+                            Material(
+                              color: Colors.transparent,
+                              child: InkWell(
+                                onTap: () {
+                                  // إظهار رسالة تأكيد الخروج إذا كان هناك تعديلات
+                                  if (_processedImages.isNotEmpty ||
+                                      _isDrawingMode ||
+                                      _isTextMode) {
+                                    Get.dialog(
+                                      AlertDialog(
+                                        title: Text('general_confirm'.tr),
+                                        content: Text('warning'.tr),
                                         actions: [
                                           TextButton(
-                                            onPressed:
-                                                () => Navigator.pop(context),
-                                            child: Text('إلغاء'),
+                                            onPressed: () => Get.back(),
+                                            child: Text('general_cancel'.tr),
                                           ),
                                           TextButton(
                                             onPressed: () {
-                                              Navigator.pop(
-                                                context,
-                                              ); // إغلاق dialog
-                                              Navigator.pop(
-                                                context,
-                                              ); // إغلاق معاينة الصور
+                                              Get.back();
+                                              Get.back();
                                             },
                                             child: Text(
-                                              'خروج',
-                                              style: TextStyle(
+                                              'exitApp'.tr,
+                                              style: const TextStyle(
                                                 color: Colors.orange,
                                               ),
                                             ),
                                           ),
                                         ],
-                                      );
-                                    },
-                                  );
-                                } else {
-                                  Navigator.pop(context);
-                                }
-                              },
-                              borderRadius: BorderRadius.circular(25),
-                              child: Container(
-                                padding: const EdgeInsets.all(12),
-                                decoration: BoxDecoration(
-                                  color: Colors.black.withOpacity(0.7),
-                                  borderRadius: BorderRadius.circular(25),
-                                ),
-                                child: const Icon(
-                                  Icons.close,
-                                  color: Colors.white,
-                                  size: 24,
-                                ),
-                              ),
-                            ),
-                          ),
-
-                          // عداد الصور
-                          if (widget.images.length > 1)
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 16,
-                                vertical: 10,
-                              ),
-                              decoration: BoxDecoration(
-                                color: Colors.black.withOpacity(0.7),
-                                borderRadius: BorderRadius.circular(20),
-                              ),
-                              child: Text(
-                                '${_currentIndex + 1} / ${widget.images.length}',
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ),
-
-                          // زر الحذف
-                          if (widget.showDeleteButton &&
-                              widget.onDelete != null)
-                            Material(
-                              color: Colors.transparent,
-                              child: InkWell(
-                                onTap: () {
-                                  // إظهار رسالة تأكيد الحذف
-                                  showDialog(
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return AlertDialog(
-                                        title: Text('تأكيد الحذف'),
-                                        content: Text(
-                                          'هل أنت متأكد من حذف هذه الصورة؟',
-                                        ),
-                                        actions: [
-                                          TextButton(
-                                            onPressed:
-                                                () => Navigator.pop(context),
-                                            child: Text('إلغاء'),
-                                          ),
-                                          TextButton(
-                                            onPressed: () {
-                                              Navigator.pop(
-                                                context,
-                                              ); // إغلاق dialog
-                                              widget.onDelete!(_currentIndex);
-                                              Navigator.pop(
-                                                context,
-                                              ); // إغلاق معاينة الصور
-                                            },
-                                            child: Text(
-                                              'حذف',
-                                              style: TextStyle(
-                                                color: Colors.red,
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      );
-                                    },
-                                  );
+                                      ),
+                                    );
+                                  } else {
+                                    Get.back();
+                                  }
                                 },
                                 borderRadius: BorderRadius.circular(25),
                                 child: Container(
                                   padding: const EdgeInsets.all(12),
                                   decoration: BoxDecoration(
-                                    color: Colors.red.withOpacity(0.9),
+                                    color: Colors.black.withOpacity(0.7),
                                     borderRadius: BorderRadius.circular(25),
                                   ),
                                   child: const Icon(
-                                    Icons.delete,
+                                    Icons.close,
                                     color: Colors.white,
                                     size: 24,
                                   ),
                                 ),
                               ),
                             ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ),
 
-            // شريط التحكم السفلي
-            Positioned(
-              bottom: 0,
-              left: 0,
-              right: 0,
-              child: AnimatedOpacity(
-                opacity:
-                    (_showControls && !_isDrawingMode && !_isTextMode)
-                        ? 1.0
-                        : 0.0,
-                duration: const Duration(milliseconds: 300),
-                child: Container(
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: [
-                        Colors.transparent,
-                        Colors.black.withOpacity(0.7),
-                      ],
-                    ),
-                  ),
-                  child: SafeArea(
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            // زر إزالة الخلفية
-                            // _ControlButton(
-                            //   icon: Icons.auto_fix_high,
-                            //   onTap: () async {
-                            //     dynamic currentImage =
-                            //         widget.images[_currentIndex];
-                            //     if (_processedImages.containsKey(_currentIndex)) {
-                            //       currentImage = _processedImages[_currentIndex]!;
-                            //     }
-                            //     if (currentImage is File) {
-                            //       final processedFile =
-                            //           await _removeBackground(currentImage);
-                            //       if (processedFile != null) {
-                            //         await _saveProcessedImage(processedFile);
-                            //       }
-                            //     }
-                            //   },
-                            // ),
+                            // عداد الصور
+                            if (widget.images.length > 1)
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 16,
+                                  vertical: 10,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: Colors.black.withOpacity(0.7),
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                                child: Text(
+                                  '${_currentIndex + 1} / ${widget.images.length}',
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ),
 
-                            // const SizedBox(width: 8),
-
-                            // زر الاقتصاص
-                            _ControlButton(
-                              icon: Icons.crop,
-                              onTap: () async {
-                                dynamic currentImage =
-                                    widget.images[_currentIndex];
-                                if (_processedImages.containsKey(
-                                  _currentIndex,
-                                )) {
-                                  currentImage =
-                                      _processedImages[_currentIndex]!;
-                                }
-                                if (currentImage is File) {
-                                  final processedFile = await _cropImage(
-                                    currentImage,
-                                  );
-                                  if (processedFile != null) {
-                                    await _saveProcessedImage(processedFile);
-                                  }
-                                }
-                              },
-                            ),
-
-                            // const SizedBox(width: 8),
-
-                            // زر التدوير لليمين
-                            _ControlButton(
-                              icon: Icons.rotate_right,
-                              onTap: () async {
-                                _rotate90Degrees();
-                                // تطبيق التدوير مباشرة
-                                if (widget.onSave != null) {
-                                  final processedFile =
-                                      await _saveImageWithAllModifications();
-                                  if (processedFile != null) {
-                                    await _saveProcessedImage(processedFile);
-
-                                    // إظهار رسالة تأكيد التدوير
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        content: Text(
-                                          'تم تدوير الصورة ${_currentRotation.toInt()}° بنجاح',
-                                          style: TextStyle(color: Colors.white),
-                                        ),
-                                        backgroundColor: Colors.green,
-                                        duration: Duration(seconds: 2),
-                                        behavior: SnackBarBehavior.floating,
-                                        margin: EdgeInsets.all(16),
+                            // زر الحذف
+                            if (widget.showDeleteButton &&
+                                widget.onDelete != null)
+                              Material(
+                                color: Colors.transparent,
+                                child: InkWell(
+                                  onTap: () {
+                                    // إظهار رسالة تأكيد الحذف
+                                    Get.dialog(
+                                      AlertDialog(
+                                        title: Text('confirm_deletion'.tr),
+                                        content: Text('delete_item_confirm'.tr),
+                                        actions: [
+                                          TextButton(
+                                            onPressed: () => Get.back(),
+                                            child: Text('general_cancel'.tr),
+                                          ),
+                                          TextButton(
+                                            onPressed: () {
+                                              Get.back();
+                                              widget.onDelete!(_currentIndex);
+                                              Get.back();
+                                            },
+                                            child: Text(
+                                              'delete'.tr,
+                                              style: const TextStyle(
+                                                color: Colors.red,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
                                       ),
                                     );
-                                  }
-                                }
-                              },
-                            ),
-
-                            const SizedBox(width: 8),
-
-                            // زر التدوير لليسار
-                            _ControlButton(
-                              icon: Icons.rotate_left,
-                              onTap: () async {
-                                _rotateMinus90Degrees();
-                                // تطبيق التدوير مباشرة
-                                if (widget.onSave != null) {
-                                  final processedFile =
-                                      await _saveImageWithAllModifications();
-                                  if (processedFile != null) {
-                                    await _saveProcessedImage(processedFile);
-
-                                    // إظهار رسالة تأكيد التدوير
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        content: Text(
-                                          'تم تدوير الصورة ${_currentRotation.toInt()}° بنجاح',
-                                          style: TextStyle(color: Colors.white),
-                                        ),
-                                        backgroundColor: Colors.green,
-                                        duration: Duration(seconds: 2),
-                                        behavior: SnackBarBehavior.floating,
-                                        margin: EdgeInsets.all(16),
-                                      ),
-                                    );
-                                  }
-                                }
-                              },
-                            ),
-
-                            const SizedBox(width: 8),
-
-                            // زر الضغط
-                            _ControlButton(
-                              icon: Icons.compress,
-                              onTap: () async {
-                                dynamic currentImage =
-                                    widget.images[_currentIndex];
-                                if (_processedImages.containsKey(
-                                  _currentIndex,
-                                )) {
-                                  currentImage =
-                                      _processedImages[_currentIndex]!;
-                                }
-                                if (currentImage is File) {
-                                  final processedFile = await _compressImage(
-                                    currentImage,
-                                  );
-                                  if (processedFile != null) {
-                                    await _saveProcessedImage(processedFile);
-                                  }
-                                }
-                              },
-                            ),
-
-                            const SizedBox(width: 8),
-
-                            // زر الرسم
-                            _ControlButton(
-                              icon: _isDrawingMode ? Icons.check : Icons.edit,
-                              onTap: () {
-                                if (_isDrawingMode) {
-                                  _stopDrawingTextMode();
-                                } else {
-                                  _startDrawingMode();
-                                }
-                              },
-                            ),
-
-                            const SizedBox(width: 8),
-
-                            // زر الكتابة
-                            _ControlButton(
-                              icon:
-                                  _isTextMode ? Icons.check : Icons.text_fields,
-                              onTap: () {
-                                if (_isTextMode) {
-                                  _stopDrawingTextMode();
-                                } else {
-                                  _startTextMode();
-                                }
-                              },
-                            ),
-
-                            // زر الحفظ
-                            if (widget.showEditButton) ...[
-                              const SizedBox(width: 8),
-                              _ControlButton(
-                                icon: Icons.save,
-                                onTap: () async {
-                                  if (widget.onSave != null) {
-                                    // حفظ الصورة مع جميع التعديلات
-                                    final processedFile =
-                                        await _saveImageWithAllModifications();
-                                    if (processedFile != null) {
-                                      await _saveProcessedImage(processedFile);
-                                    }
-                                  }
-                                },
-                              ),
-                            ],
-
-                            // زر التراجع
-                            if (_canUndo()) ...[
-                              const SizedBox(width: 8),
-                              _ControlButton(
-                                icon: Icons.undo,
-                                onTap: () {
-                                  _undoLastEdit();
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text(
-                                        'تم التراجع عن آخر تعديل',
-                                        style: TextStyle(color: Colors.white),
-                                      ),
-                                      backgroundColor: Colors.blue,
-                                      duration: Duration(seconds: 1),
-                                      behavior: SnackBarBehavior.floating,
-                                      margin: EdgeInsets.all(16),
+                                  },
+                                  borderRadius: BorderRadius.circular(25),
+                                  child: Container(
+                                    padding: const EdgeInsets.all(12),
+                                    decoration: BoxDecoration(
+                                      color: Colors.red.withOpacity(0.9),
+                                      borderRadius: BorderRadius.circular(25),
                                     ),
-                                  );
-                                },
-                              ),
-                            ],
-
-                            // زر إعادة التنفيذ
-                            if (_canRedo()) ...[
-                              const SizedBox(width: 8),
-                              _ControlButton(
-                                icon: Icons.redo,
-                                onTap: () {
-                                  _redoLastEdit();
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text(
-                                        'تم إعادة تنفيذ التعديل',
-                                        style: TextStyle(color: Colors.white),
-                                      ),
-                                      backgroundColor: Colors.blue,
-                                      duration: Duration(seconds: 1),
-                                      behavior: SnackBarBehavior.floating,
-                                      margin: EdgeInsets.all(16),
+                                    child: const Icon(
+                                      Icons.delete,
+                                      color: Colors.white,
+                                      size: 24,
                                     ),
-                                  );
-                                },
+                                  ),
+                                ),
                               ),
-                            ],
-
-                            // زر إعادة التعيين
-                            if (_processedImages.containsKey(
-                              _currentIndex,
-                            )) ...[
-                              const SizedBox(width: 8),
-                              _ControlButton(
-                                icon: Icons.refresh,
-                                onTap: () {
-                                  _resetImage();
-                                },
-                              ),
-                            ],
                           ],
                         ),
                       ),
@@ -1546,7 +1252,326 @@ class _FullscreenImageViewerState extends State<FullscreenImageViewer> {
                   ),
                 ),
               ),
-            ),
+
+            // شريط التحكم السفلي
+            if (!widget.hideControls)
+              Positioned(
+                bottom: 0,
+                left: 0,
+                right: 0,
+                child: AnimatedOpacity(
+                  opacity:
+                      (_showControls && !_isDrawingMode && !_isTextMode)
+                          ? 1.0
+                          : 0.0,
+                  duration: const Duration(milliseconds: 300),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          Colors.transparent,
+                          Colors.black.withOpacity(0.7),
+                        ],
+                      ),
+                    ),
+                    child: SafeArea(
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              // زر إزالة الخلفية
+                              // _ControlButton(
+                              //   icon: Icons.auto_fix_high,
+                              //   onTap: () async {
+                              //     dynamic currentImage =
+                              //         widget.images[_currentIndex];
+                              //     if (_processedImages.containsKey(_currentIndex)) {
+                              //       currentImage = _processedImages[_currentIndex]!;
+                              //     }
+                              //     if (currentImage is File) {
+                              //       final processedFile =
+                              //           await _removeBackground(currentImage);
+                              //       if (processedFile != null) {
+                              //         await _saveProcessedImage(processedFile);
+                              //       }
+                              //     }
+                              //   },
+                              // ),
+
+                              // const SizedBox(width: 8),
+
+                              // زر الاقتصاص
+                              _ControlButton(
+                                icon: Icons.crop,
+                                onTap: () async {
+                                  dynamic currentImage =
+                                      widget.images[_currentIndex];
+                                  if (_processedImages.containsKey(
+                                    _currentIndex,
+                                  )) {
+                                    currentImage =
+                                        _processedImages[_currentIndex]!;
+                                  }
+                                  if (currentImage is File) {
+                                    final processedFile = await _cropImage(
+                                      currentImage,
+                                    );
+                                    if (processedFile != null) {
+                                      await _saveProcessedImage(processedFile);
+                                    }
+                                  }
+                                },
+                              ),
+
+                              // const SizedBox(width: 8),
+
+                              // زر التدوير لليمين
+                              _ControlButton(
+                                icon: Icons.rotate_right,
+                                onTap: () async {
+                                  _rotate90Degrees();
+                                  // تطبيق التدوير مباشرة
+                                  if (widget.onSave != null) {
+                                    final processedFile =
+                                        await _saveImageWithAllModifications();
+                                    if (processedFile != null) {
+                                      await _saveProcessedImage(processedFile);
+
+                                      // إظهار رسالة تأكيد التدوير
+                                      ScaffoldMessenger.of(
+                                        context,
+                                      ).showSnackBar(
+                                        SnackBar(
+                                          content: Text(
+                                            'تم تدوير الصورة ${_currentRotation.toInt()}° بنجاح',
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                          backgroundColor: Colors.green,
+                                          duration: Duration(seconds: 2),
+                                          behavior: SnackBarBehavior.floating,
+                                          margin: EdgeInsets.all(16),
+                                        ),
+                                      );
+                                    }
+                                  }
+                                },
+                              ),
+
+                              const SizedBox(width: 8),
+
+                              // زر التدوير لليسار
+                              _ControlButton(
+                                icon: Icons.rotate_left,
+                                onTap: () async {
+                                  _rotateMinus90Degrees();
+                                  // تطبيق التدوير مباشرة
+                                  if (widget.onSave != null) {
+                                    final processedFile =
+                                        await _saveImageWithAllModifications();
+                                    if (processedFile != null) {
+                                      await _saveProcessedImage(processedFile);
+
+                                      // إظهار رسالة تأكيد التدوير
+                                      ScaffoldMessenger.of(
+                                        context,
+                                      ).showSnackBar(
+                                        SnackBar(
+                                          content: Text(
+                                            'تم تدوير الصورة ${_currentRotation.toInt()}° بنجاح',
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                          backgroundColor: Colors.green,
+                                          duration: Duration(seconds: 2),
+                                          behavior: SnackBarBehavior.floating,
+                                          margin: EdgeInsets.all(16),
+                                        ),
+                                      );
+                                    }
+                                  }
+                                },
+                              ),
+
+                              const SizedBox(width: 8),
+
+                              // زر الضغط
+                              _ControlButton(
+                                icon: Icons.compress,
+                                onTap: () async {
+                                  dynamic currentImage =
+                                      widget.images[_currentIndex];
+                                  if (_processedImages.containsKey(
+                                    _currentIndex,
+                                  )) {
+                                    currentImage =
+                                        _processedImages[_currentIndex]!;
+                                  }
+                                  if (currentImage is File) {
+                                    final processedFile = await _compressImage(
+                                      currentImage,
+                                    );
+                                    if (processedFile != null) {
+                                      await _saveProcessedImage(processedFile);
+                                    }
+                                  }
+                                },
+                              ),
+
+                              const SizedBox(width: 8),
+
+                              // زر الرسم
+                              _ControlButton(
+                                icon: _isDrawingMode ? Icons.check : Icons.edit,
+                                onTap: () {
+                                  if (_isDrawingMode) {
+                                    _stopDrawingTextMode();
+                                  } else {
+                                    _startDrawingMode();
+                                  }
+                                },
+                              ),
+
+                              const SizedBox(width: 8),
+
+                              // زر الكتابة
+                              _ControlButton(
+                                icon:
+                                    _isTextMode
+                                        ? Icons.check
+                                        : Icons.text_fields,
+                                onTap: () {
+                                  if (_isTextMode) {
+                                    _stopDrawingTextMode();
+                                  } else {
+                                    _startTextMode();
+                                  }
+                                },
+                              ),
+
+                              // زر الحفظ
+                              if (widget.showEditButton) ...[
+                                const SizedBox(width: 8),
+                                _ControlButton(
+                                  icon: Icons.save,
+                                  onTap: () async {
+                                    if (widget.onSave != null) {
+                                      // حفظ الصورة مع جميع التعديلات
+                                      final processedFile =
+                                          await _saveImageWithAllModifications();
+                                      if (processedFile != null) {
+                                        await _saveProcessedImage(
+                                          processedFile,
+                                        );
+                                      }
+                                    }
+                                  },
+                                ),
+                              ],
+
+                              // زر التراجع
+                              if (_canUndo()) ...[
+                                const SizedBox(width: 8),
+                                _ControlButton(
+                                  icon: Icons.undo,
+                                  onTap: () {
+                                    _undoLastEdit();
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text(
+                                          'تم التراجع عن آخر تعديل',
+                                          style: TextStyle(color: Colors.white),
+                                        ),
+                                        backgroundColor: Colors.blue,
+                                        duration: Duration(seconds: 1),
+                                        behavior: SnackBarBehavior.floating,
+                                        margin: EdgeInsets.all(16),
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ],
+
+                              // زر إعادة التنفيذ
+                              if (_canRedo()) ...[
+                                const SizedBox(width: 8),
+                                _ControlButton(
+                                  icon: Icons.redo,
+                                  onTap: () {
+                                    _redoLastEdit();
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text(
+                                          'تم إعادة تنفيذ التعديل',
+                                          style: TextStyle(color: Colors.white),
+                                        ),
+                                        backgroundColor: Colors.blue,
+                                        duration: Duration(seconds: 1),
+                                        behavior: SnackBarBehavior.floating,
+                                        margin: EdgeInsets.all(16),
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ],
+
+                              // زر إعادة التعيين
+                              if (_processedImages.containsKey(
+                                _currentIndex,
+                              )) ...[
+                                const SizedBox(width: 8),
+                                _ControlButton(
+                                  icon: Icons.refresh,
+                                  onTap: () {
+                                    _resetImage();
+                                  },
+                                ),
+                              ],
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+
+            // زر الإغلاق البسيط عندما تكون عناصر التحكم مخفية
+            if (widget.hideControls)
+              Positioned(
+                top: 40,
+                right: 20,
+                child: Material(
+                  color: Colors.transparent,
+                  child: InkWell(
+                    onTap: () => Get.back(),
+                    borderRadius: BorderRadius.circular(25),
+                    child: Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: Colors.black.withOpacity(0.6),
+                        borderRadius: BorderRadius.circular(25),
+                        border: Border.all(
+                          color: Colors.white.withOpacity(0.3),
+                          width: 1,
+                        ),
+                      ),
+                      child: const Icon(
+                        Icons.close,
+                        color: Colors.white,
+                        size: 24,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
           ],
         ),
       ),
@@ -1733,18 +1758,14 @@ void showFullscreenImage({
   Function(int)? onDelete,
   Function(File, int)? onSave,
 }) {
-  Navigator.push(
-    context,
-    MaterialPageRoute(
-      builder:
-          (context) => FullscreenImageViewer(
-            images: images,
-            initialIndex: initialIndex,
-            showDeleteButton: showDeleteButton,
-            showEditButton: showEditButton,
-            onDelete: onDelete,
-            onSave: onSave,
-          ),
+  Get.to(
+    () => FullscreenImageViewer(
+      images: images,
+      initialIndex: initialIndex,
+      showDeleteButton: showDeleteButton,
+      showEditButton: showEditButton,
+      onDelete: onDelete,
+      onSave: onSave,
     ),
   );
 }

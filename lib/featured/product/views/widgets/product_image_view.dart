@@ -35,7 +35,9 @@ class ProductImageView extends StatelessWidget {
             child: Container(
               decoration: BoxDecoration(
                 color: Theme.of(context).cardColor,
-                border: Border.all(color: TColors.darkGrey.withOpacity(.25)),
+                border: Border.all(
+                  color: TColors.darkGrey.withValues(alpha: .25),
+                ),
                 borderRadius: BorderRadius.circular(TSizes.paddingSizeSmall),
               ),
               child: Stack(

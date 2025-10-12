@@ -79,4 +79,41 @@ class StorageService {
     final session = await getUserSession();
     return session['isLoggedIn'] == true && session['userId'].isNotEmpty;
   }
+
+  // طرق عامة للقراءة والكتابة - General Read/Write Methods
+  Future<void> write(String key, String value) async {
+    await _prefs?.setString(key, value);
+  }
+
+  String? read(String key) {
+    return _prefs?.getString(key);
+  }
+
+  Future<void> remove(String key) async {
+    await _prefs?.remove(key);
+  }
+
+  Future<void> writeBool(String key, bool value) async {
+    await _prefs?.setBool(key, value);
+  }
+
+  bool? readBool(String key) {
+    return _prefs?.getBool(key);
+  }
+
+  Future<void> writeInt(String key, int value) async {
+    await _prefs?.setInt(key, value);
+  }
+
+  int? readInt(String key) {
+    return _prefs?.getInt(key);
+  }
+
+  Future<void> writeDouble(String key, double value) async {
+    await _prefs?.setDouble(key, value);
+  }
+
+  double? readDouble(String key) {
+    return _prefs?.getDouble(key);
+  }
 }

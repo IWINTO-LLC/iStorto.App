@@ -182,7 +182,7 @@ class TCategoryListItem extends StatelessWidget {
                   elevation: 0,
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: Image.asset(TImages.editIcon, color: TColors.black),
+                    child: Icon(Icons.edit, color: TColors.black),
                   ),
                   onTap:
                       () => Navigator.push(

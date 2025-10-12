@@ -74,16 +74,6 @@ class ControlPanelMenu extends StatelessWidget {
   ) {
     return [
       MenuItemData(
-        icon: CupertinoIcons.eye,
-        title: 'viewMyShop'.tr,
-        onTap:
-            () => Get.to(
-              () => MarketPlaceView(vendorId: vendorId, editMode: false),
-              duration: Duration(microseconds: 900),
-              transition: Transition.cupertino,
-            ),
-      ),
-      MenuItemData(
         icon: LineIcons.magic,
         title: 'settings'.tr,
         onTap:

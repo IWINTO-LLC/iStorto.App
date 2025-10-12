@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:istoreto/featured/shop/controller/vendor_controller.dart';
+import 'package:istoreto/featured/shop/data/vendor_model.dart';
 import 'package:istoreto/featured/shop/view/all_tab.dart';
-import 'package:istoreto/featured/shop/view/widgets/market_header_organization.dart';
+import 'package:istoreto/featured/shop/view/widgets/market_header.dart';
 import 'package:istoreto/featured/shop/view/widgets/market_place_shimmer_widget.dart';
 
 class MarketPlaceView extends GetView<VendorController> {
@@ -35,7 +36,10 @@ class NestedScrollViewForHome extends GetView<VendorController> {
   Widget build(BuildContext context) {
     // جلب بيانات البائع عند تحميل الصفحة
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      controller.fetchVendorData(vendorId);
+      if (controller.vendorData.value == VendorModel.empty() ||
+          controller.vendorData.value.id != vendorId) {
+        controller.fetchVendorData(vendorId);
+      }
     });
 
     return Scaffold(
@@ -53,15 +57,19 @@ class NestedScrollViewForHome extends GetView<VendorController> {
                             : SingleChildScrollView(
                               child: Column(
                                 children: [
-                                  MarketHeaderSection(
-                                    userId: vendorId,
+                                  MarketHeader(
+                                    vendorId: vendorId,
                                     editMode: editMode,
                                   ),
+                                  // MarketHeaderSection(
+                                  //   userId: vendorId,
+                                  //   editMode: editMode,
+                                  // ),
                                   Padding(
                                     padding: const EdgeInsets.only(top: 28.0),
                                     child: AllTab(
                                       vendorId: vendorId,
-                                      editMode: false,
+                                      editMode: editMode,
                                     ),
                                   ),
                                 ],

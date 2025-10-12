@@ -65,7 +65,7 @@ class UserProfileActionsWidget extends StatelessWidget {
         border: Border.all(color: Colors.grey.shade200),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 4,
             offset: Offset(0, 2),
           ),
@@ -75,7 +75,7 @@ class UserProfileActionsWidget extends StatelessWidget {
         leading: Container(
           padding: EdgeInsets.all(12),
           decoration: BoxDecoration(
-            color: color.withOpacity(0.1),
+            color: color.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(12),
           ),
           child: Icon(icon, color: color, size: 24),
@@ -99,7 +99,7 @@ class UserProfileActionsWidget extends StatelessWidget {
         trailing: Container(
           padding: EdgeInsets.all(8),
           decoration: BoxDecoration(
-            color: color.withOpacity(0.1),
+            color: color.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(8),
           ),
           child: Icon(Icons.arrow_forward_ios, color: color, size: 16),

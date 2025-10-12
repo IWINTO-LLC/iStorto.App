@@ -54,19 +54,19 @@ class CategoryPriorityManagementPage extends StatelessWidget {
       padding: const EdgeInsets.all(16),
       margin: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: TColors.primary.withOpacity(0.1),
+        color: TColors.black.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: TColors.primary.withOpacity(0.3)),
+        border: Border.all(color: TColors.black.withValues(alpha: 0.3)),
       ),
       child: Column(
         children: [
-          Icon(Icons.drag_indicator, color: TColors.primary, size: 24.sp),
+          Icon(Icons.drag_indicator, size: 24.sp),
           const SizedBox(height: 8),
           Text(
             'drag_drop_instructions'.tr,
             style: titilliumRegular.copyWith(
               fontSize: 14.sp,
-              color: TColors.primary,
+
               fontWeight: FontWeight.w500,
             ),
             textAlign: TextAlign.center,
@@ -134,8 +134,8 @@ class CategoryPriorityManagementPage extends StatelessWidget {
               // أيقونة الفئة
               if (category.icon != null && category.icon.isNotEmpty)
                 Container(
-                  width: 32,
-                  height: 32,
+                  width: 50,
+                  height: 50,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     image: DecorationImage(
@@ -149,7 +149,7 @@ class CategoryPriorityManagementPage extends StatelessWidget {
                   width: 32,
                   height: 32,
                   decoration: BoxDecoration(
-                    color: TColors.primary.withOpacity(0.1),
+                    color: TColors.primary.withValues(alpha: 0.1),
                     shape: BoxShape.circle,
                   ),
                   child: Icon(
@@ -167,21 +167,13 @@ class CategoryPriorityManagementPage extends StatelessWidget {
 
   /// مؤشر الأولوية
   Widget _buildPriorityIndicator(int priority) {
-    Color priorityColor;
-
-    if (priority == 1) {
-      priorityColor = Colors.amber;
-    } else if (priority == 2) {
-      priorityColor = Colors.grey;
-    } else {
-      priorityColor = Colors.blue;
-    }
+    Color priorityColor = Colors.black;
 
     return Container(
       width: 40,
       height: 40,
       decoration: BoxDecoration(
-        color: priorityColor.withOpacity(0.1),
+        color: priorityColor.withValues(alpha: 0.1),
         shape: BoxShape.circle,
         border: Border.all(color: priorityColor, width: 2),
       ),
@@ -202,7 +194,7 @@ class CategoryPriorityManagementPage extends StatelessWidget {
         color: Colors.white,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black.withValues(alpha: 0.1),
             blurRadius: 10,
             offset: const Offset(0, -2),
           ),
@@ -241,14 +233,14 @@ class CategoryPriorityManagementPage extends StatelessWidget {
                     controller.isLoading.value
                         ? null
                         : controller.savePriorityOrder,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: TColors.primary,
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(vertical: 12),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                ),
+                // style: ElevatedButton.styleFrom(
+                //   backgroundColor: TColors.primary,
+                //   foregroundColor: Colors.white,
+                //   padding: const EdgeInsets.symmetric(vertical: 12),
+                //   shape: RoundedRectangleBorder(
+                //     borderRadius: BorderRadius.circular(8),
+                //   ),
+                // ),
                 child: Text(
                   controller.isLoading.value ? 'saving'.tr : 'save_changes'.tr,
                   style: titilliumRegular.copyWith(

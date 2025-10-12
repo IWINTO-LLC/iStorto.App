@@ -49,7 +49,9 @@ class BannerController extends GetxController {
       banners.clear();
       activeBanners.clear();
     }
-    var snapshot = await bannersRepo.getVendorBannersById(vendorId);
+
+    // استخدام الدالة الجديدة لجلب جميع بانرات التاجر بغض النظر عن scope
+    var snapshot = await bannersRepo.getAllVendorBannersByVendorId(vendorId);
     isloadUserBanner.value = false;
     lastFetchedUserId = vendorId;
     banners.value = snapshot;

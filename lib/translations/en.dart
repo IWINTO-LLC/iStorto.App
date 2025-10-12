@@ -15,6 +15,80 @@ class En {
     'search': 'Search',
     'filter': 'Filter',
     'sort': 'Sort',
+    'reload': 'Reload',
+    'found': 'Found',
+    'clear_all': 'Clear All',
+
+    // Vendor Product Search
+    'search_products': 'Search Products',
+    'search_by_name_description': 'Search by name or description...',
+    'filter_by_category': 'Filter by Category',
+    'sort_by': 'Sort By',
+    'newest_first': 'Newest First',
+    'oldest_first': 'Oldest First',
+    'price_high_to_low': 'Price: High to Low',
+    'price_low_to_high': 'Price: Low to High',
+    'no_products_found': 'No Products Found',
+    'start_searching': 'Start Searching',
+    'search_hint': 'Type product name or description to search',
+    'try_different_keywords': 'Try different keywords or adjust filters',
+    'no_categories_available': 'No Categories Available',
+    'failed_to_load_products': 'Failed to load products',
+
+    // Global Product Search
+    'search_all_products': 'Search All Products',
+    'filter_by_vendor': 'Filter by Vendor',
+    'no_vendors_available': 'No Vendors Available',
+
+    // Storage Management
+    'storage_management': 'Storage Management',
+    'total_storage': 'Total Storage',
+    'used': 'Used',
+    'available': 'Available',
+    'storage_breakdown': 'Storage Breakdown',
+    'images': 'Images',
+    'videos': 'Videos',
+    'cache': 'Cache',
+    'downloads': 'Downloads',
+    'documents': 'Documents',
+    'other_files': 'Other Files',
+    'clear': 'Clear',
+    'quick_actions': 'Quick Actions',
+    'clear_all_cache': 'Clear All Cache',
+    'free_up_space_quickly': 'Free up space quickly',
+    'clear_temp_files': 'Clear Temporary Files',
+    'remove_temporary_files': 'Remove all temporary files',
+    'optimize_storage': 'Optimize Storage',
+    'compress_and_optimize': 'Compress and optimize files',
+    'danger_zone': 'Danger Zone',
+    'clear_all_data': 'Clear All Data',
+    'delete_all_app_data': 'Delete all app data permanently',
+    'clear_cache_message':
+        'This will clear all cached data. The app may need to reload some content.',
+    'clear_temp_message':
+        'This will remove all temporary files. This is safe and recommended.',
+    'optimize_storage_message':
+        'This will clear cache and temporary files to free up space.',
+    'clear_all_data_warning':
+        'This will delete ALL app data including cache, downloads, and temporary files. You will need to log in again.',
+    'this_action_cannot_be_undone': 'This action cannot be undone!',
+    'delete_all': 'Delete All',
+    'optimize': 'Optimize',
+    'cache_cleared_successfully': 'Cache cleared successfully',
+    'temp_files_cleared': 'Temporary files cleared',
+    'images_cleared': 'Images cleared',
+    'videos_cleared': 'Videos cleared',
+    'downloads_cleared': 'Downloads cleared',
+    'documents_cleared': 'Documents cleared',
+    'other_files_cleared': 'Other files cleared',
+    'storage_optimized': 'Storage optimized successfully',
+    'all_data_cleared': 'All data cleared successfully',
+    'failed_to_load_storage_info': 'Failed to load storage information',
+    'failed_to_clear_cache': 'Failed to clear cache',
+    'failed_to_clear_temp': 'Failed to clear temporary files',
+    'failed_to_clear': 'Failed to clear files',
+    'failed_to_optimize': 'Failed to optimize storage',
+    'failed_to_clear_data': 'Failed to clear data',
 
     // Search Filters
     'search_filters': 'Search Filters',
@@ -52,7 +126,6 @@ class En {
     'primary': 'Primary',
     'vendor_selected': 'Vendor selected',
     'browse_categories_subtitle': 'Browse different categories',
-    'no_categories_available': 'No categories available',
 
     // Product Rating
     'product_rating': 'Product Rating',
@@ -133,7 +206,16 @@ class En {
     'product.images': 'Images',
     'product.preview': 'Preview',
     'product.no_images_uploaded': 'No images uploaded',
+    'product.select_category': 'Select Category',
     'product.publish': 'Publish',
+    'create_first_category_description':
+        'You need to create at least one category before adding products',
+    'category_help_text': 'Categories help organize your products',
+    'error_creating_category': 'Error creating category',
+    'optional': 'Optional',
+    'category_description_hint': 'Enter a brief description for this category',
+    'category_created': 'Category Created',
+    'created_successfully': 'created successfully',
 
     // Product Messages
     'product.please_add_title': 'Please add a title',
@@ -267,7 +349,6 @@ class En {
     'popular_products': 'Popular Products',
     'new_items': 'New Items',
     'top_sellers': 'Top Sellers',
-    'no_vendors_available': 'No vendors available',
     'latest_vendor': 'Latest Vendor',
     'all_vendors': 'All Vendors',
     'all_vendors_will_be_shown': 'All vendors will be shown',
@@ -275,11 +356,9 @@ class En {
     'check_back_later': 'Check back later',
     'unknown_vendor': 'Unknown Vendor',
     'visit_store': 'Visit Store',
-    'follow': 'Follow',
     'visiting_store': 'Visiting Store',
     'store_page': 'Store Page',
     'following_vendor': 'Following Vendor',
-    'followed_successfully': 'Followed Successfully',
     'store': 'Store',
     'vendor': 'Vendor',
     'vendor_description': 'Professional store',
@@ -323,6 +402,10 @@ class En {
     'apple_login_failed': 'Apple login failed',
     'update_failed': 'Update failed',
     'profile_image_updated': 'Profile image updated',
+    'profile_image_updated_successfully': 'Profile image updated successfully',
+    'cover_image_updated_successfully': 'Cover image updated successfully',
+    'uploading_profile_photo': 'Uploading photo',
+    'uploading_cover_photo': 'Uploading cover',
     'signout_failed': 'Sign out failed',
     'your_store_tagline': 'Your Favorite Store',
     'welcome_back': 'Welcome Back',
@@ -560,6 +643,236 @@ class En {
 
     // Settings
     'settings.title': 'Settings',
+    'app_preferences_and_configuration': 'App preferences and configuration',
+    'settings.profile_settings': 'Profile Settings',
+    'settings.personal_information': 'Personal Information',
+    'settings.personal_information_subtitle': 'Update your personal details',
+    'settings.profile_photo': 'Profile Photo',
+    'settings.profile_photo_subtitle': 'Change your profile picture',
+    'settings.cover_photo': 'Cover Photo',
+    'settings.cover_photo_subtitle': 'Change your cover image',
+    'settings.bio_description': 'Bio & Description',
+    'settings.bio_description_subtitle':
+        'Update your biography and description',
+
+    // Account Settings
+    'settings.account_settings': 'Account Settings',
+    'settings.email_password': 'Email & Password',
+    'settings.email_password_subtitle': 'Change your email and password',
+    'settings.phone_number': 'Phone Number',
+    'settings.phone_number_subtitle': 'Update your phone number',
+    'settings.location': 'Location',
+    'settings.location_subtitle': 'Update your location',
+    'settings.business_account': 'Business Account',
+    'settings.business_account_subtitle_vendor': 'Manage your business account',
+    'settings.business_account_subtitle_user': 'Upgrade to business account',
+
+    // Privacy & Security
+    'settings.privacy_security': 'Privacy & Security',
+    'settings.privacy_settings': 'Privacy Settings',
+    'settings.privacy_settings_subtitle': 'Control your privacy preferences',
+    'settings.security': 'Security',
+    'settings.security_subtitle': 'Manage your security settings',
+    'settings.notifications': 'Notifications',
+    'settings.notifications_subtitle': 'Configure notification preferences',
+    'settings.blocked_users': 'Blocked Users',
+    'settings.blocked_users_subtitle': 'Manage blocked users',
+
+    // App Settings
+    'settings.app_settings': 'App Settings',
+    'settings.language': 'Language',
+    'settings.language_subtitle': 'Change app language',
+    'settings.currency': 'Currency',
+    'settings.currency_subtitle': 'Change default currency',
+    'settings.select_currency': 'Select Currency',
+    'settings.currency_description':
+        'Choose your preferred currency for prices',
+    'settings.currency_updated': 'Currency updated to',
+    'settings.currency_update_failed': 'Failed to update currency',
+    'settings.theme': 'Theme',
+    'settings.theme_subtitle': 'Change app theme',
+    'settings.storage': 'Storage',
+    'settings.storage_subtitle': 'Manage app storage',
+    'settings.app_updates': 'App Updates',
+    'settings.app_updates_subtitle': 'Check for app updates',
+
+    // Support
+    'settings.support': 'Support',
+    'help_and_support': 'Help & Support',
+    'get_help_and_contact_support': 'Get help and contact support',
+    'help_and_support_coming_soon': 'Help and support feature is coming soon',
+    'settings.help_center': 'Help Center',
+    'settings.help_center_subtitle': 'Get help and support',
+    'settings.send_feedback': 'Send Feedback',
+    'settings.send_feedback_subtitle': 'Share your feedback with us',
+    'settings.about': 'About',
+    'settings.about_subtitle': 'App version and information',
+    'settings.contact_us': 'Contact Us',
+    'settings.contact_us_subtitle': 'Get in touch with our team',
+
+    // Danger Zone
+    'settings.danger_zone': 'Danger Zone',
+    'settings.delete_account': 'Delete Account',
+    'settings.delete_account_subtitle': 'Permanently delete your account',
+    'settings.sign_out': 'Sign Out',
+    'settings.sign_out_subtitle': 'Sign out of your account',
+    'sign_out_of_your_account': 'Sign out of your account',
+
+    // Dialogs
+    'settings.select_language': 'Select Language',
+    'settings.arabic': 'العربية',
+    'settings.english': 'English',
+    'settings.coming_soon_feature': 'feature coming soon!',
+    'settings.about_app': 'About',
+    'settings.app_name': 'App Name: iStoreTo',
+    'settings.version': 'Version: 1.0.0',
+    'settings.build': 'Build: 2024.01.01',
+    'settings.developer': 'Developer: iStoreTo Team',
+    'settings.ok': 'OK',
+    'ok': 'OK',
+    'settings.delete_account_confirm': 'Delete Account',
+    'settings.delete_account_message':
+        'Are you sure you want to delete your account? This action cannot be undone.',
+    'settings.cancel': 'Cancel',
+    'settings.delete': 'Delete',
+    'settings.sign_out_confirm': 'Sign Out',
+    'settings.sign_out_message': 'Are you sure you want to sign out?',
+    'settings.business_account_required': 'Business Account Required',
+    'settings.cover_photo_vendor_only':
+        'Cover photo is only available for business accounts',
+    'settings.select_cover_photo_source': 'Select Cover Photo Source',
+    'settings.select_profile_photo_source': 'Select Profile Photo Source',
+
+    // Profile Menu
+    'saved_products': 'Saved Products',
+    'view_your_saved_products': 'View your saved products',
+
+    // Add Product Page
+    'add_new_product': 'Add New Product',
+    'basic_information': 'Basic Information',
+    'category_and_section': 'Category & Section',
+    'pricing': 'Pricing',
+    'product_images': 'Product Images',
+    'product_name': 'Product Name',
+    'enter_product_name': 'Enter product name',
+    'product_name_required': 'Product name is required',
+    'enter_product_description': 'Enter product description',
+    'minimum_quantity_error': 'Minimum quantity must be at least 1',
+    'no_category': 'No Category',
+    'original_price': 'Original Price',
+    'no_images_added': 'No Images Added',
+    'tap_buttons_below_to_add': 'Tap buttons below to add images',
+    'saving_product': 'Saving Product...',
+    'save_product': 'Save Product',
+    'please_fill_required_fields': 'Please fill all required fields',
+    'please_add_at_least_one_image': 'Please add at least one image',
+    'product_created_successfully': 'Product created successfully',
+    'failed_to_create_product': 'Failed to create product',
+    'failed_to_pick_images': 'Failed to pick images',
+    'product_updated_successfully': 'Product updated successfully',
+    'failed_to_update_product': 'Failed to update product',
+
+    // Products Management Page
+    'products_management': 'Products Management',
+    'search_products_placeholder': 'Search products...',
+    'all_products': 'All Products',
+    'active_products': 'Active Products',
+    'deleted_products': 'Deleted Products',
+    'add_first_product': 'Add your first product to get started',
+    'delete_product': 'Delete Product',
+    'delete_product_confirmation':
+        'Are you sure you want to delete this product?',
+    'product_deleted_successfully': 'Product deleted successfully',
+    'failed_to_delete_product': 'Failed to delete product',
+    'restore_product': 'Restore Product',
+    'product_restored_successfully': 'Product restored successfully',
+    'failed_to_restore_product': 'Failed to restore product',
+    'permanently_delete_product': 'Permanently Delete Product',
+    'permanently_delete_warning':
+        'This action cannot be undone. The product will be deleted permanently.',
+    'delete_permanently': 'Delete Permanently',
+    'product_permanently_deleted': 'Product permanently deleted',
+    'failed_to_delete_permanently': 'Failed to delete product permanently',
+    'edit_product': 'Edit Product',
+    'no_results_found': 'No results found',
+
+    'deleted': 'Deleted',
+
+    // Image Management
+    'image_saved_successfully': 'Image saved successfully',
+    'preview': 'Preview',
+    'uploading_images': 'Uploading images',
+    'uploading_image': 'Uploading image',
+    'images_uploaded_successfully': 'Images uploaded successfully',
+
+    // Currency
+    'currency': 'Currency',
+    'select_currency': 'Select Currency',
+    'currency_updated_successfully': 'Default currency updated successfully',
+    'failed_to_update_currency': 'Failed to update currency',
+
+    // Follow System
+    'follow': 'Follow',
+    'following': 'Following',
+    'followed_successfully': 'You are now following this vendor',
+    'unfollowed_successfully': 'Unfollowed successfully',
+    'please_login_first': 'Please login first to follow vendors',
+    'operation_failed': 'Operation failed, please try again',
+
+    // Vendor Offers Page
+    'vendor_offers': 'Special Offers',
+    'search_offers': 'Search in offers...',
+    'offers_found': 'offers found',
+    'no_offers_available': 'No offers available',
+    'vendor_has_no_offers': 'This vendor has no special offers at the moment',
+    'no_offers_found': 'No offers found',
+    'try_different_search': 'Try a different search term',
+    'highest_discount': 'Highest Discount',
+    'lowest_discount': 'Lowest Discount',
+
+    // Personal Information Dialog
+    'settings.user_not_found': 'User not found',
+    'settings.name': 'Name',
+    'settings.enter_your_name': 'Enter your full name',
+    'settings.name_required': 'Name is required',
+    'settings.name_too_short': 'Name must be at least 2 characters',
+    'settings.username': 'Username',
+    'settings.enter_username': 'Enter your username',
+    'settings.username_too_short': 'Username must be at least 3 characters',
+    'settings.phone': 'Phone Number',
+    'settings.enter_phone': 'Enter your phone number',
+    'settings.phone_invalid': 'Invalid phone number',
+    'settings.email': 'Email',
+    'settings.email_cannot_be_changed':
+        'Email cannot be changed from this screen',
+    'settings.saving_changes': 'Saving changes...',
+    'settings.no_changes': 'No Changes',
+    'settings.no_changes_message': 'You haven\'t made any changes',
+    'settings.personal_info_updated':
+        'Personal information updated successfully',
+    'settings.update_failed': 'Failed to update information',
+    'settings.save_changes': 'Save Changes',
+
+    // Profile Edit
+    'edit_profile': 'Edit Profile',
+    'edit_cover_photo': 'Edit Cover Photo',
+    'change_your_cover_image': 'Change your cover image',
+    'edit_profile_photo': 'Edit Profile Photo',
+    'change_your_profile_picture': 'Change your profile picture',
+    'edit_personal_info': 'Edit Personal Info',
+    'update_your_personal_details': 'Update your personal details',
+    'edit_bio': 'Edit Bio',
+    'update_your_biography': 'Update your biography',
+    'edit_brief': 'Edit Brief',
+    'update_your_brief_description': 'Update your brief description',
+    'feature_coming_soon': 'This feature is coming soon',
+    'feature_for_business_accounts_only':
+        'This feature is available for business accounts only',
+    'enter_store_bio': 'Enter store biography',
+    'enter_brief_description': 'Enter a brief description about the store',
+    'brief_helper_text': 'Short description shown in search results',
+    'bio_updated_successfully': 'Biography updated successfully',
+    'brief_updated_successfully': 'Brief description updated successfully',
 
     'uploading_photo': 'Upload photo ..',
     'everything_done': 'Everything done',
@@ -889,7 +1202,6 @@ class En {
     'set_inactive': 'Set Inactive',
     'clear_filters': 'Clear Filters',
     'search_categories': 'Search Categories',
-    'search_hint': 'Try searching with different words',
 
     // Commercial Account Translations
     'create_commercial_account': 'Create Commercial Account',
@@ -1003,9 +1315,90 @@ class En {
     'admin_zone_analytics_desc': 'Detailed statistics and reports',
     'admin_zone_settings': 'Settings',
     'admin_zone_settings_desc': 'General app settings',
+    'manage_categories_and_content': 'Manage categories and content',
+
+    // Vendor Admin Zone
+    'vendor_admin_zone_title': 'Vendor Control Panel',
+    'vendor_admin_zone_welcome': 'Welcome to Your Store Management',
+    'vendor_admin_zone_subtitle':
+        'Manage your store efficiently from one place',
+    'vendor_admin_zone_management_sections': 'Store Management',
+    'vendor_admin_zone_banners': 'Banner Management',
+    'vendor_admin_zone_banners_desc':
+        'Manage your store banners and promotions',
+    'vendor_admin_zone_products': 'Product Management',
+    'vendor_admin_zone_products_desc': 'Add, edit, and manage your products',
+    'vendor_admin_zone_categories': 'Category Management',
+    'vendor_admin_zone_categories_desc':
+        'Organize your products into categories',
+    'vendor_admin_zone_orders': 'Order Management',
+    'vendor_admin_zone_orders_desc': 'Track and process customer orders',
+    'vendor_admin_zone_store_settings': 'Store Settings',
+    'vendor_admin_zone_store_settings_desc':
+        'Configure your store information and preferences',
+    'vendor_admin_zone_analytics': 'Sales Analytics',
+    'vendor_admin_zone_analytics_desc':
+        'View sales statistics and performance reports',
+    'vendor_admin_zone_reviews': 'Customer Reviews',
+    'vendor_admin_zone_reviews_desc': 'Manage and respond to customer reviews',
+
+    // Category Management
+    'manage_categories': 'Manage Categories',
+    'create_new_vendor_category': 'Create a new category for your products',
+    'reorder_categories_by_priority': 'Reorder categories by priority',
+    'view_all_categories': 'View All Categories',
+    'see_all_vendor_categories': 'See all your vendor categories',
+    'manage_order': 'Manage Order',
+    // Vendor Categories Management
+    'vendor_categories_management': 'Categories Management',
+    'no_vendor_categories_found': 'No categories found',
+    'add_first_vendor_category':
+        'Add your first category to organize your products',
+    'add_vendor_category': 'Add Category',
+    'vendor_search_categories': 'Search categories...',
+    'vendor_all_categories': 'All Categories',
+    'vendor_active_categories': 'Active Categories',
+    'vendor_inactive_categories': 'Inactive Categories',
+    'vendor_primary': 'Primary',
+    'vendor_secondary': 'Secondary',
+    'vendor_priority': 'Priority',
+    'vendor_edit': 'Edit',
+    'vendor_remove_primary': 'Remove Primary',
+    'vendor_make_primary': 'Make Primary',
+    'vendor_deactivate': 'Deactivate',
+    'vendor_activate': 'Activate',
+    'vendor_delete': 'Delete',
+    'vendor_active': 'Active',
+    'vendor_inactive': 'Inactive',
+    'vendor_delete_category': 'Delete Category',
+    'vendor_delete_category_confirmation':
+        'Are you sure you want to delete this category?',
+
+    // Vendor Banners
+    'vendor_banners_title': 'Banner Management',
+    'vendor_total_banners': 'Total Banners',
+    'vendor_active_banners': 'Active',
+    'vendor_search_banners': 'Search banners...',
+    'vendor_all_banners': 'All Banners',
+    'vendor_active_only': 'Active Only',
+    'vendor_inactive_only': 'Inactive Only',
+    'vendor_add_banner': 'Add Banner',
+    'vendor_no_banners': 'No Banners Yet',
+    'vendor_no_banners_subtitle':
+        'Start promoting your store by adding your first banner',
+    'vendor_add_first_banner': 'Add Your First Banner',
+    'vendor_add_new_banner': 'Add New Banner',
+    'vendor_select_banner_image': 'Select Banner Image',
+    'vendor_banner_title': 'Banner Title',
+    'vendor_enter_banner_title': 'Enter banner title',
+    'vendor_banner_link': 'Banner Link',
+    'vendor_enter_banner_link': 'Enter banner link (optional)',
+
+    'info': 'Info',
 
     // Personal Information
     'personal_information': 'Personal Information',
+    'update_personal_details': 'Update your personal details',
     'profile_photo': 'Profile Photo',
     'full_name': 'Full Name',
     'bio_description': 'Bio & Description',
@@ -1015,6 +1408,7 @@ class En {
     // Account Type
     'account_type': 'Account Type',
     'business_account': 'Business Account',
+    'manage_your_business': 'Manage your business account',
     'personal_account': 'Personal Account',
     'business_account_description':
         'You have a business account with additional features',
@@ -1082,5 +1476,13 @@ class En {
 
     // Vendor Category
     'create_first_category': 'Create First Category',
+
+    // Product Details
+    'product_type': 'Product Type',
+    'add_more': 'Add More',
+
+    // Gallery
+    'gallery.discover_latest_products': 'Discover Latest Products 📸',
+    'gallery.browse_thousands_of_photos': 'Browse thousands of product photos',
   };
 }

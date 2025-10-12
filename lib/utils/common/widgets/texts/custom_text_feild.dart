@@ -86,7 +86,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
             widget.border
                 ? Border.all(
                   width: 1,
-                  color: Theme.of(context).hintColor.withOpacity(.35),
+                  color: Theme.of(context).hintColor.withValues(alpha: .35),
                 )
                 : null,
         color: Theme.of(context).highlightColor,
@@ -148,7 +148,9 @@ class _CustomTextFieldState extends State<CustomTextField> {
                     child: Container(
                       padding: const EdgeInsets.all(TSizes.paddingSizeSmall),
                       decoration: BoxDecoration(
-                        color: Theme.of(context).primaryColor.withOpacity(.135),
+                        color: Theme.of(
+                          context,
+                        ).primaryColor.withValues(alpha: .135),
                       ),
                       child: Image.asset(
                         widget.prefixIconImage!,

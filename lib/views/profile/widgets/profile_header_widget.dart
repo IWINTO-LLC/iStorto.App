@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:istoreto/controllers/auth_controller.dart';
 import 'package:istoreto/controllers/image_edit_controller.dart';
-import 'package:istoreto/featured/shop/controller/vendor_controller.dart';
+import 'package:istoreto/featured/product/cashed_network_image_free.dart';
 
 /// مكون رأس الملف الشخصي - يعرض صورة الغلاف والصورة الشخصية ومعلومات المستخدم
 class ProfileHeaderWidget extends StatelessWidget {
@@ -12,6 +12,16 @@ class ProfileHeaderWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final authController = Get.find<AuthController>();
     final imageController = Get.put(ImageEditController());
+
+    // Debug: عرض معلومات المستخدم
+    debugPrint('═══════════ Profile Header Debug ═══════════');
+    debugPrint('👤 User ID: ${authController.currentUser.value?.id}');
+    debugPrint('🏪 Vendor ID: ${authController.currentUser.value?.vendorId}');
+    debugPrint(
+      '🔢 Account Type: ${authController.currentUser.value?.accountType}',
+    );
+    debugPrint('📧 Email: ${authController.currentUser.value?.email}');
+    debugPrint('═══════════════════════════════════════════');
 
     // تحميل صور المستخدم من قاعدة البيانات
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -42,38 +52,120 @@ class ProfileHeaderWidget extends StatelessWidget {
   ) {
     return Positioned.fill(
       child: Obx(() {
-        // عرض صورة غلاف محلية أولاً إذا كانت موجودة
-        if (imageController.coverImage != null) {
+        // عرض loading overlay أثناء رفع صورة الغلاف
+        if (imageController.isLoadingCover) {
+          final progress = imageController.coverUploadProgress;
+          final percentage = (progress * 100).toInt();
+
           return Container(
-            decoration: BoxDecoration(
-              image: DecorationImage(
-                image: FileImage(imageController.coverImage!),
-                fit: BoxFit.cover,
+            color: Colors.black.withValues(alpha: 0.7),
+            child: Center(
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  SizedBox(
+                    width: 100,
+                    height: 100,
+                    child: CircularProgressIndicator(
+                      value: progress,
+                      backgroundColor: Colors.white.withValues(alpha: 0.3),
+                      valueColor: const AlwaysStoppedAnimation<Color>(
+                        Colors.white,
+                      ),
+                      strokeWidth: 6,
+                    ),
+                  ),
+                  Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        '$percentage%',
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        'uploading_cover_photo'.tr,
+                        style: TextStyle(
+                          color: Colors.white.withValues(alpha: 0.8),
+                          fontSize: 13,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
               ),
             ),
           );
         }
-        // عرض صورة غلاف من قاعدة البيانات إذا كانت موجودة
-        else if (authController.currentUser.value?.accountType == 1) {
-          return FutureBuilder(
-            future: _getVendorCoverImage(authController.currentUser.value!.id),
-            builder: (context, snapshot) {
-              if (snapshot.hasData && snapshot.data!.isNotEmpty) {
-                return Container(
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                      image: NetworkImage(snapshot.data!),
-                      fit: BoxFit.cover,
-                    ),
+
+        // عرض صورة غلاف محلية أولاً إذا كانت موجودة
+        if (imageController.coverImage != null) {
+          return Stack(
+            fit: StackFit.expand,
+            children: [
+              Container(
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    image: FileImage(imageController.coverImage!),
+                    fit: BoxFit.cover,
                   ),
-                );
-              }
-              // عرض الطبقة الزرقاء فقط إذا لم تكن هناك صورة غلاف
-              return Container();
-            },
+                ),
+              ),
+              // Black opacity overlay for better text visibility
+              Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      Colors.black.withValues(alpha: 0.3),
+                      Colors.black.withValues(alpha: 0.5),
+                    ],
+                  ),
+                ),
+              ),
+            ],
           );
         }
-        // عرض الطبقة الزرقاء إذا لم يكن المستخدم تجاري
+        // عرض صورة غلاف من UserModel إذا كانت موجودة
+        else if (authController.currentUser.value?.cover != null &&
+            authController.currentUser.value!.cover.isNotEmpty) {
+          final coverUrl = authController.currentUser.value!.cover;
+
+          debugPrint('🖼️ Loading cover from UserModel: $coverUrl');
+
+          return Stack(
+            fit: StackFit.expand,
+            children: [
+              FreeCaChedNetworkImage(
+                url: coverUrl,
+                raduis: BorderRadius.zero, // لا حواف دائرية للغلاف
+                fit: BoxFit.cover,
+              ),
+              // Black opacity overlay for better text visibility
+              Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      Colors.black.withValues(alpha: 0.3),
+                      Colors.black.withValues(alpha: 0.5),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          );
+        }
+        // عرض الخلفية الافتراضية إذا لم يكن المستخدم تجاري
+        debugPrint(
+          'ℹ️ User is not vendor (accountType: ${authController.currentUser.value?.accountType})',
+        );
         return Container(
           decoration: BoxDecoration(
             gradient: LinearGradient(
@@ -112,13 +204,66 @@ class ProfileHeaderWidget extends StatelessWidget {
                 border: Border.all(color: Colors.white, width: 4),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
+                    color: Colors.black.withValues(alpha: 0.1),
                     blurRadius: 10,
                     offset: Offset(0, 5),
                   ),
                 ],
               ),
               child: Obx(() {
+                // عرض loading overlay أثناء رفع الصورة الشخصية
+                if (imageController.isLoadingProfile) {
+                  final progress = imageController.profileUploadProgress;
+                  final percentage = (progress * 100).toInt();
+
+                  return Container(
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.black.withValues(alpha: 0.7),
+                    ),
+                    child: Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        SizedBox(
+                          width: 70,
+                          height: 70,
+                          child: CircularProgressIndicator(
+                            value: progress,
+                            backgroundColor: Colors.white.withValues(
+                              alpha: 0.3,
+                            ),
+                            valueColor: const AlwaysStoppedAnimation<Color>(
+                              Colors.white,
+                            ),
+                            strokeWidth: 5,
+                          ),
+                        ),
+                        Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              '$percentage%',
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const SizedBox(height: 2),
+                            Text(
+                              'uploading_profile_photo'.tr,
+                              style: TextStyle(
+                                color: Colors.white.withValues(alpha: 0.8),
+                                fontSize: 10,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  );
+                }
+
                 // عرض صورة محلية أولاً إذا كانت موجودة
                 if (imageController.profileImage != null) {
                   return CircleAvatar(
@@ -182,14 +327,31 @@ class ProfileHeaderWidget extends StatelessWidget {
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
-                color: Colors.grey.shade800,
+                color: Colors.white,
+                shadows: [
+                  Shadow(
+                    offset: Offset(0, 2),
+                    blurRadius: 4.0,
+                    color: Colors.black.withValues(alpha: 0.7),
+                  ),
+                ],
               ),
             ),
           ),
           SizedBox(height: 4),
           Text(
             '${authController.currentUser.value?.email ?? 'user@example.com'}',
-            style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
+            style: TextStyle(
+              fontSize: 14,
+              color: Colors.white,
+              shadows: [
+                Shadow(
+                  offset: Offset(0, 1),
+                  blurRadius: 3.0,
+                  color: Colors.black.withValues(alpha: 0.7),
+                ),
+              ],
+            ),
           ),
           SizedBox(height: 8),
           // أزرار الإجراءات
@@ -265,9 +427,9 @@ class ProfileHeaderWidget extends StatelessWidget {
           _loadImageFromUrl(user.profileImage, true, imageController);
         }
 
-        // تحميل صورة الغلاف من VendorModel إذا كان المستخدم تجاري
-        if (user.accountType == 1) {
-          _loadVendorCoverImage(user.id, imageController);
+        // تحميل صورة الغلاف من UserModel إذا كانت موجودة
+        if (user.cover.isNotEmpty) {
+          _loadImageFromUrl(user.cover, false, imageController);
         }
       }
     } catch (e) {
@@ -287,43 +449,6 @@ class ProfileHeaderWidget extends StatelessWidget {
       // للآن سنتركه فارغاً وسنعتمد على الصور المحلية
     } catch (e) {
       print('خطأ في تحميل الصورة من URL: $e');
-    }
-  }
-
-  /// تحميل صورة غلاف المتجر
-  Future<void> _loadVendorCoverImage(
-    String userId,
-    ImageEditController imageController,
-  ) async {
-    try {
-      // جلب بيانات المتجر
-      final vendorController = Get.find<VendorController>();
-      await vendorController.fetchVendorData(userId);
-
-      final vendor = vendorController.vendorData.value;
-      if (vendor != null && vendor.organizationCover.isNotEmpty) {
-        // تحميل صورة الغلاف
-        _loadImageFromUrl(vendor.organizationCover, false, imageController);
-      }
-    } catch (e) {
-      print('خطأ في تحميل صورة غلاف المتجر: $e');
-    }
-  }
-
-  /// جلب صورة غلاف المتجر
-  Future<String> _getVendorCoverImage(String userId) async {
-    try {
-      final vendorController = Get.find<VendorController>();
-      await vendorController.fetchVendorData(userId);
-
-      final vendor = vendorController.vendorData.value;
-      if (vendor != null && vendor.organizationCover.isNotEmpty) {
-        return vendor.organizationCover;
-      }
-      return '';
-    } catch (e) {
-      print('خطأ في جلب صورة غلاف المتجر: $e');
-      return '';
     }
   }
 

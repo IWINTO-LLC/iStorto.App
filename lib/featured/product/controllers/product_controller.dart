@@ -60,6 +60,212 @@ class ProductController extends GetxController {
   String a = "";
   var discountPercentage = 10.0.obs;
 
+  /// إنشاء منتج جديد من صفحة الإضافة
+  Future<void> createProductFromAddPage(
+    String type,
+    String vendorId, {
+    required String title,
+    required String description,
+    int minQuantity = 1,
+    double? price,
+    double? oldPrice,
+    String? vendorCategoryId,
+    List<String>? imageUrls,
+  }) async {
+    try {
+      debugPrint('=== CREATE PRODUCT FROM ADD PAGE ===');
+      debugPrint('Type: $type');
+      debugPrint('Vendor ID: $vendorId');
+      debugPrint('Title: $title');
+      debugPrint('Description: $description');
+      debugPrint('Min Quantity: $minQuantity');
+      debugPrint('Price: $price');
+      debugPrint('Old Price: $oldPrice');
+      debugPrint('Vendor Category ID: $vendorCategoryId');
+      debugPrint('Image URLs: $imageUrls');
+
+      if (title.isEmpty) {
+        throw Exception('Product title is required');
+      }
+
+      if (price == null || price <= 0) {
+        throw Exception('Product price is required and must be greater than 0');
+      }
+
+      if (imageUrls == null || imageUrls.isEmpty) {
+        throw Exception('At least one image is required');
+      }
+
+      if (vendorId.isEmpty) {
+        throw Exception('Vendor ID is required');
+      }
+
+      showProgressBar('product.saving_now'.tr);
+      message.value = 'product.sending_data'.tr;
+
+      final product = ProductModel(
+        id: Uuid().v4(),
+        vendorId: vendorId,
+        title: title,
+        description: description,
+        price: price,
+        oldPrice: oldPrice ?? 0.0,
+        images: imageUrls,
+        isFeature: false,
+        category: CategoryModel.empty(), // سيتم تحديثها لاحقاً إذا لزم الأمر
+        vendorCategoryId: vendorCategoryId,
+        productType: type,
+        minQuantity: minQuantity,
+      );
+
+      debugPrint('Product created: ${product.toJson()}');
+
+      await productRepository.createProduct(product);
+
+      debugPrint('Product saved to database successfully');
+
+      message.value = "everything done";
+
+      allItems.insert(0, product);
+      tempProducts.insert(0, product);
+
+      var product1 = ProductModel.fromJson(product.toJson());
+      if (type == 'offers') offerDynamic.insert(0, product1);
+      if (type == 'all') allDynamic.insert(0, product1);
+      if (type == 'all1') allLine1Dynamic.insert(0, product1);
+      if (type == 'all2') allLine2Dynamic.insert(0, product1);
+      if (type == 'all3') allLine3Dynamic.insert(0, product1);
+      if (type == 'sales') salesDynamic.insert(0, product1);
+      if (type == 'foryou') foryouDynamic.insert(0, product1);
+      if (type == 'mixone') mixoneDynamic.insert(0, product1);
+      if (type == 'mixlin1') mixline1Dynamic.insert(0, product1);
+      if (type == 'mixlin2') mixline2Dynamic.insert(0, product1);
+      if (type == 'mostdeamand') mostdeamandDynamic.insert(0, product1);
+      if (type == 'newArrival') newArrivalDynamic.insert(0, product1);
+
+      Get.closeCurrentSnackbar();
+      message.value = "";
+
+      debugPrint('Product created successfully');
+    } catch (e, stackTrace) {
+      debugPrint('=== ERROR IN CREATE PRODUCT FROM ADD PAGE ===');
+      debugPrint('Error: $e');
+      debugPrint('Stack Trace: $stackTrace');
+
+      Get.closeCurrentSnackbar();
+      message.value = "";
+      rethrow;
+    }
+  }
+
+  /// تحديث منتج موجود
+  Future<void> updateProduct({
+    required String productId,
+    required String type,
+    required String vendorId,
+    required String title,
+    required String description,
+    int minQuantity = 1,
+    double? price,
+    double? oldPrice,
+    String? vendorCategoryId,
+    List<String>? imageUrls,
+  }) async {
+    try {
+      debugPrint('=== UPDATE PRODUCT ===');
+      debugPrint('Product ID: $productId');
+      debugPrint('Type: $type');
+      debugPrint('Title: $title');
+      debugPrint('Price: $price');
+      debugPrint('Image URLs Count: ${imageUrls?.length}');
+
+      if (title.isEmpty) {
+        throw Exception('Product title is required');
+      }
+
+      if (price == null || price <= 0) {
+        throw Exception('Product price is required and must be greater than 0');
+      }
+
+      if (imageUrls == null || imageUrls.isEmpty) {
+        throw Exception('At least one image is required');
+      }
+
+      showProgressBar('updating_product'.tr);
+
+      final updatedProduct = ProductModel(
+        id: productId,
+        vendorId: vendorId,
+        title: title,
+        description: description,
+        price: price,
+        oldPrice: oldPrice ?? 0.0,
+        images: imageUrls,
+        isFeature: false,
+        category: CategoryModel.empty(),
+        vendorCategoryId: vendorCategoryId,
+        productType: type,
+        minQuantity: minQuantity,
+      );
+
+      await productRepository.updateProduct(updatedProduct);
+
+      debugPrint('Product updated successfully in database');
+
+      // تحديث في القوائم المحلية
+      final index = allItems.indexWhere((p) => p.id == productId);
+      if (index != -1) {
+        allItems[index] = updatedProduct;
+      }
+
+      final tempIndex = tempProducts.indexWhere((p) => p.id == productId);
+      if (tempIndex != -1) {
+        tempProducts[tempIndex] = updatedProduct;
+      }
+
+      // تحديث في القوائم الديناميكية حسب النوع
+      _updateDynamicLists(productId, updatedProduct, type);
+
+      Get.closeCurrentSnackbar();
+
+      debugPrint('Product updated successfully');
+    } catch (e, stackTrace) {
+      debugPrint('=== ERROR IN UPDATE PRODUCT ===');
+      debugPrint('Error: $e');
+      debugPrint('Stack Trace: $stackTrace');
+
+      Get.closeCurrentSnackbar();
+      rethrow;
+    }
+  }
+
+  /// تحديث القوائم الديناميكية
+  void _updateDynamicLists(
+    String productId,
+    ProductModel product,
+    String type,
+  ) {
+    void updateList(RxList<ProductModel> list) {
+      final index = list.indexWhere((p) => p.id == productId);
+      if (index != -1) {
+        list[index] = ProductModel.fromJson(product.toJson());
+      }
+    }
+
+    if (type == 'offers') updateList(offerDynamic);
+    if (type == 'all') updateList(allDynamic);
+    if (type == 'all1') updateList(allLine1Dynamic);
+    if (type == 'all2') updateList(allLine2Dynamic);
+    if (type == 'all3') updateList(allLine3Dynamic);
+    if (type == 'sales') updateList(salesDynamic);
+    if (type == 'foryou') updateList(foryouDynamic);
+    if (type == 'mixone') updateList(mixoneDynamic);
+    if (type == 'mixlin1') updateList(mixline1Dynamic);
+    if (type == 'mixlin2') updateList(mixline2Dynamic);
+    if (type == 'mostdeamand') updateList(mostdeamandDynamic);
+    if (type == 'newArrival') updateList(newArrivalDynamic);
+  }
+
   Future<void> createProduct(
     String type,
     String vendorId, {
@@ -124,6 +330,7 @@ class ProductController extends GetxController {
         images: images,
         isFeature: true,
         category: category,
+        vendorCategoryId: vendorCategory?.id,
         productType: type,
         minQuantity: minQuantity,
       );
@@ -947,9 +1154,24 @@ class ProductController extends GetxController {
     );
   }
 
-  ProductModel getProductById(String id) {
-    var product = ProductModel.empty();
-    return product;
+  /// الحصول على منتج من خلال معرفه
+  Future<ProductModel?> getProductById(String id) async {
+    try {
+      // البحث في القائمة المحلية أولاً
+      final localProduct = allItems.firstWhereOrNull((p) => p.id == id);
+      if (localProduct != null) {
+        return localProduct;
+      }
+
+      // إذا لم يوجد محلياً، جلبه من قاعدة البيانات
+      final product = await productRepository.getProductById(id);
+      return product;
+    } catch (e) {
+      if (kDebugMode) {
+        print('❌ Error getting product by ID: $e');
+      }
+      return null;
+    }
   }
 
   var regularPrice = 0.0.obs;

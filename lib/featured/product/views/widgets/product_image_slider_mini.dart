@@ -251,12 +251,7 @@ class TProductImageSliderMini extends StatelessWidget {
                 backgroundColor: Colors.black.withValues(alpha: .7),
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: Image.asset(
-                    TImages.editIcon,
-                    color: Colors.white,
-                    width: 18,
-                    height: 18,
-                  ),
+                  child: Icon(Icons.edit, color: TColors.white, size: 18),
                 ),
               ),
             ),
@@ -282,12 +277,7 @@ class TProductImageSliderMini extends StatelessWidget {
                   backgroundColor: Colors.black.withValues(alpha: .7),
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: Image.asset(
-                      TImages.delete,
-                      color: Colors.white,
-                      width: 18,
-                      height: 18,
-                    ),
+                    child: Icon(Icons.delete, color: Colors.white, size: 18),
                   ),
                 ),
               ),

@@ -2,10 +2,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:istoreto/controllers/translation_controller.dart';
-import 'package:istoreto/featured/shop/controller/vendor_controller.dart';
 import 'package:istoreto/controllers/create_category_controller.dart';
+import 'package:istoreto/data/models/category_model.dart';
 import 'package:istoreto/featured/category/view/all_category/widgets/category_grid_item.dart';
-import 'package:istoreto/featured/category/view/edit_category/edit_category.dart';
 import 'package:istoreto/utils/common/styles/styles.dart';
 import 'package:istoreto/utils/common/widgets/buttons/custom_button.dart';
 import 'package:istoreto/utils/common/widgets/custom_shapes/containers/rounded_container.dart';
@@ -14,28 +13,47 @@ import 'package:istoreto/utils/constants/color.dart';
 import 'package:istoreto/utils/constants/enums.dart';
 import 'package:istoreto/utils/constants/image_strings.dart';
 import 'package:istoreto/utils/constants/sizes.dart';
+import 'package:istoreto/featured/shop/controllers/vendor_categories_controller.dart';
 import 'image_uploader.dart';
 
 class CreateCategoryForm extends StatelessWidget {
-  CreateCategoryForm({super.key});
+  CreateCategoryForm({super.key, required this.vendorId});
+  final String vendorId;
 
   /// حساب النسبة المئوية للتقدم بناءً على رسالة الحالة
   int _getProgressPercentage(String message) {
-    if (message.contains('جاري التحضير') ||
-        message.contains('uploading_photo')) {
+    // دعم مفاتيح الترجمة والقيم المحلية السابقة
+    final loadingTr = 'loading'.tr;
+    final savingTr = 'saving'.tr;
+    final uploadingPhotoKey = 'uploading_photo';
+    final uploadingPhotoTr = 'uploading_photo'.tr;
+    final sendingDataKey = 'sending_data';
+    final sendingDataTr = 'sending_data'.tr;
+    final doneKey = 'everything_done';
+    final doneTr = 'everything_done'.tr;
+
+    if (message.contains(loadingTr) ||
+        message.contains(savingTr) ||
+        message.contains(uploadingPhotoKey) ||
+        message.contains(uploadingPhotoTr) ||
+        message.contains('جاري التحضير')) {
       return 10;
-    } else if (message.contains('جاري رفع الصورة') ||
+    } else if (message.contains(uploadingPhotoKey) ||
+        message.contains(uploadingPhotoTr) ||
+        message.contains('جاري رفع الصورة') ||
         message.contains('رفع الصورة')) {
       return 30;
     } else if (message.contains('جاري إعداد البيانات')) {
       return 50;
-    } else if (message.contains('جاري إرسال البيانات') ||
-        message.contains('sending_data')) {
+    } else if (message.contains(sendingDataKey) ||
+        message.contains(sendingDataTr) ||
+        message.contains('جاري إرسال البيانات')) {
       return 70;
     } else if (message.contains('جاري تحديث القوائم')) {
       return 85;
-    } else if (message.contains('تم إنشاء الفئة بنجاح') ||
-        message.contains('everything_done')) {
+    } else if (message.contains(doneKey) ||
+        message.contains(doneTr) ||
+        message.contains('تم إنشاء الفئة بنجاح')) {
       return 100;
     }
     return 0;
@@ -64,13 +82,13 @@ class CreateCategoryForm extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const SizedBox(height: TSizes.sm),
-                  TCustomWidgets.buildLabel('${'Category'.tr} *'),
+                  TCustomWidgets.buildLabel('${'category'.tr} *'),
                   TextFormField(
                     style: titilliumBold.copyWith(fontSize: 18),
                     controller: createController.name,
                     validator: (value) {
                       if (value == null || value == '') {
-                        return "required".tr;
+                        return 'common.required'.tr;
                       }
                       return null;
                     },
@@ -84,7 +102,30 @@ class CreateCategoryForm extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: TSizes.spaceBtwInputFields),
-              TCustomWidgets.buildLabel('Image'.tr),
+
+              // حقل إدخال وصف الفئة (اختياري)
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  TCustomWidgets.buildLabel(
+                    '${'description'.tr} (${'optional'.tr})',
+                  ),
+                  TextFormField(
+                    style: titilliumRegular.copyWith(fontSize: 16),
+                    controller: createController.description,
+                    maxLines: 3,
+                    decoration: InputDecoration(
+                      contentPadding:
+                          TranslationController.instance.isRTL
+                              ? EdgeInsets.only(right: 5)
+                              : EdgeInsets.only(left: 5),
+                      hintText: 'category_description_hint'.tr,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: TSizes.spaceBtwInputFields),
+              TCustomWidgets.buildLabel('product.image'.tr),
               Obx(
                 () => Visibility(
                   visible: createController.localImage.isEmpty,
@@ -98,7 +139,7 @@ class CreateCategoryForm extends StatelessWidget {
                             width: 60,
                             height: 60,
                             showBorder: true,
-                            radius: BorderRadius.circular(50),
+                            radius: BorderRadius.circular(30),
                             child: Center(
                               child: Icon(CupertinoIcons.photo_fill, size: 30),
                             ),
@@ -113,19 +154,60 @@ class CreateCategoryForm extends StatelessWidget {
                 () => Visibility(
                   visible: createController.localImage.isNotEmpty,
                   child: Center(
-                    child: TImageUploader(
-                      circuler: true,
-                      imageType:
-                          createController.localImage.isNotEmpty
-                              ? ImageType.file
-                              : ImageType.asset,
-                      width: 150,
-                      height: 150,
-                      image:
-                          createController.localImage.isNotEmpty
-                              ? createController.localImage.value
-                              : TImages.imagePlaceholder,
-                      onIconButtonPressed: () => createController.pickImage(),
+                    child: Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        TImageUploader(
+                          circuler: true,
+                          imageType:
+                              createController.localImage.isNotEmpty
+                                  ? ImageType.file
+                                  : ImageType.asset,
+                          width: 150,
+                          height: 150,
+                          image:
+                              createController.localImage.isNotEmpty
+                                  ? createController.localImage.value
+                                  : TImages.imagePlaceholder,
+                          onIconButtonPressed:
+                              () => createController.pickImage(),
+                        ),
+                        Positioned(
+                          top: 0,
+                          right: 0,
+                          child: Material(
+                            color: Colors.transparent,
+                            child: InkWell(
+                              onTap: () {
+                                createController.localImage.value = '';
+                              },
+                              borderRadius: BorderRadius.circular(16),
+                              child: Container(
+                                width: 32,
+                                height: 32,
+                                decoration: BoxDecoration(
+                                  color: Colors.red.withValues(alpha: 0.9),
+                                  shape: BoxShape.circle,
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withValues(
+                                        alpha: 0.15,
+                                      ),
+                                      blurRadius: 4,
+                                      offset: Offset(0, 2),
+                                    ),
+                                  ],
+                                ),
+                                child: Icon(
+                                  Icons.delete_outline,
+                                  color: Colors.white,
+                                  size: 18,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
@@ -152,7 +234,7 @@ class CreateCategoryForm extends StatelessWidget {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text(
-                                  'جاري المعالجة...',
+                                  'saving'.tr,
                                   style: titilliumBold.copyWith(
                                     fontSize: 16,
                                     color: Colors.black87,
@@ -182,7 +264,7 @@ class CreateCategoryForm extends StatelessWidget {
                             Text(
                               createController.message.value.isNotEmpty
                                   ? createController.message.value
-                                  : 'جاري التحضير...',
+                                  : 'loading'.tr,
                               style: titilliumRegular.copyWith(
                                 fontSize: 14,
                                 color: Colors.grey.shade600,
@@ -197,15 +279,18 @@ class CreateCategoryForm extends StatelessWidget {
                     CustomButtonBlack(
                       text:
                           createController.isUploading.value
-                              ? 'جاري المعالجة...'
+                              ? 'saving'.tr
                               : 'post'.tr,
                       onTap:
                           createController.isUploading.value
                               ? null
                               : () async {
                                 // التحقق من صحة النموذج أولاً
-                                if (!createController.formKey.currentState!
-                                    .validate()) {
+                                final isValidForm =
+                                    createController.formKey.currentState
+                                        ?.validate() ??
+                                    false;
+                                if (!isValidForm) {
                                   return;
                                 }
 
@@ -221,21 +306,45 @@ class CreateCategoryForm extends StatelessWidget {
                                   return;
                                 }
 
+                                // التحقق من vendorId
+                                if (vendorId.isEmpty) {
+                                  Get.snackbar(
+                                    'error'.tr,
+                                    'user_data_error'.tr,
+                                    snackPosition: SnackPosition.BOTTOM,
+                                    backgroundColor: Colors.red,
+                                    colorText: Colors.white,
+                                  );
+                                  return;
+                                }
+
                                 try {
                                   createController.isUploading.value = true;
-                                  createController.message.value =
-                                      'جاري التحضير...';
+                                  createController.message.value = 'loading'.tr;
 
                                   await createController.createCategory(
-                                    VendorController
-                                        .instance
-                                        .profileData
-                                        .value
-                                        .id!,
+                                    vendorId,
                                   );
 
-                                  // إغلاق الصفحة وإرجاع نتيجة نجاح
-                                  Navigator.pop(context, true);
+                                  // تحديث قائمة الفئات في الصفحة بدون الرجوع
+                                  if (Get.isRegistered<
+                                    VendorCategoriesController
+                                  >()) {
+                                    await VendorCategoriesController.instance
+                                        .refreshCategories();
+                                  }
+
+                                  // إشعار نجاح وإعادة تهيئة الحالة
+                                  Get.snackbar(
+                                    'success'.tr,
+                                    'everything_done'.tr,
+                                    snackPosition: SnackPosition.BOTTOM,
+                                    backgroundColor: Colors.green,
+                                    colorText: Colors.white,
+                                  );
+
+                                  createController.isUploading.value = false;
+                                  createController.message.value = '';
                                 } catch (e) {
                                   createController.message.value =
                                       'حدث خطأ: $e';
@@ -278,31 +387,40 @@ class CreateCategoryForm extends StatelessWidget {
       child: Obx(
         () =>
             controller.tempItems.isNotEmpty
-                ? Container(
-                  color: Colors.transparent,
-                  height: 120,
-                  width: 85 * (controller.tempItems.length + 0),
-                  child: ListView.builder(
+                ? SizedBox(
+                  height: 110,
+                  width: double.infinity,
+                  child: SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
-                    itemCount: controller.tempItems.length,
-                    itemBuilder: (context, index) {
-                      return GestureDetector(
-                        onTap:
-                            () => Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder:
-                                    (context) => EditCategory(
-                                      category: controller.tempItems[index],
-                                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const SizedBox(width: 12),
+                        ...controller.tempItems.map((vc) {
+                          final temp = CategoryModel(
+                            id: vc.id,
+                            vendorId: vc.vendorId,
+                            title: vc.title,
+                            icon: controller.imageUrl.value,
+                            isActive: true,
+                            sortOrder: 0,
+                          );
+
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 6),
+                            child: SizedBox(
+                              width: 90,
+                              child: TCategoryGridItem(
+                                category: temp,
+                                editMode: false,
+                                selected: false,
                               ),
                             ),
-                        child: TCategoryGridItem(
-                          category: controller.tempItems[index],
-                          editMode: false,
-                        ),
-                      );
-                    },
+                          );
+                        }),
+                        const SizedBox(width: 12),
+                      ],
+                    ),
                   ),
                 )
                 : const SizedBox.shrink(),

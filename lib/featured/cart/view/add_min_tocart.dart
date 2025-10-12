@@ -135,7 +135,7 @@ class AddMinusToCartWidget extends StatelessWidget {
                     width: size,
                     height: size,
                     showBorder: true,
-                    radius: BorderRadius.circular(40),
+                    radius: BorderRadius.circular(12),
                     backgroundColor: Colors.grey.shade100,
                     child: Icon(
                       CupertinoIcons.add,
@@ -185,7 +185,7 @@ class AddMinusToCartWidget extends StatelessWidget {
                     width: size,
                     height: size,
                     showBorder: true,
-                    radius: BorderRadius.circular(40),
+                    radius: BorderRadius.circular(12),
                     backgroundColor: Colors.grey.shade100,
                     child: Obx(() {
                       final quantity =

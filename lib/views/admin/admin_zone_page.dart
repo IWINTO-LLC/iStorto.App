@@ -36,7 +36,7 @@ class AdminZonePage extends StatelessWidget {
                     borderRadius: BorderRadius.circular(20),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.08),
+                        color: Colors.black.withValues(alpha: 0.08),
                         blurRadius: 20,
                         offset: const Offset(0, 4),
                       ),
@@ -49,7 +49,7 @@ class AdminZonePage extends StatelessWidget {
                         width: 80,
                         height: 80,
                         decoration: BoxDecoration(
-                          color: TColors.primary.withOpacity(0.1),
+                          color: TColors.primary.withValues(alpha: 0.1),
                           shape: BoxShape.circle,
                         ),
                         child: Icon(
@@ -318,7 +318,7 @@ class AdminZonePage extends StatelessWidget {
           borderRadius: BorderRadius.circular(18),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.06),
+              color: Colors.black.withValues(alpha: 0.06),
               blurRadius: 15,
               offset: const Offset(0, 3),
             ),
@@ -331,7 +331,7 @@ class AdminZonePage extends StatelessWidget {
               width: 56,
               height: 56,
               decoration: BoxDecoration(
-                color: color.withOpacity(0.12),
+                color: color.withValues(alpha: 0.12),
                 borderRadius: BorderRadius.circular(16),
               ),
               child: Icon(icon, color: color, size: 26),

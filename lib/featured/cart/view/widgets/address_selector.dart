@@ -134,7 +134,8 @@ class AddressSelector extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.only(bottom: 8),
       decoration: BoxDecoration(
-        color: isSelected ? TColors.primary.withOpacity(0.1) : Colors.white,
+        color:
+            isSelected ? TColors.primary.withValues(alpha: 0.1) : Colors.white,
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
           color: isSelected ? TColors.primary : Colors.grey.shade300,

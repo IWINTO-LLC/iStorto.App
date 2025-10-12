@@ -18,6 +18,7 @@ import 'package:istoreto/featured/product/controllers/scrolle_controller.dart';
 import 'package:istoreto/featured/product/data/product_model.dart';
 import 'package:istoreto/featured/product/views/widgets/product_details.dart';
 import 'package:istoreto/featured/product/views/widgets/product_widget_xsmall.dart';
+import 'package:istoreto/featured/product/cashed_network_image.dart';
 import 'package:istoreto/featured/sector/model/sector_model.dart';
 import 'package:istoreto/utils/actions.dart';
 import 'package:istoreto/utils/common/styles/styles.dart';
@@ -30,7 +31,7 @@ import 'package:istoreto/utils/constants/sizes.dart';
 import 'package:istoreto/utils/validators/validator.dart';
 
 class CreateProductForm extends StatelessWidget {
-  CreateProductForm({
+  const CreateProductForm({
     super.key,
     required this.type,
     required this.initialList,
@@ -810,104 +811,235 @@ class CreateProductForm extends StatelessWidget {
     String vendorId,
     BuildContext context,
   ) {
-    final addCat = VendorCategoryModel(
+    // إنشاء خيار إضافة فئة جديدة
+    final addCategoryOption = VendorCategoryModel(
+      id: 'add_new_category',
       vendorId: vendorId,
       title: "menu.add_category".tr,
     );
 
-    final items =
-        vendorCategories.map((vendorCat) {
-          return DropdownMenuItem<VendorCategoryModel>(
-            value: vendorCat,
+    // إنشاء قائمة العناصر
+    final List<DropdownMenuItem<VendorCategoryModel>> items = [];
+
+    // إضافة الفئات الموجودة
+    for (final vendorCat in vendorCategories) {
+      items.add(
+        DropdownMenuItem<VendorCategoryModel>(
+          value: vendorCat,
+          child: Container(
+            padding: const EdgeInsets.symmetric(vertical: 4),
             child: Row(
               children: [
-                // أيقونة الفئة
-                Container(
-                  width: 40,
-                  height: 40,
-                  decoration: BoxDecoration(
-                    color: TColors.primary.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(
-                      color: TColors.primary.withOpacity(0.3),
-                      width: 1,
-                    ),
+                // صورة الفئة
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(18),
+                  child: SizedBox(
+                    width: 36,
+                    height: 36,
+                    child:
+                        vendorCat.icon != null && vendorCat.icon!.isNotEmpty
+                            ? CustomCaChedNetworkImage(
+                              width: 36,
+                              height: 36,
+                              url: vendorCat.icon!,
+                              enableShadow: false,
+                              enableborder: true,
+                              fit: BoxFit.cover,
+                              raduis: BorderRadius.circular(18),
+                            )
+                            : Container(
+                              decoration: BoxDecoration(
+                                color: TColors.primary.withValues(alpha: 0.1),
+                                borderRadius: BorderRadius.circular(18),
+                                border: Border.all(
+                                  color: TColors.primary.withValues(alpha: 0.3),
+                                  width: 1,
+                                ),
+                              ),
+                              child: Icon(
+                                vendorCat.isPrimary
+                                    ? Icons.star
+                                    : Icons.category,
+                                color:
+                                    vendorCat.isPrimary
+                                        ? Colors.green
+                                        : TColors.primary,
+                                size: 18,
+                              ),
+                            ),
                   ),
-                  child: Icon(Icons.category, color: TColors.primary, size: 20),
                 ),
-                const SizedBox(width: 10),
+                const SizedBox(width: 12),
 
                 // اسم الفئة
                 Expanded(
-                  child: Text(
-                    vendorCat.title,
-                    style: titilliumRegular.copyWith(fontSize: 16),
-                    overflow: TextOverflow.ellipsis,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        vendorCat.title,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: titilliumRegular.copyWith(
+                          fontSize: 14,
+                          fontWeight:
+                              vendorCat.isPrimary
+                                  ? FontWeight.w600
+                                  : FontWeight.normal,
+                        ),
+                      ),
+                      if (vendorCat.customDescription != null &&
+                          vendorCat.customDescription!.isNotEmpty)
+                        Text(
+                          vendorCat.customDescription!,
+                          style: titilliumRegular.copyWith(
+                            fontSize: 11,
+                            color: Colors.grey[600],
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                    ],
                   ),
                 ),
 
-                // مؤشر الأولوية
-                if (vendorCat.isPrimary)
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 6,
-                      vertical: 2,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.green.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Text(
-                      'primary'.tr,
-                      style: titilliumRegular.copyWith(
-                        fontSize: 10,
-                        color: Colors.green,
+                // مؤشرات الحالة
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // مؤشر الأولوية
+                    if (vendorCat.isPrimary)
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 6,
+                          vertical: 2,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.green.withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Text(
+                          'primary'.tr,
+                          style: titilliumRegular.copyWith(
+                            fontSize: 10,
+                            color: Colors.green,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+
+                    const SizedBox(width: 4),
+
+                    // مستوى التخصص
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 4,
+                        vertical: 1,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.blue.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      child: Text(
+                        'L${vendorCat.specializationLevel}',
+                        style: titilliumRegular.copyWith(
+                          fontSize: 9,
+                          color: Colors.blue,
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
                     ),
-                  ),
+                  ],
+                ),
               ],
             ),
-          );
-        }).toList();
+          ),
+        ),
+      );
+    }
 
-    // إضافة خيار إنشاء فئة جديدة
+    // إضافة خيار إنشاء فئة جديدة في النهاية
     items.add(
       DropdownMenuItem<VendorCategoryModel>(
-        value: addCat,
-        child: Row(
-          children: [
-            const Icon(Icons.add, color: Colors.blue),
-            const SizedBox(width: 10),
-            Text(
-              "menu.add_category".tr,
-              style: titilliumRegular.copyWith(color: Colors.blue),
-            ),
-          ],
+        value: addCategoryOption,
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 8),
+          child: Row(
+            children: [
+              Container(
+                width: 36,
+                height: 36,
+                decoration: BoxDecoration(
+                  color: Colors.blue.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(18),
+                  border: Border.all(
+                    color: Colors.blue.withValues(alpha: 0.3),
+                    width: 1,
+                  ),
+                ),
+                child: const Icon(Icons.add, color: Colors.blue, size: 20),
+              ),
+              const SizedBox(width: 12),
+              Text(
+                "menu.add_category".tr,
+                style: titilliumRegular.copyWith(
+                  color: Colors.blue,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
 
-    // البحث عن القيمة المحددة
-    VendorCategoryModel? selected;
+    // تحديد القيمة المحددة حالياً
+    VendorCategoryModel? selectedValue;
     if (controller.vendorCategory != null && vendorCategories.isNotEmpty) {
       try {
-        selected = vendorCategories.firstWhere(
+        selectedValue = vendorCategories.firstWhere(
           (cat) => cat.id == controller.vendorCategory?.id,
         );
       } catch (e) {
         // إذا لم توجد القيمة، اختر العنصر الأول
-        selected = vendorCategories.isNotEmpty ? vendorCategories.first : null;
+        selectedValue =
+            vendorCategories.isNotEmpty ? vendorCategories.first : null;
       }
     }
 
     return DropdownButtonFormField<VendorCategoryModel>(
-      borderRadius: BorderRadius.circular(15),
-      iconSize: 40,
-      itemHeight: 60,
-      value: selected,
+      borderRadius: BorderRadius.circular(12),
+      iconSize: 24,
+      itemHeight: 70,
+      isExpanded: true,
+      value: selectedValue,
       items: items,
+      decoration: InputDecoration(
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: Colors.grey.shade300),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: Colors.grey.shade300),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: TColors.primary, width: 2),
+        ),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 12,
+        ),
+      ),
+      hint: Text(
+        'product.select_category'.tr,
+        style: titilliumRegular.copyWith(color: Colors.grey[600], fontSize: 16),
+      ),
       onChanged: (newValue) async {
-        if (newValue == addCat) {
+        if (newValue == addCategoryOption) {
           // الانتقال إلى صفحة إنشاء فئة جديدة
           final result = await Navigator.push(
             context,
@@ -925,12 +1057,18 @@ class CreateProductForm extends StatelessWidget {
             (context as Element).markNeedsBuild();
           }
         } else if (newValue != null) {
+          // تحديث الفئة المحددة في الكنترولر
           controller.vendorCategory = newValue;
+
           // تحديث فئة المنتج أيضاً للتوافق مع النظام القديم
           controller.category = CategoryModel(
             id: newValue.id ?? '',
             title: newValue.title,
             color: TColors.primary.value.toRadixString(16),
+          );
+
+          debugPrint(
+            '📌 Selected vendor category: ${newValue.title} (ID: ${newValue.id})',
           );
         }
       },
@@ -944,44 +1082,130 @@ class CreateProductForm extends StatelessWidget {
     BuildContext context,
   ) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: Colors.grey.shade50,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey.shade300),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Colors.grey.shade300, width: 1.5),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(Icons.category_outlined, size: 48, color: Colors.grey.shade400),
-          const SizedBox(height: 8),
+          // أيقونة الفئات
+          Container(
+            width: 64,
+            height: 64,
+            decoration: BoxDecoration(
+              color: Colors.blue.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(32),
+              border: Border.all(
+                color: Colors.blue.withValues(alpha: 0.2),
+                width: 2,
+              ),
+            ),
+            child: Icon(
+              Icons.category_outlined,
+              size: 32,
+              color: Colors.blue.shade400,
+            ),
+          ),
+          const SizedBox(height: 16),
+
+          // العنوان الرئيسي
           Text(
             'no_categories_available'.tr,
             style: titilliumRegular.copyWith(
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+              color: Colors.grey.shade700,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 8),
+
+          // النص التوضيحي
+          Text(
+            'create_first_category_description'.tr,
+            style: titilliumRegular.copyWith(
               fontSize: 14,
               color: Colors.grey.shade600,
+              height: 1.4,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 20),
+
+          // زر إنشاء الفئة الأولى
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton.icon(
+              onPressed: () async {
+                try {
+                  final result = await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => CreateCategory(vendorId: vendorId),
+                    ),
+                  );
+
+                  if (result == true) {
+                    debugPrint(
+                      '📌 Category created successfully, refreshing dropdown for vendor: $vendorId',
+                    );
+                    // إعادة بناء الواجهة لتحميل الفئات الجديدة
+                    (context as Element).markNeedsBuild();
+                  }
+                } catch (e) {
+                  debugPrint('Error creating category: $e');
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('error_creating_category'.tr),
+                      backgroundColor: Colors.red,
+                      duration: const Duration(seconds: 3),
+                    ),
+                  );
+                }
+              },
+              icon: const Icon(Icons.add_circle_outline, size: 20),
+              label: Text(
+                'create_first_category'.tr,
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: TColors.primary,
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 12,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                elevation: 2,
+              ),
             ),
           ),
           const SizedBox(height: 12),
-          ElevatedButton.icon(
-            onPressed: () async {
-              final result = await Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => CreateCategory(vendorId: vendorId),
-                ),
-              );
 
-              if (result == true) {
-                (context as Element).markNeedsBuild();
-              }
-            },
-            icon: const Icon(Icons.add, size: 16),
-            label: Text('create_first_category'.tr),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: TColors.primary,
-              foregroundColor: Colors.white,
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          // نص مساعد
+          Text(
+            'category_help_text'.tr,
+            style: titilliumRegular.copyWith(
+              fontSize: 12,
+              color: Colors.grey.shade500,
+              fontStyle: FontStyle.italic,
             ),
+            textAlign: TextAlign.center,
           ),
         ],
       ),

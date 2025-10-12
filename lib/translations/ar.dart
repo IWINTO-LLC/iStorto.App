@@ -15,6 +15,79 @@ class Ar {
     'search': 'بحث',
     'filter': 'تصفية',
     'sort': 'ترتيب',
+    'reload': 'إعادة تحميل',
+    'found': 'تم العثور على',
+    'clear_all': 'مسح الكل',
+
+    // Vendor Product Search
+    'search_products': 'البحث عن المنتجات',
+    'search_by_name_description': 'ابحث بالاسم أو الوصف...',
+    'filter_by_category': 'تصفية حسب الفئة',
+    'sort_by': 'ترتيب حسب',
+    'newest_first': 'الأحدث أولاً',
+    'oldest_first': 'الأقدم أولاً',
+    'price_high_to_low': 'السعر: من الأعلى للأقل',
+    'price_low_to_high': 'السعر: من الأقل للأعلى',
+    'no_products_found': 'لا توجد منتجات',
+    'start_searching': 'ابدأ البحث',
+    'search_hint': 'اكتب اسم المنتج أو الوصف للبحث',
+    'try_different_keywords': 'جرب كلمات مفتاحية مختلفة أو عدل الفلاتر',
+    'no_categories_available': 'لا توجد فئات متاحة',
+    'failed_to_load_products': 'فشل تحميل المنتجات',
+
+    // Global Product Search
+    'search_all_products': 'البحث في جميع المنتجات',
+    'filter_by_vendor': 'تصفية حسب التاجر',
+    'no_vendors_available': 'لا يوجد تجار متاحين',
+
+    // Storage Management
+    'storage_management': 'إدارة التخزين',
+    'total_storage': 'إجمالي التخزين',
+    'used': 'مستخدم',
+    'available': 'متاح',
+    'storage_breakdown': 'تفاصيل التخزين',
+    'images': 'الصور',
+    'videos': 'الفيديوهات',
+    'cache': 'الذاكرة المؤقتة',
+    'downloads': 'التنزيلات',
+    'documents': 'المستندات',
+    'other_files': 'ملفات أخرى',
+    'clear': 'مسح',
+    'quick_actions': 'إجراءات سريعة',
+    'clear_all_cache': 'مسح كل الذاكرة المؤقتة',
+    'free_up_space_quickly': 'حرر المساحة بسرعة',
+    'clear_temp_files': 'مسح الملفات المؤقتة',
+    'remove_temporary_files': 'إزالة جميع الملفات المؤقتة',
+    'optimize_storage': 'تحسين التخزين',
+    'compress_and_optimize': 'ضغط وتحسين الملفات',
+    'danger_zone': 'منطقة الخطر',
+    'clear_all_data': 'مسح جميع البيانات',
+    'delete_all_app_data': 'حذف جميع بيانات التطبيق نهائياً',
+    'clear_cache_message':
+        'سيتم مسح جميع البيانات المخزنة مؤقتاً. قد يحتاج التطبيق لإعادة تحميل بعض المحتوى.',
+    'clear_temp_message': 'سيتم إزالة جميع الملفات المؤقتة. هذا آمن وموصى به.',
+    'optimize_storage_message':
+        'سيتم مسح الذاكرة المؤقتة والملفات المؤقتة لتحرير المساحة.',
+    'clear_all_data_warning':
+        'سيتم حذف جميع بيانات التطبيق بما في ذلك الذاكرة المؤقتة والتنزيلات والملفات المؤقتة. ستحتاج لتسجيل الدخول مرة أخرى.',
+    'this_action_cannot_be_undone': 'لا يمكن التراجع عن هذا الإجراء!',
+    'delete_all': 'حذف الكل',
+    'optimize': 'تحسين',
+    'cache_cleared_successfully': 'تم مسح الذاكرة المؤقتة بنجاح',
+    'temp_files_cleared': 'تم مسح الملفات المؤقتة',
+    'images_cleared': 'تم مسح الصور',
+    'videos_cleared': 'تم مسح الفيديوهات',
+    'downloads_cleared': 'تم مسح التنزيلات',
+    'documents_cleared': 'تم مسح المستندات',
+    'other_files_cleared': 'تم مسح الملفات الأخرى',
+    'storage_optimized': 'تم تحسين التخزين بنجاح',
+    'all_data_cleared': 'تم مسح جميع البيانات بنجاح',
+    'failed_to_load_storage_info': 'فشل تحميل معلومات التخزين',
+    'failed_to_clear_cache': 'فشل مسح الذاكرة المؤقتة',
+    'failed_to_clear_temp': 'فشل مسح الملفات المؤقتة',
+    'failed_to_clear': 'فشل مسح الملفات',
+    'failed_to_optimize': 'فشل تحسين التخزين',
+    'failed_to_clear_data': 'فشل مسح البيانات',
 
     // Search Filters
     'search_filters': 'فلاتر البحث',
@@ -51,7 +124,7 @@ class Ar {
     'primary': 'أساسي',
     'vendor_selected': 'تم اختيار التاجر',
     'browse_categories_subtitle': 'تصفح الفئات المختلفة',
-    'no_categories_available': 'لا توجد فئات متاحة',
+
     'loading_categories': 'جاري تحميل الفئات...',
 
     // Category Priority Management
@@ -131,7 +204,16 @@ class Ar {
     'product.images': 'الصور',
     'product.preview': 'معاينة',
     'product.no_images_uploaded': 'لم يتم رفع صور',
+    'product.select_category': 'اختر الفئة',
     'product.publish': 'نشر',
+    'create_first_category_description':
+        'تحتاج إلى إنشاء فئة واحدة على الأقل قبل إضافة المنتجات',
+    'category_help_text': 'الفئات تساعد في تنظيم منتجاتك',
+    'error_creating_category': 'خطأ في إنشاء الفئة',
+    'optional': 'اختياري',
+    'category_description_hint': 'أدخل وصفاً مختصراً لهذه الفئة',
+    'category_created': 'تم إنشاء الفئة',
+    'created_successfully': 'تم إنشاؤها بنجاح',
 
     // Product Messages
     'product.please_add_title': 'الرجاء إدخال اسم العنصر',
@@ -262,7 +344,6 @@ class Ar {
     'popular_products': 'المنتجات الشائعة',
     'new_items': 'العناصر الجديدة',
     'top_sellers': 'أفضل البائعين',
-    'no_vendors_available': 'لا يوجد بائعين متاحين',
     'latest_vendor': 'انضم لنا مؤخراً',
     'all_vendors': 'جميع التجار',
     'all_vendors_will_be_shown': 'سيتم عرض جميع التجار',
@@ -270,11 +351,9 @@ class Ar {
     'check_back_later': 'تحقق لاحقاً',
     'unknown_vendor': 'تاجر غير معروف',
     'visit_store': 'زيارة المتجر',
-    'follow': 'متابعة',
     'visiting_store': 'جاري زيارة المتجر',
     'store_page': 'صفحة المتجر',
     'following_vendor': 'جاري متابعة التاجر',
-    'followed_successfully': 'تم المتابعة بنجاح',
     'store': 'متجر',
     'vendor': 'تاجر',
     'vendor_description': 'متجر احترافي',
@@ -317,6 +396,10 @@ class Ar {
     'apple_login_failed': 'فشل تسجيل الدخول عبر آبل',
     'update_failed': 'فشل في التحديث',
     'profile_image_updated': 'تم تحديث صورة الملف الشخصي',
+    'profile_image_updated_successfully': 'تم تحديث الصورة الشخصية بنجاح',
+    'cover_image_updated_successfully': 'تم تحديث صورة الغلاف بنجاح',
+    'uploading_profile_photo': 'جاري رفع الصورة',
+    'uploading_cover_photo': 'جاري رفع الغلاف',
     'signout_failed': 'فشل في تسجيل الخروج',
     'your_store_tagline': 'متجرك المفضل',
     'welcome_back': 'مرحباً بعودتك',
@@ -464,6 +547,231 @@ class Ar {
 
     // Settings
     'settings.title': 'الإعدادات',
+    'app_preferences_and_configuration': 'تفضيلات وإعدادات التطبيق',
+    'settings.profile_settings': 'إعدادات الملف الشخصي',
+    'settings.personal_information': 'المعلومات الشخصية',
+    'settings.personal_information_subtitle': 'تحديث التفاصيل الشخصية',
+    'settings.profile_photo': 'صورة الملف الشخصي',
+    'settings.profile_photo_subtitle': 'تغيير صورة الملف الشخصي',
+    'settings.cover_photo': 'صورة الغلاف',
+    'settings.cover_photo_subtitle': 'تغيير صورة الغلاف',
+    'settings.bio_description': 'السيرة والوصف',
+    'settings.bio_description_subtitle': 'تحديث السيرة الذاتية والوصف',
+
+    // Account Settings
+    'settings.account_settings': 'إعدادات الحساب',
+    'settings.email_password': 'البريد الإلكتروني وكلمة المرور',
+    'settings.email_password_subtitle': 'تغيير البريد وكلمة المرور',
+    'settings.phone_number': 'رقم الهاتف',
+    'settings.phone_number_subtitle': 'تحديث رقم الهاتف',
+    'settings.location': 'الموقع',
+    'settings.location_subtitle': 'تحديث الموقع',
+    'settings.business_account': 'حساب تجاري',
+    'settings.business_account_subtitle_vendor': 'إدارة الحساب التجاري',
+    'settings.business_account_subtitle_user': 'الترقية لحساب تجاري',
+
+    // Privacy & Security
+    'settings.privacy_security': 'الخصوصية والأمان',
+    'settings.privacy_settings': 'إعدادات الخصوصية',
+    'settings.privacy_settings_subtitle': 'التحكم في تفضيلات الخصوصية',
+    'settings.security': 'الأمان',
+    'settings.security_subtitle': 'إدارة إعدادات الأمان',
+    'settings.notifications': 'الإشعارات',
+    'settings.notifications_subtitle': 'تكوين تفضيلات الإشعارات',
+    'settings.blocked_users': 'المستخدمون المحظورون',
+    'settings.blocked_users_subtitle': 'إدارة المستخدمين المحظورين',
+
+    // App Settings
+    'settings.app_settings': 'إعدادات التطبيق',
+    'settings.language': 'اللغة',
+    'settings.language_subtitle': 'تغيير لغة التطبيق',
+    'settings.currency': 'العملة',
+    'settings.currency_subtitle': 'تغيير العملة الافتراضية',
+    'settings.select_currency': 'اختيار العملة',
+    'settings.currency_description': 'اختر العملة المفضلة لعرض الأسعار',
+    'settings.currency_updated': 'تم تحديث العملة إلى',
+    'settings.currency_update_failed': 'فشل في تحديث العملة',
+    'settings.theme': 'المظهر',
+    'settings.theme_subtitle': 'تغيير مظهر التطبيق',
+    'settings.storage': 'التخزين',
+    'settings.storage_subtitle': 'إدارة تخزين التطبيق',
+    'settings.app_updates': 'تحديثات التطبيق',
+    'settings.app_updates_subtitle': 'التحقق من تحديثات التطبيق',
+
+    // Support
+    'settings.support': 'الدعم',
+    'help_and_support': 'المساعدة والدعم',
+    'get_help_and_contact_support': 'احصل على المساعدة وتواصل مع الدعم',
+    'help_and_support_coming_soon': 'ميزة المساعدة والدعم ستتوفر قريباً',
+    'settings.help_center': 'مركز المساعدة',
+    'settings.help_center_subtitle': 'الحصول على المساعدة والدعم',
+    'settings.send_feedback': 'إرسال ملاحظات',
+    'settings.send_feedback_subtitle': 'شارك ملاحظاتك معنا',
+    'settings.about': 'حول',
+    'settings.about_subtitle': 'إصدار التطبيق والمعلومات',
+    'settings.contact_us': 'اتصل بنا',
+    'settings.contact_us_subtitle': 'تواصل مع فريقنا',
+
+    // Danger Zone
+    'settings.danger_zone': 'منطقة الخطر',
+    'settings.delete_account': 'حذف الحساب',
+    'settings.delete_account_subtitle': 'حذف حسابك بشكل دائم',
+    'settings.sign_out': 'تسجيل الخروج',
+    'settings.sign_out_subtitle': 'تسجيل الخروج من حسابك',
+    'sign_out_of_your_account': 'تسجيل الخروج من حسابك',
+
+    // Dialogs
+    'settings.select_language': 'اختر اللغة',
+    'settings.arabic': 'العربية',
+    'settings.english': 'English',
+    'settings.coming_soon_feature': 'هذه الميزة قريباً!',
+    'settings.about_app': 'حول التطبيق',
+    'settings.app_name': 'اسم التطبيق: iStoreTo',
+    'settings.version': 'الإصدار: 1.0.0',
+    'settings.build': 'البناء: 2024.01.01',
+    'settings.developer': 'المطور: فريق iStoreTo',
+    'settings.ok': 'حسناً',
+    'ok': 'حسناً',
+    'settings.delete_account_confirm': 'حذف الحساب',
+    'settings.delete_account_message':
+        'هل أنت متأكد من حذف حسابك؟ لا يمكن التراجع عن هذا الإجراء.',
+    'settings.cancel': 'إلغاء',
+    'settings.delete': 'حذف',
+    'settings.sign_out_confirm': 'تسجيل الخروج',
+    'settings.sign_out_message': 'هل أنت متأكد من تسجيل الخروج؟',
+    'settings.business_account_required': 'حساب تجاري مطلوب',
+    'settings.cover_photo_vendor_only':
+        'صورة الغلاف متاحة فقط للحسابات التجارية',
+    'settings.select_cover_photo_source': 'اختر مصدر صورة الغلاف',
+    'settings.select_profile_photo_source': 'اختر مصدر الصورة الشخصية',
+
+    // Profile Menu
+    'saved_products': 'المنتجات المحفوظة',
+    'view_your_saved_products': 'عرض منتجاتك المحفوظة',
+
+    // Add Product Page
+    'add_new_product': 'إضافة منتج جديد',
+    'basic_information': 'المعلومات الأساسية',
+    'category_and_section': 'التصنيف والقسم',
+    'pricing': 'التسعير',
+    'product_images': 'صور المنتج',
+    'product_name': 'اسم المنتج',
+    'enter_product_name': 'أدخل اسم المنتج',
+    'product_name_required': 'اسم المنتج مطلوب',
+    'enter_product_description': 'أدخل وصف المنتج',
+    'minimum_quantity_error': 'الحد الأدنى للكمية يجب أن يكون 1 على الأقل',
+    'no_category': 'بدون تصنيف',
+    'original_price': 'السعر الأصلي',
+    'no_images_added': 'لا توجد صور مضافة',
+    'tap_buttons_below_to_add': 'اضغط على الأزرار بالأسفل لإضافة الصور',
+    'saving_product': 'جاري حفظ المنتج...',
+    'save_product': 'حفظ المنتج',
+    'please_fill_required_fields': 'يرجى ملء جميع الحقول المطلوبة',
+    'please_add_at_least_one_image': 'يرجى إضافة صورة واحدة على الأقل',
+    'product_created_successfully': 'تم إنشاء المنتج بنجاح',
+    'failed_to_create_product': 'فشل في إنشاء المنتج',
+    'failed_to_pick_images': 'فشل في اختيار الصور',
+    'product_updated_successfully': 'تم تحديث المنتج بنجاح',
+    'failed_to_update_product': 'فشل في تحديث المنتج',
+    // Products Management Page
+    'products_management': 'إدارة المنتجات',
+    'search_products_placeholder': 'البحث في المنتجات...',
+    'all_products': 'جميع المنتجات',
+    'active_products': 'المنتجات النشطة',
+    'deleted_products': 'المنتجات المحذوفة',
+    'add_first_product': 'أضف منتجك الأول للبدء',
+    'delete_product': 'حذف المنتج',
+    'delete_product_confirmation': 'هل أنت متأكد من حذف هذا المنتج؟',
+    'product_deleted_successfully': 'تم حذف المنتج بنجاح',
+    'failed_to_delete_product': 'فشل في حذف المنتج',
+    'restore_product': 'استعادة المنتج',
+    'product_restored_successfully': 'تم استعادة المنتج بنجاح',
+    'failed_to_restore_product': 'فشل في استعادة المنتج',
+    'permanently_delete_product': 'حذف نهائي للمنتج',
+    'permanently_delete_warning':
+        'لا يمكن التراجع عن هذا الإجراء. سيتم حذف المنتج نهائياً.',
+    'delete_permanently': 'حذف نهائياً',
+    'product_permanently_deleted': 'تم حذف المنتج نهائياً',
+    'failed_to_delete_permanently': 'فشل في الحذف النهائي للمنتج',
+    'edit_product': 'تعديل المنتج',
+    'no_results_found': 'لا توجد نتائج',
+
+    'deleted': 'محذوف',
+
+    // Image Management
+    'image_saved_successfully': 'تم حفظ الصورة بنجاح',
+    'preview': 'معاينة',
+    'uploading_images': 'جاري رفع الصور',
+    'uploading_image': 'جاري رفع الصورة',
+    'images_uploaded_successfully': 'تم رفع الصور بنجاح',
+
+    // Currency
+    'currency': 'العملة',
+    'select_currency': 'اختيار العملة',
+    'currency_updated_successfully': 'تم تحديث العملة الافتراضية بنجاح',
+    'failed_to_update_currency': 'فشل في تحديث العملة',
+
+    // Follow System
+    'follow': 'متابعة',
+    'following': 'متابَع',
+    'followed_successfully': 'أصبحت الآن تتابع هذا المتجر',
+    'unfollowed_successfully': 'تم إلغاء المتابعة بنجاح',
+    'please_login_first': 'يرجى تسجيل الدخول أولاً لمتابعة المتاجر',
+    'operation_failed': 'فشلت العملية، يرجى المحاولة مرة أخرى',
+
+    // Vendor Offers Page
+    'vendor_offers': 'العروض الخاصة',
+    'search_offers': 'البحث في العروض...',
+    'offers_found': 'عرض موجود',
+    'no_offers_available': 'لا توجد عروض متاحة',
+    'vendor_has_no_offers': 'هذا المتجر ليس لديه عروض خاصة في الوقت الحالي',
+    'no_offers_found': 'لم يتم العثور على عروض',
+    'try_different_search': 'جرب كلمة بحث مختلفة',
+    'highest_discount': 'أعلى خصم',
+    'lowest_discount': 'أقل خصم',
+
+    // Personal Information Dialog
+    'settings.user_not_found': 'لم يتم العثور على المستخدم',
+    'settings.name': 'الاسم',
+    'settings.enter_your_name': 'أدخل اسمك الكامل',
+    'settings.name_required': 'الاسم مطلوب',
+    'settings.name_too_short': 'يجب أن يكون الاسم على الأقل حرفين',
+    'settings.username': 'اسم المستخدم',
+    'settings.enter_username': 'أدخل اسم المستخدم',
+    'settings.username_too_short': 'يجب أن يكون اسم المستخدم على الأقل 3 أحرف',
+    'settings.phone': 'رقم الهاتف',
+    'settings.enter_phone': 'أدخل رقم هاتفك',
+    'settings.phone_invalid': 'رقم الهاتف غير صحيح',
+    'settings.email': 'البريد الإلكتروني',
+    'settings.email_cannot_be_changed':
+        'لا يمكن تغيير البريد الإلكتروني من هذه الشاشة',
+    'settings.saving_changes': 'جاري حفظ التغييرات...',
+    'settings.no_changes': 'لا توجد تغييرات',
+    'settings.no_changes_message': 'لم تقم بإجراء أي تغييرات',
+    'settings.personal_info_updated': 'تم تحديث المعلومات الشخصية بنجاح',
+    'settings.update_failed': 'فشل تحديث المعلومات',
+    'settings.save_changes': 'حفظ التغييرات',
+
+    // Profile Edit
+    'edit_profile': 'تعديل الملف الشخصي',
+    'edit_cover_photo': 'تعديل صورة الغلاف',
+    'change_your_cover_image': 'تغيير صورة الغلاف',
+    'edit_profile_photo': 'تعديل الصورة الشخصية',
+    'change_your_profile_picture': 'تغيير صورتك الشخصية',
+    'edit_personal_info': 'تعديل المعلومات الشخصية',
+    'update_your_personal_details': 'تحديث تفاصيلك الشخصية',
+    'edit_bio': 'تعديل السيرة الذاتية',
+    'update_your_biography': 'تحديث سيرتك الذاتية',
+    'edit_brief': 'تعديل النبذة المختصرة',
+    'update_your_brief_description': 'تحديث نبذتك المختصرة',
+    'feature_coming_soon': 'هذه الميزة ستتوفر قريباً',
+    'feature_for_business_accounts_only':
+        'هذه الميزة متاحة للحسابات التجارية فقط',
+    'enter_store_bio': 'أدخل السيرة الذاتية للمتجر',
+    'enter_brief_description': 'أدخل وصفاً مختصراً عن المتجر',
+    'brief_helper_text': 'وصف قصير يظهر في نتائج البحث',
+    'bio_updated_successfully': 'تم تحديث السيرة الذاتية بنجاح',
+    'brief_updated_successfully': 'تم تحديث الوصف المختصر بنجاح',
 
     'uploading_photo': 'جاري رفع الصورة',
     'everything_done': 'تمت الإضافة',
@@ -659,7 +967,6 @@ class Ar {
     'set_inactive': 'تعيين كغير نشط',
     'clear_filters': 'مسح المرشحات',
     'search_categories': 'البحث في الفئات',
-    'search_hint': 'جرب البحث بكلمات مختلفة',
 
     // Commercial Account Translations
     'create_commercial_account': 'إنشاء حساب تجاري',
@@ -770,6 +1077,78 @@ class Ar {
     'admin_zone_analytics_desc': 'إحصائيات وتقارير مفصلة',
     'admin_zone_settings': 'الإعدادات',
     'admin_zone_settings_desc': 'إعدادات التطبيق العامة',
+    'manage_categories_and_content': 'إدارة الفئات والمحتوى',
+
+    // Vendor Admin Zone
+    'vendor_admin_zone_title': 'لوحة تحكم التاجر',
+    'vendor_admin_zone_welcome': 'مرحباً بك في إدارة متجرك',
+    'vendor_admin_zone_subtitle': 'إدارة متجرك بكفاءة من مكان واحد',
+    'vendor_admin_zone_management_sections': 'إدارة المتجر',
+    'vendor_admin_zone_banners': 'إدارة البانرات',
+    'vendor_admin_zone_banners_desc': 'إدارة بانرات وعروض متجرك الترويجية',
+    'vendor_admin_zone_products': 'إدارة المنتجات',
+    'vendor_admin_zone_products_desc': 'إضافة وتعديل وإدارة منتجاتك',
+    'vendor_admin_zone_categories': 'إدارة الفئات',
+    'vendor_admin_zone_categories_desc': 'تنظيم منتجاتك في فئات',
+    'vendor_admin_zone_orders': 'إدارة الطلبات',
+    'vendor_admin_zone_orders_desc': 'متابعة ومعالجة طلبات العملاء',
+    'vendor_admin_zone_store_settings': 'إعدادات المتجر',
+    'vendor_admin_zone_store_settings_desc': 'تكوين معلومات وتفضيلات متجرك',
+    'vendor_admin_zone_analytics': 'تحليلات المبيعات',
+    'vendor_admin_zone_analytics_desc': 'عرض إحصائيات المبيعات وتقارير الأداء',
+    'vendor_admin_zone_reviews': 'تقييمات العملاء',
+    'vendor_admin_zone_reviews_desc': 'إدارة والرد على تقييمات العملاء',
+
+    // Category Management
+    'manage_categories': 'إدارة الفئات',
+    'create_new_vendor_category': 'إنشاء فئة جديدة لمنتجاتك',
+    'reorder_categories_by_priority': 'إعادة ترتيب الفئات حسب الأولوية',
+    'view_all_categories': 'عرض جميع الفئات',
+    'see_all_vendor_categories': 'عرض جميع فئات التاجر',
+    'manage_order': 'إدارة الترتيب',
+    // Vendor Categories Management
+    'vendor_categories_management': 'إدارة الفئات',
+    'no_vendor_categories_found': 'لا توجد فئات',
+    'add_first_vendor_category': 'أضف فئتك الأولى لتنظيم منتجاتك',
+    'add_vendor_category': 'إضافة فئة',
+    'vendor_search_categories': 'البحث في الفئات...',
+    'vendor_all_categories': 'جميع الفئات',
+    'vendor_active_categories': 'الفئات النشطة',
+    'vendor_inactive_categories': 'الفئات غير النشطة',
+    'vendor_primary': 'أساسية',
+    'vendor_secondary': 'ثانوية',
+    'vendor_priority': 'الأولوية',
+    'vendor_edit': 'تعديل',
+    'vendor_remove_primary': 'إزالة الأساسية',
+    'vendor_make_primary': 'جعل أساسية',
+    'vendor_deactivate': 'إلغاء التفعيل',
+    'vendor_activate': 'تفعيل',
+    'vendor_delete': 'حذف',
+    'vendor_active': 'نشطة',
+    'vendor_inactive': 'غير نشطة',
+    'vendor_delete_category': 'حذف الفئة',
+    'vendor_delete_category_confirmation': 'هل أنت متأكد من حذف هذه الفئة؟',
+
+    // Vendor Banners
+    'vendor_banners_title': 'إدارة البانرات',
+    'vendor_total_banners': 'إجمالي البانرات',
+    'vendor_active_banners': 'نشطة',
+    'vendor_search_banners': 'البحث في البانرات...',
+    'vendor_all_banners': 'جميع البانرات',
+    'vendor_active_only': 'النشطة فقط',
+    'vendor_inactive_only': 'غير النشطة فقط',
+    'vendor_add_banner': 'إضافة بانر',
+    'vendor_no_banners': 'لا توجد بانرات بعد',
+    'vendor_no_banners_subtitle': 'ابدأ في الترويج لمتجرك بإضافة أول بانر',
+    'vendor_add_first_banner': 'أضف أول بانر',
+    'vendor_add_new_banner': 'إضافة بانر جديد',
+    'vendor_select_banner_image': 'اختر صورة البانر',
+    'vendor_banner_title': 'عنوان البانر',
+    'vendor_enter_banner_title': 'أدخل عنوان البانر',
+    'vendor_banner_link': 'رابط البانر',
+    'vendor_enter_banner_link': 'أدخل رابط البانر (اختياري)',
+
+    'info': 'معلومة',
 
     // Banner Management
     'banner_management': 'إدارة البانرات',
@@ -783,6 +1162,13 @@ class Ar {
     'choose_from_gallery': 'اختر صورة من المعرض',
     'from_camera': 'من الكاميرا',
     'take_new_photo': 'التقط صورة جديدة',
+    'manage_your_banners': 'إدارة بانراتك',
+    'manage_your_company_banners': 'إدارة بانرات الشركة',
+    'manage_your_vendor_banners': 'إدارة بانرات التاجر',
+    'manage_your_banners_subtitle': 'إدارة جميع بانراتك',
+    'manage_your_company_banners_subtitle': 'إدارة جميع بانرات الشركة',
+    'manage_your_vendor_banners_subtitle': 'إدارة جميع بانرات التاجر',
+    'help_and_support_subtitle': 'المساعدة والدعم الخاص بالتطبيق',
 
     'activate': 'تفعيل',
     'deactivate': 'إلغاء التفعيل',
@@ -819,6 +1205,7 @@ class Ar {
 
     // Personal Info Page
     'personal_information': 'المعلومات الشخصية',
+    'update_personal_details': 'تحديث التفاصيل الشخصية',
     'profile_photo': 'صورة الملف الشخصي',
     'full_name': 'الاسم الكامل',
     'not_set': 'غير محدد',
@@ -826,6 +1213,7 @@ class Ar {
     'bio_description': 'السيرة الذاتية والوصف',
     'account_type': 'نوع الحساب',
     'business_account': 'حساب تجاري',
+    'manage_your_business': 'إدارة حسابك التجاري',
     'personal_account': 'حساب شخصي',
     'business_account_description': 'لديك حساب تجاري مع ميزات إضافية',
     'personal_account_description':
@@ -846,5 +1234,13 @@ class Ar {
 
     // Vendor Category
     'create_first_category': 'إنشاء أول فئة',
+
+    // Product Details
+    'product_type': 'نوع المنتج',
+    'add_more': 'إضافة المزيد',
+
+    // Gallery
+    'gallery.discover_latest_products': 'اكتشف أحدث المنتجات 📸',
+    'gallery.browse_thousands_of_photos': 'تصفح آلاف الصور لجميع المنتجات',
   };
 }

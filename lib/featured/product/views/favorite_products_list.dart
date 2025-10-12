@@ -1,7 +1,10 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
+import 'package:istoreto/controllers/auth_controller.dart';
 import 'package:istoreto/controllers/translation_controller.dart';
 import 'package:istoreto/featured/product/controllers/favorite_product_controller.dart';
 import 'package:istoreto/featured/product/data/product_model.dart';
@@ -62,7 +65,7 @@ class _AppBarContent extends StatelessWidget {
         color: Colors.white,
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
+            color: Colors.grey.withValues(alpha: 0.1),
             spreadRadius: 1,
             blurRadius: 3,
             offset: const Offset(0, 1),
@@ -117,15 +120,18 @@ class _AppBarContent extends StatelessWidget {
             onPressed: controller.toggleSearch,
             icon: Obx(
               () => Icon(
-                controller.isSearchExpanded.value ? Icons.close : Icons.search,
+                controller.isSearchExpanded.value
+                    ? Icons.close
+                    : CupertinoIcons.search,
                 color: Colors.black,
+                size: 25,
               ),
             ),
           ),
 
           // View Mode Button
           PopupMenuButton<String>(
-            icon: const Icon(Icons.more_vert, color: Colors.black),
+            icon: const Icon(Icons.filter_list, color: Colors.black),
             onSelected: (value) {
               switch (value) {
                 case 'list_view':
@@ -725,9 +731,14 @@ class _FavoriteVendorsSection extends StatelessWidget {
   }
 
   String _getCurrentUserId() {
-    // You might need to get this from your auth controller
-    // For now, returning a placeholder
-    return 'current_user_id';
+    // Get actual user ID from AuthController
+    try {
+      final userId = Get.find<AuthController>().currentUser.value?.userId;
+      return userId ?? '';
+    } catch (e) {
+      print('Error getting current user ID: $e');
+      return '';
+    }
   }
 
   void _navigateToVendor(VendorModel vendor) {

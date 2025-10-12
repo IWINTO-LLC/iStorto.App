@@ -99,7 +99,7 @@ class VendorModel {
       'banner_image': bannerImage,
       'organization_logo': organizationLogo,
       'organization_cover': organizationCover,
-      'website': website,
+      // NOTE: 'website' is NOT included - it's stored in social_links table
       'brief': brief,
       'exclusive_id': exclusiveId,
       'store_message': storeMessage,
@@ -113,7 +113,8 @@ class VendorModel {
       'organization_activated': organizationActivated,
       'default_currency': defaultCurrency,
       'selected_major_categories': selectedMajorCategories,
-      'social_link': socialLink?.toJson(),
+      // NOTE: social_link is NOT included here because it's stored in a separate table (social_links)
+      // Social links are handled separately via VendorRepository.updateVendorSocialLinks()
       'created_at': createdAt?.toIso8601String(),
       'updated_at': updatedAt?.toIso8601String(),
     };

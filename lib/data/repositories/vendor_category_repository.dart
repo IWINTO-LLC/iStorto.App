@@ -47,14 +47,11 @@ class VendorCategoryRepository extends GetxController {
         throw 'Vendor ID is required';
       }
 
+      // Keep query compatible with minimal schema
       final response = await _client
           .from('vendor_categories')
           .select('*')
-          .eq('vendor_id', vendorId)
-          .eq('is_active', true)
-          .order('is_primary', ascending: false)
-          .order('priority', ascending: true)
-          .order('created_at', ascending: true);
+          .eq('vendor_id', vendorId);
 
       if (kDebugMode) {
         print("Vendor ID: $vendorId");
@@ -359,10 +356,7 @@ class VendorCategoryRepository extends GetxController {
           .from('vendor_categories')
           .select('*')
           .eq('is_active', true)
-          .or('''
-            title.ilike.%$query%,
-            custom_description.ilike.%$query%
-          ''');
+          .ilike('title', '%$query%');
 
       // Only filter by vendor_id if it's provided
       if (vendorId.isNotEmpty) {

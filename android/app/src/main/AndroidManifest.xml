@@ -31,6 +31,49 @@
                 <category android:name="android.intent.category.BROWSABLE" />
                 <data android:scheme="com.istoreto.app" />
             </intent-filter>
+            
+            <!-- Deep Links للمنتجات - Product Deep Links -->
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                
+                <!-- HTTPS -->
+                <data
+                    android:scheme="https"
+                    android:host="istorto.com"
+                    android:pathPrefix="/product" />
+                <!-- HTTP -->
+                <data
+                    android:scheme="http"
+                    android:host="istorto.com"
+                    android:pathPrefix="/product" />
+            </intent-filter>
+
+            <!-- Deep Links للمتاجر - Vendor Deep Links -->
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                
+                <data
+                    android:scheme="https"
+                    android:host="istorto.com"
+                    android:pathPrefix="/vendor" />
+                <data
+                    android:scheme="http"
+                    android:host="istorto.com"
+                    android:pathPrefix="/vendor" />
+            </intent-filter>
+
+            <!-- Custom URL Scheme (اختياري) -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                
+                <data android:scheme="istoreto" />
+            </intent-filter>
         </activity>
         
         <!-- Image Cropper Activity -->

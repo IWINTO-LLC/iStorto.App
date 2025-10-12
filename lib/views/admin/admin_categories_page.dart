@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:istoreto/controllers/admin_categories_controller.dart';
 import 'package:istoreto/data/models/major_category_model.dart';
+import 'package:istoreto/featured/product/cashed_network_image.dart';
 import 'package:istoreto/utils/common/widgets/appbar/custom_app_bar.dart';
+import 'package:istoreto/utils/common/widgets/custom_shapes/containers/rounded_container.dart';
 import 'package:istoreto/utils/constants/color.dart';
 
 class AdminCategoriesPage extends StatelessWidget {
@@ -94,19 +96,146 @@ class AdminCategoriesPage extends StatelessWidget {
                         (context) => [
                           PopupMenuItem(
                             value: 'all',
-                            child: Text('admin_all_categories'.tr),
+                            child: Obx(
+                              () => Row(
+                                children: [
+                                  Icon(
+                                    controller.currentFilter.value == 'all'
+                                        ? Icons.check
+                                        : Icons.filter_list,
+                                    size: 20,
+                                    color:
+                                        controller.currentFilter.value == 'all'
+                                            ? Colors.green
+                                            : null,
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Text(
+                                    'admin_all_categories'.tr,
+                                    style: TextStyle(
+                                      color:
+                                          controller.currentFilter.value ==
+                                                  'all'
+                                              ? Colors.green
+                                              : null,
+                                      fontWeight:
+                                          controller.currentFilter.value ==
+                                                  'all'
+                                              ? FontWeight.bold
+                                              : null,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
                           ),
                           PopupMenuItem(
                             value: 'active',
-                            child: Text('admin_active_categories'.tr),
+                            child: Obx(
+                              () => Row(
+                                children: [
+                                  Icon(
+                                    controller.currentFilter.value == 'active'
+                                        ? Icons.check
+                                        : Icons.check_circle,
+                                    size: 20,
+                                    color:
+                                        controller.currentFilter.value ==
+                                                'active'
+                                            ? Colors.green
+                                            : null,
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Text(
+                                    'admin_active_categories'.tr,
+                                    style: TextStyle(
+                                      color:
+                                          controller.currentFilter.value ==
+                                                  'active'
+                                              ? Colors.green
+                                              : null,
+                                      fontWeight:
+                                          controller.currentFilter.value ==
+                                                  'active'
+                                              ? FontWeight.bold
+                                              : null,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
                           ),
                           PopupMenuItem(
                             value: 'pending',
-                            child: Text('admin_pending_categories'.tr),
+                            child: Obx(
+                              () => Row(
+                                children: [
+                                  Icon(
+                                    controller.currentFilter.value == 'pending'
+                                        ? Icons.check
+                                        : Icons.schedule,
+                                    size: 20,
+                                    color:
+                                        controller.currentFilter.value ==
+                                                'pending'
+                                            ? Colors.green
+                                            : null,
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Text(
+                                    'admin_pending_categories'.tr,
+                                    style: TextStyle(
+                                      color:
+                                          controller.currentFilter.value ==
+                                                  'pending'
+                                              ? Colors.green
+                                              : null,
+                                      fontWeight:
+                                          controller.currentFilter.value ==
+                                                  'pending'
+                                              ? FontWeight.bold
+                                              : null,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
                           ),
                           PopupMenuItem(
                             value: 'inactive',
-                            child: Text('admin_inactive_categories'.tr),
+                            child: Obx(
+                              () => Row(
+                                children: [
+                                  Icon(
+                                    controller.currentFilter.value == 'inactive'
+                                        ? Icons.check
+                                        : Icons.cancel,
+                                    size: 20,
+                                    color:
+                                        controller.currentFilter.value ==
+                                                'inactive'
+                                            ? Colors.green
+                                            : null,
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Text(
+                                    'admin_inactive_categories'.tr,
+                                    style: TextStyle(
+                                      color:
+                                          controller.currentFilter.value ==
+                                                  'inactive'
+                                              ? Colors.green
+                                              : null,
+                                      fontWeight:
+                                          controller.currentFilter.value ==
+                                                  'inactive'
+                                              ? FontWeight.bold
+                                              : null,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
                           ),
                         ],
                     child: Container(
@@ -124,13 +253,23 @@ class AdminCategoriesPage extends StatelessWidget {
 
             // Categories List
             Expanded(
-              child: ListView.builder(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                itemCount: controller.filteredCategories.length,
-                itemBuilder: (context, index) {
-                  final category = controller.filteredCategories[index];
-                  return _buildCategoryCard(controller, category);
-                },
+              child: Padding(
+                padding: const EdgeInsets.only(bottom: 50.0),
+                child: ListView.builder(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  itemCount:
+                      controller.filteredCategories.length +
+                      1, // +1 for spacing
+                  itemBuilder: (context, index) {
+                    // إضافة فراغ 100 بكسل بعد آخر عنصر
+                    if (index == controller.filteredCategories.length) {
+                      return const SizedBox(height: 100);
+                    }
+
+                    final category = controller.filteredCategories[index];
+                    return _buildCategoryCard(controller, category);
+                  },
+                ),
               ),
             ),
           ],
@@ -293,25 +432,23 @@ class AdminCategoriesPage extends StatelessWidget {
   }
 
   Widget _buildCategoryImage(MajorCategoryModel category) {
-    return Container(
-      width: 60,
-      height: 60,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        border: Border.all(color: Colors.grey.shade300, width: 2),
-      ),
-      child: ClipOval(
+    return TRoundedContainer(
+      width: 90,
+      height: 90,
+      showBorder: true,
+      radius: BorderRadius.circular(25),
+      borderWidth: 3,
+      borderColor: TColors.white,
+
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(25),
         child:
             category.image?.isNotEmpty == true
-                ? Image.network(
-                  category.image!,
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) {
-                    return Container(
-                      color: Colors.grey.shade200,
-                      child: const Icon(Icons.category, color: Colors.grey),
-                    );
-                  },
+                ? CustomCaChedNetworkImage(
+                  width: 88,
+                  height: 88,
+                  raduis: BorderRadius.circular(25),
+                  url: category.image!,
                 )
                 : Container(
                   color: Colors.grey.shade200,
@@ -346,9 +483,9 @@ class AdminCategoriesPage extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: color.withOpacity(0.3)),
+        border: Border.all(color: color.withValues(alpha: 0.3)),
       ),
       child: Text(
         text,

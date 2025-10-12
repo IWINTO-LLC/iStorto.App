@@ -47,7 +47,7 @@ class MajorCategoryModel {
       id: json['id'],
       name: json['name'] ?? '',
       arabicName: json['arabic_name'],
-      image: json['image'],
+      image: json['image'] ?? "",
       isFeature: json['is_feature'] ?? false,
       status: json['status'] ?? 2,
       parentId: json['parent_id'],

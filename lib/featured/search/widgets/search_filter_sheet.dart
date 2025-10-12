@@ -251,7 +251,7 @@ class _FilterSheetContent extends StatelessWidget {
                       onChanged(option);
                     }
                   },
-                  selectedColor: TColors.primary.withOpacity(0.2),
+                  selectedColor: TColors.primary.withValues(alpha: 0.2),
                   checkmarkColor: TColors.primary,
                 );
               }).toList(),

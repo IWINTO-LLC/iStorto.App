@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:istoreto/featured/home-page/views/widgets/small-widgets/view_all.dart';
 import 'package:istoreto/featured/shop/data/vendor_model.dart';
 import 'package:istoreto/featured/shop/data/vendor_repository.dart';
 import 'package:istoreto/featured/shop/view/market_place_view.dart';
@@ -62,31 +63,7 @@ class _TopSellerSectionsState extends State<TopSellerSections> {
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              Row(
-                children: [
-                  Text(
-                    'see_all'.tr,
-                    style: TextStyle(
-                      color: Theme.of(context).colorScheme.primary,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  const SizedBox(width: 4),
-                  Container(
-                    width: 24,
-                    height: 24,
-                    decoration: BoxDecoration(
-                      color: Colors.black,
-                      shape: BoxShape.circle,
-                    ),
-                    child: const Icon(
-                      Icons.arrow_forward,
-                      color: Colors.white,
-                      size: 16,
-                    ),
-                  ),
-                ],
-              ),
+              ViewAll(onTap: () {}),
             ],
           ),
         ),

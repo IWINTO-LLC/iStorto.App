@@ -233,7 +233,7 @@ class NetworkImageFullScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
-        backgroundColor: Colors.black.withOpacity(0.7),
+        backgroundColor: Colors.black.withValues(alpha: 0.7),
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.white, size: 28),

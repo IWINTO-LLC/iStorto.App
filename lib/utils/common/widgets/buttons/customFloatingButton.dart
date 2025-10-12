@@ -10,16 +10,19 @@ class CustomFloatActionButton extends StatelessWidget {
     this.icon = CupertinoIcons.add,
     this.isIcon = true,
     this.widget,
+    this.heroTag,
   });
   final VoidCallback onTap;
   final IconData icon;
   final bool isIcon;
-  Widget? widget;
+  final Widget? widget;
+  final Object? heroTag;
+
   @override
   Widget build(BuildContext context) {
     return FloatingActionButton(
+      heroTag: heroTag, // إضافة heroTag فريد لتجنب التضارب
       backgroundColor: Colors.transparent,
-
       elevation: 0,
       foregroundColor: Colors.transparent,
       //focusColor: TColors.primary,

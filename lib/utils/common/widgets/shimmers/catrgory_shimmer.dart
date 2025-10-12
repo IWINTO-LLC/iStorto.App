@@ -16,12 +16,16 @@ class TCategoryShummer extends StatelessWidget {
           return Column(
             children: [
               TShimmerEffect(
-                width: 80,
-                height: 75,
-                raduis: BorderRadius.circular(80),
+                width: 90,
+                height: 90,
+                raduis: BorderRadius.circular(25),
               ),
               const SizedBox(height: TSizes.spaceBtWItems / 2),
-              const TShimmerEffect(width: 90, height: 14),
+              TShimmerEffect(
+                width: 90,
+                height: 14,
+                raduis: BorderRadius.circular(10),
+              ),
             ],
           );
         },

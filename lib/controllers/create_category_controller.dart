@@ -5,18 +5,17 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:istoreto/controllers/category_controller.dart';
 import 'package:istoreto/services/image_upload_service.dart';
-import 'package:uuid/uuid.dart';
 
 import '../data/models/category_model.dart';
-import '../data/repositories/category_repository.dart';
+import '../data/models/vendor_category_model.dart';
+import '../data/repositories/vendor_category_repository.dart';
 
 class CreateCategoryController extends GetxController {
   static CreateCategoryController get instance => Get.find();
 
   final isLoading = false.obs;
-  final categoryRepository = CategoryRepository.instance;
+  final vendorCategoryRepository = VendorCategoryRepository();
   final selectedParent = CategoryModel.empty().obs;
   RxString imageUrl = ''.obs;
   RxString localImage = ''.obs;
@@ -25,6 +24,7 @@ class CreateCategoryController extends GetxController {
   final isUploading = false.obs;
 
   final name = TextEditingController();
+  final description = TextEditingController();
   final formKey = GlobalKey<FormState>();
 
   Future<void> pickImage() async {
@@ -113,7 +113,7 @@ class CreateCategoryController extends GetxController {
     }
   }
 
-  RxList<CategoryModel> tempItems = <CategoryModel>[].obs;
+  RxList<VendorCategoryModel> tempItems = <VendorCategoryModel>[].obs;
   Future<void> createCategory(String vendorId) async {
     try {
       isUploading.value = true;
@@ -138,22 +138,25 @@ class CreateCategoryController extends GetxController {
 
       // إنشاء كائن الفئة الجديدة
       message.value = "جاري إعداد البيانات...";
-      final newCat = CategoryModel(
-        title: name.text.trim(),
-        icon: imageUrl.value,
+      final addRequest = AddVendorCategoryRequest(
         vendorId: vendorId,
-        createdAt: DateTime.now(),
-        id: Uuid().v4(),
-        isActive: true,
+        title: name.text.trim(),
+        isPrimary: false, // يمكن تغيير هذا حسب الحاجة
+        priority: 0, // أولوية عالية
+        specializationLevel: 1, // مستوى مبتدئ
+        customDescription:
+            description.text.trim().isNotEmpty ? description.text.trim() : null,
+        icon: imageUrl.value, // حفظ رابط الصورة في حقل icon
       );
 
       // إرسال البيانات إلى قاعدة البيانات
       message.value = "جاري إرسال البيانات...";
-      final createdCategory = await categoryRepository.addCategory(newCat);
+      final createdCategory = await vendorCategoryRepository.addVendorCategory(
+        addRequest,
+      );
 
-      // إضافة الفئة إلى القوائم المحلية
+      // إضافة الفئة إلى القائمة المؤقتة
       message.value = "جاري تحديث القوائم...";
-      CategoryController.instance.addItemToLists(createdCategory);
       tempItems.add(createdCategory);
 
       // إكمال العملية
@@ -173,13 +176,14 @@ class CreateCategoryController extends GetxController {
     }
   }
 
-  void deleteTempItems() => tempItems = <CategoryModel>[].obs;
+  void deleteTempItems() => tempItems = <VendorCategoryModel>[].obs;
   void resetFields() {
     selectedParent(CategoryModel.empty());
     isLoading(false);
     isFeatured(false);
     isUploading(false);
     name.clear();
+    description.clear();
     localImage.value = "";
     imageUrl.value = "";
     message.value = "";

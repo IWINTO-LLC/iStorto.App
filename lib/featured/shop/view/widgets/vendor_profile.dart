@@ -76,15 +76,7 @@ class VendorProfilePreview extends StatelessWidget {
         final name = profile.organizationName;
 
         return GestureDetector(
-          onTap:
-              () => Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder:
-                      (context) =>
-                          MarketPlaceView(editMode: false, vendorId: vendorId),
-                ),
-              ),
+          onTap: () {},
           child: Padding(
             padding: EdgeInsets.all(withPadding ? 10.0 : 0),
             child: Row(

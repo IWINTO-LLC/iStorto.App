@@ -5,7 +5,7 @@ import 'package:istoreto/utils/constants/color.dart';
 
 class TRoundedContainer extends StatelessWidget {
   const TRoundedContainer({
-    Key? key,
+    super.key,
     this.width,
     this.height,
     this.radius,
@@ -17,7 +17,7 @@ class TRoundedContainer extends StatelessWidget {
     this.enableShadow = false,
     this.backgroundColor = TColors.white,
     this.borderWidth,
-  }) : super(key: key);
+  });
 
   final double? width;
   final double? height;

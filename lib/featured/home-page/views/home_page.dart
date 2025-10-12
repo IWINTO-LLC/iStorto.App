@@ -17,13 +17,14 @@ import 'package:istoreto/featured/cart/controller/saved_controller.dart';
 import 'package:istoreto/featured/currency/controller/currency_controller.dart';
 import 'package:istoreto/featured/home-page/views/widgets/banner_section.dart';
 import 'package:istoreto/featured/home-page/views/widgets/home_search_widget.dart';
-import 'package:istoreto/featured/home-page/views/widgets/just_foryou_section.dart';
 import 'package:istoreto/featured/home-page/views/widgets/major_category_section.dart';
 import 'package:istoreto/featured/home-page/views/widgets/most_popular_section.dart';
 import 'package:istoreto/featured/home-page/views/widgets/populer_product.dart';
 import 'package:istoreto/featured/home-page/views/widgets/the_last_vendor_section.dart';
 import 'package:istoreto/featured/home-page/views/widgets/topseller_section.dart';
 import 'package:istoreto/featured/payment/controller/order_controller.dart';
+import 'package:istoreto/views/product_images_gallery_page.dart';
+import 'package:istoreto/utils/constants/color.dart';
 import 'package:istoreto/featured/payment/services/address_service.dart';
 import 'package:istoreto/featured/product/controllers/edit_product_controller.dart';
 import 'package:istoreto/featured/product/controllers/favorite_product_controller.dart';
@@ -48,42 +49,55 @@ class HomePage extends StatelessWidget {
     }
     // Get translation controller to trigger rebuild on language change
     Get.find<TranslationController>();
-    // Initialize General Bindings
-    final generalBindings = GeneralBindings();
-    generalBindings.dependencies();
-    Get.put(VendorRepository());
+    // Initialize General Bindings only once
+    if (!Get.isRegistered<VendorRepository>()) {
+      final generalBindings = GeneralBindings();
+      generalBindings.dependencies();
+      Get.put(VendorRepository());
+    }
 
-    Get.put(CategoryController());
-    Get.put(NetworkManager());
-    Get.put(CategoryRepository());
-    Get.put(SavedController());
-    Get.put(BannerController());
-    Get.put(SaveForLaterController());
-    Get.put(FavoriteProductsController());
-    Get.put(ProductController());
-    Get.put(OrderController());
-    Get.put(EditProductController());
-    Get.put(AlbumRepository());
-    Get.put(PhotoRepository());
-    Get.put(PhotoController());
-    Get.put(FollowController());
-    Get.put(AlbumController());
-    Get.put(CartController());
-    Get.put(AddressService());
-    Get.put(EditCategoryController());
-    Get.put(ImageUploadService());
-    Get.put(TranslateController());
-    Get.put(CurrencyController());
-    Get.put(ProductCurrencyService());
-
-    Get.put(FollowController());
+    // تهيئة Controllers بشكل آمن - استخدام Get.find مع fallback
+    if (!Get.isRegistered<CategoryController>()) Get.put(CategoryController());
+    if (!Get.isRegistered<NetworkManager>()) Get.put(NetworkManager());
+    if (!Get.isRegistered<CategoryRepository>()) Get.put(CategoryRepository());
+    if (!Get.isRegistered<SavedController>()) Get.put(SavedController());
+    if (!Get.isRegistered<BannerController>()) Get.put(BannerController());
+    if (!Get.isRegistered<SaveForLaterController>())
+      Get.put(SaveForLaterController());
+    if (!Get.isRegistered<FavoriteProductsController>())
+      Get.put(FavoriteProductsController());
+    if (!Get.isRegistered<ProductController>()) Get.put(ProductController());
+    if (!Get.isRegistered<OrderController>()) Get.put(OrderController());
+    if (!Get.isRegistered<EditProductController>())
+      Get.put(EditProductController());
+    if (!Get.isRegistered<AlbumRepository>()) Get.put(AlbumRepository());
+    if (!Get.isRegistered<PhotoRepository>()) Get.put(PhotoRepository());
+    if (!Get.isRegistered<PhotoController>()) Get.put(PhotoController());
+    if (!Get.isRegistered<FollowController>()) Get.put(FollowController());
+    if (!Get.isRegistered<AlbumController>()) Get.put(AlbumController());
+    if (!Get.isRegistered<CartController>()) Get.put(CartController());
+    if (!Get.isRegistered<AddressService>()) Get.put(AddressService());
+    if (!Get.isRegistered<EditCategoryController>())
+      Get.put(EditCategoryController());
+    if (!Get.isRegistered<ImageUploadService>()) Get.put(ImageUploadService());
+    if (!Get.isRegistered<TranslateController>())
+      Get.put(TranslateController());
+    if (!Get.isRegistered<CurrencyController>()) Get.put(CurrencyController());
+    if (!Get.isRegistered<ProductCurrencyService>())
+      Get.put(ProductCurrencyService());
 
     return SingleChildScrollView(
       child: Column(
         children: [
+          SizedBox(height: TSizes.paddingSizeDefault),
           // شريط البحث
           Padding(
-            padding: const EdgeInsets.all(TSizes.defaultSpace),
+            padding: const EdgeInsets.only(
+              left: TSizes.defaultSpace,
+              right: TSizes.defaultSpace,
+              top: TSizes.defaultSpace,
+              bottom: TSizes.defaultSpace / 2,
+            ),
             child: const HomeSearchWidget(),
           ),
           BannerSection(),
@@ -97,20 +111,17 @@ class HomePage extends StatelessWidget {
 
           // Popular Products Section
           PopularProduct(context: context),
+          const SizedBox(height: TSizes.spaceBtWsections),
+          _buildDiscoverGalleryButton(context),
 
           const SizedBox(height: TSizes.spaceBtWsections),
-          MostPopularSection(),
-          const SizedBox(height: TSizes.spaceBtWsections),
 
+          // MostPopularSection(),
+          // const SizedBox(height: TSizes.spaceBtWsections),
           const TheLastVendorSection(),
           const SizedBox(height: TSizes.spaceBtWsections),
 
-          // Just For You Section
-          const JustForYou(),
-
-          const SizedBox(height: TSizes.spaceBtWsections),
-          // New Items Section
-          // NewItemSection(context: context),
+          // زر اكتشف معرض الصور
 
           // const SizedBox(height: TSizes.spaceBtWsections),
 
@@ -120,15 +131,114 @@ class HomePage extends StatelessWidget {
           const SizedBox(height: TSizes.spaceBtWsections),
 
           // Most Popular Section
-          const MostPopularSection(),
+          // const MostPopularSection(),
 
-          const SizedBox(height: TSizes.spaceBtWsections),
+          // const SizedBox(height: TSizes.spaceBtWsections),
 
           // Just For You Section
-          const JustForYou(),
-
-          const SizedBox(height: 100), // Space for bottom navigation
+          const SizedBox(height: 200), // Space for bottom navigation
         ],
+      ),
+    );
+  }
+
+  /// زر اكتشف معرض الصور
+  static Widget _buildDiscoverGalleryButton(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: TSizes.defaultSpace),
+      child: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Colors.black, TColors.black.withValues(alpha: 0.8)],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.3),
+              blurRadius: 12,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Material(
+          color: Colors.transparent,
+          child: InkWell(
+            onTap: () {
+              Get.to(
+                () => const ProductImagesGalleryPage(),
+                transition: Transition.rightToLeft,
+                duration: const Duration(milliseconds: 300),
+              );
+            },
+            borderRadius: BorderRadius.circular(16),
+            child: Padding(
+              padding: const EdgeInsets.all(20),
+              child: Row(
+                children: [
+                  // أيقونة
+                  Container(
+                    width: 56,
+                    height: 56,
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.2),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: const Icon(
+                      Icons.photo_library_rounded,
+                      color: Colors.white,
+                      size: 28,
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+
+                  // النص
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'gallery.discover_latest_products'.tr,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            height: 1.2,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          'gallery.browse_thousands_of_photos'.tr,
+                          style: TextStyle(
+                            color: Colors.white.withOpacity(0.9),
+                            fontSize: 13,
+                            height: 1.3,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  // سهم
+                  Container(
+                    width: 32,
+                    height: 32,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(
+                      Icons.arrow_forward_ios,
+                      color: Colors.black,
+                      size: 16,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
       ),
     );
   }

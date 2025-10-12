@@ -184,7 +184,7 @@ class _MapLocationPickerState extends State<MapLocationPicker> {
                       borderRadius: BorderRadius.circular(12),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.blue.withOpacity(0.08),
+                          color: Colors.blue.withValues(alpha: 0.08),
                           blurRadius: 12,
                           offset: const Offset(0, 2),
                         ),

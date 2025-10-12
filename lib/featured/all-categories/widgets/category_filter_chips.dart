@@ -117,11 +117,11 @@ class CategoryFilterChips extends StatelessWidget {
       ),
       selected: isSelected,
       onSelected: (_) => onSelected(),
-      backgroundColor: color.withOpacity(0.1),
+      backgroundColor: color.withValues(alpha: 0.1),
       selectedColor: color,
       checkmarkColor: Colors.white,
       side: BorderSide(
-        color: isSelected ? color : color.withOpacity(0.3),
+        color: isSelected ? color : color.withValues(alpha: 0.3),
         width: 1,
       ),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),

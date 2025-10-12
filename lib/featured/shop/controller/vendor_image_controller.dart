@@ -10,10 +10,27 @@ class VendorImageController extends GetxController {
   static VendorImageController get instance => Get.find();
 
   final ImagePicker _imagePicker = ImagePicker();
-  final RxBool _isLoading = false.obs;
+
+  // متغيرات منفصلة للشعار والغلاف
+  final RxBool _isLoadingLogo = false.obs;
+  final RxBool _isLoadingCover = false.obs;
+  final RxDouble _logoUploadProgress = 0.0.obs;
+  final RxDouble _coverUploadProgress = 0.0.obs;
 
   // Getters
-  bool get isLoading => _isLoading.value;
+  bool get isLoadingLogo => _isLoadingLogo.value;
+  bool get isLoadingCover => _isLoadingCover.value;
+  double get logoUploadProgress => _logoUploadProgress.value;
+  double get coverUploadProgress => _coverUploadProgress.value;
+
+  // للتوافق مع الكود القديم
+  @Deprecated('Use isLoadingLogo or isLoadingCover')
+  bool get isLoading => _isLoadingLogo.value || _isLoadingCover.value;
+  @Deprecated('Use logoUploadProgress or coverUploadProgress')
+  double get uploadProgress =>
+      _isLoadingLogo.value
+          ? _logoUploadProgress.value
+          : _coverUploadProgress.value;
 
   // Edit Vendor Cover Image
   Future<void> editVendorCoverImage(String vendorId) async {
@@ -60,8 +77,6 @@ class VendorImageController extends GetxController {
   // Pick from Camera
   Future<void> _pickFromCamera(String vendorId, {required bool isCover}) async {
     try {
-      _isLoading.value = true;
-
       final XFile? pickedFile = await _imagePicker.pickImage(
         source: ImageSource.camera,
         imageQuality: 80,
@@ -79,8 +94,6 @@ class VendorImageController extends GetxController {
         colorText: Colors.red.shade800,
         duration: Duration(seconds: 3),
       );
-    } finally {
-      _isLoading.value = false;
     }
   }
 
@@ -90,8 +103,6 @@ class VendorImageController extends GetxController {
     required bool isCover,
   }) async {
     try {
-      _isLoading.value = true;
-
       final XFile? pickedFile = await _imagePicker.pickImage(
         source: ImageSource.gallery,
         imageQuality: 80,
@@ -109,8 +120,6 @@ class VendorImageController extends GetxController {
         colorText: Colors.red.shade800,
         duration: Duration(seconds: 3),
       );
-    } finally {
-      _isLoading.value = false;
     }
   }
 
@@ -122,6 +131,7 @@ class VendorImageController extends GetxController {
   }) async {
     try {
       // Crop image
+
       final croppedFile = await _cropImage(imageFile, isCover: isCover);
 
       if (croppedFile != null) {
@@ -161,7 +171,7 @@ class VendorImageController extends GetxController {
       uiSettings: [
         AndroidUiSettings(
           toolbarTitle: isCover ? 'قص صورة الغلاف' : 'قص شعار المتجر',
-          toolbarColor: Colors.blue,
+          toolbarColor: Colors.black,
           toolbarWidgetColor: Colors.white,
           initAspectRatio:
               isCover
@@ -170,6 +180,10 @@ class VendorImageController extends GetxController {
           lockAspectRatio: true,
           cropGridColor: Colors.blue,
           cropGridStrokeWidth: 2,
+          cropStyle:
+              isCover
+                  ? CropStyle.rectangle
+                  : CropStyle.circle, // مستطيل للغلاف، دائري للشعار
           hideBottomControls: false,
           showCropGrid: true,
         ),
@@ -179,6 +193,10 @@ class VendorImageController extends GetxController {
           cancelButtonTitle: 'إلغاء',
           aspectRatioLockEnabled: true,
           resetAspectRatioEnabled: false,
+          cropStyle:
+              isCover
+                  ? CropStyle.rectangle
+                  : CropStyle.circle, // مستطيل للغلاف، دائري للشعار
           minimumAspectRatio: isCover ? 1.0 : 1.0,
         ),
       ],
@@ -192,33 +210,56 @@ class VendorImageController extends GetxController {
     required bool isCover,
   }) async {
     try {
-      _isLoading.value = true;
+      // تعيين المتغيرات الصحيحة حسب النوع
+      if (isCover) {
+        _isLoadingCover.value = true;
+        _coverUploadProgress.value = 0.0;
+      } else {
+        _isLoadingLogo.value = true;
+        _logoUploadProgress.value = 0.0;
+      }
 
-      // Upload image to Supabase Storage
+      // مرحلة قراءة الملف - 10%
+      _setProgress(isCover, 0.1);
       final supabaseService = SupabaseService();
       final imageBytes = await imageFile.readAsBytes();
 
+      // مرحلة التحضير - 20%
+      _setProgress(isCover, 0.2);
       final fileName =
           isCover
               ? 'vendor_covers/cover_${vendorId}_${DateTime.now().millisecondsSinceEpoch}.jpg'
               : 'vendor_logos/logo_${vendorId}_${DateTime.now().millisecondsSinceEpoch}.jpg';
+
+      // مرحلة الرفع - 30% إلى 80%
+      _setProgress(isCover, 0.3);
+      await Future.delayed(Duration(milliseconds: 200));
+      _setProgress(isCover, 0.5);
 
       final uploadResult = await supabaseService.uploadImageToStorage(
         imageBytes,
         fileName,
       );
 
+      // مرحلة الحصول على الرابط - 85%
+      _setProgress(isCover, 0.85);
       final imageUrl = uploadResult['url'] as String? ?? '';
 
       if (imageUrl.isNotEmpty) {
-        // Update vendor data in database
+        // مرحلة تحديث قاعدة البيانات - 90%
+        _setProgress(isCover, 0.9);
         await _updateVendorImageInDatabase(
           vendorId,
           imageUrl,
           isCover: isCover,
         );
+
+        // مكتمل - 100%
+        _setProgress(isCover, 1.0);
+        await Future.delayed(Duration(milliseconds: 300));
       }
     } catch (e) {
+      _setProgress(isCover, 0.0);
       Get.snackbar(
         'خطأ',
         'فشل في رفع الصورة: ${e.toString()}',
@@ -228,7 +269,22 @@ class VendorImageController extends GetxController {
         duration: Duration(seconds: 3),
       );
     } finally {
-      _isLoading.value = false;
+      if (isCover) {
+        _isLoadingCover.value = false;
+        _coverUploadProgress.value = 0.0;
+      } else {
+        _isLoadingLogo.value = false;
+        _logoUploadProgress.value = 0.0;
+      }
+    }
+  }
+
+  // دالة مساعدة لتعيين التقدم حسب النوع
+  void _setProgress(bool isCover, double value) {
+    if (isCover) {
+      _coverUploadProgress.value = value;
+    } else {
+      _logoUploadProgress.value = value;
     }
   }
 
@@ -242,10 +298,17 @@ class VendorImageController extends GetxController {
       final fieldName = isCover ? 'organization_cover' : 'organization_logo';
 
       // Update vendor data in Supabase
-      await SupabaseService.client
-          .from('vendors')
-          .update({fieldName: imageUrl})
-          .eq('user_id', vendorId);
+      debugPrint('🔄 Updating $fieldName for vendor: $vendorId');
+      debugPrint('📸 New image URL: $imageUrl');
+
+      final response =
+          await SupabaseService.client
+              .from('vendors')
+              .update({fieldName: imageUrl})
+              .eq('id', vendorId) // تغيير من user_id إلى id
+              .select();
+
+      debugPrint('✅ Update response: $response');
 
       // Add small delay to show shimmer effect
       await Future.delayed(Duration(milliseconds: 500));
@@ -255,7 +318,11 @@ class VendorImageController extends GetxController {
       await vendorController.fetchVendorData(vendorId);
 
       // Ensure loading is stopped
-      _isLoading.value = false;
+      if (isCover) {
+        _isLoadingCover.value = false;
+      } else {
+        _isLoadingLogo.value = false;
+      }
 
       Get.snackbar(
         'نجح',
@@ -266,7 +333,11 @@ class VendorImageController extends GetxController {
         duration: Duration(seconds: 2),
       );
     } catch (e) {
-      _isLoading.value = false;
+      if (isCover) {
+        _isLoadingCover.value = false;
+      } else {
+        _isLoadingLogo.value = false;
+      }
       Get.snackbar(
         'خطأ',
         'فشل في تحديث البيانات: ${e.toString()}',

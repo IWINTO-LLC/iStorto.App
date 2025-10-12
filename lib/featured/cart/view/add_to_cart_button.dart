@@ -17,30 +17,23 @@ class AddToCartButton extends StatelessWidget {
   double size;
   @override
   Widget build(BuildContext context) {
-    var quantity = 0;
-    // final GlobalKey globalKeyAddButton =
-    //     GlobalKey(debugLabel: 'add_${product.id}');
-    // final GlobalKey globalKeyAddButton = GlobalKey();
-    // final GlobalKey globalKeyAddButton = GlobalKey();
-    var cartController = CartController.instance;
-    Future.microtask(() {
-      cartController.getProductQuantity(product.id);
-    });
+    final cartController = CartController.instance;
 
-    return GestureDetector(
-      onTap: () {
-        if (quantity > 0) {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => CartScreen()),
-          );
-        } else {
-          cartController.addToCart(product);
-        }
-      },
-      child: Obx(() {
-        quantity = cartController.productQuantities[product.id]?.value ?? 0;
-        return TRoundedContainer(
+    return Obx(() {
+      // الحصول على الكمية الفعلية مباشرة
+      final quantity = cartController.productQuantities[product.id]?.value ?? 0;
+
+      return GestureDetector(
+        onTap: () {
+          if (quantity > 0) {
+            // إذا كان المنتج موجود، افتح صفحة السلة
+            Get.to(() => const CartScreen(), transition: Transition.cupertino);
+          } else {
+            // إضافة المنتج للسلة
+            cartController.addToCart(product);
+          }
+        },
+        child: TRoundedContainer(
           borderColor: Colors.black,
           borderWidth: 2,
           width: (size * 4) - 5,
@@ -49,7 +42,6 @@ class AddToCartButton extends StatelessWidget {
           showBorder: true,
           backgroundColor: Colors.black,
           child: Center(
-            //padding: const EdgeInsets.all(4.0),
             child: Padding(
               padding: const EdgeInsets.only(top: 5.0),
               child: Text(
@@ -62,8 +54,8 @@ class AddToCartButton extends StatelessWidget {
               ),
             ),
           ),
-        );
-      }),
-    );
+        ),
+      );
+    });
   }
 }

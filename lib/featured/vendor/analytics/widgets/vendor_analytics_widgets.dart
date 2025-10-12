@@ -68,7 +68,8 @@ class VendorSummaryCard extends StatelessWidget {
                   Expanded(
                     child: _StatCard(
                       title: 'القيمة المحتملة',
-                      value: '${analytics.totalPotentialRevenue.toStringAsFixed(0)} ريال',
+                      value:
+                          '${analytics.totalPotentialRevenue.toStringAsFixed(0)} ريال',
                       icon: Icons.attach_money,
                       color: Colors.purple,
                     ),
@@ -106,9 +107,7 @@ class TopPerformingProductsList extends StatelessWidget {
         return const Card(
           child: Padding(
             padding: EdgeInsets.all(16.0),
-            child: Center(
-              child: Text('لا توجد منتجات متاحة'),
-            ),
+            child: Center(child: Text('لا توجد منتجات متاحة')),
           ),
         );
       }
@@ -124,10 +123,14 @@ class TopPerformingProductsList extends StatelessWidget {
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 16),
-              ...products.take(5).map((product) => _ProductAnalyticsTile(
-                product: product,
-                showEngagement: true,
-              )),
+              ...products
+                  .take(5)
+                  .map(
+                    (product) => _ProductAnalyticsTile(
+                      product: product,
+                      showEngagement: true,
+                    ),
+                  ),
             ],
           ),
         ),
@@ -150,9 +153,7 @@ class ProductsNeedingAttentionList extends StatelessWidget {
         return const Card(
           child: Padding(
             padding: EdgeInsets.all(16.0),
-            child: Center(
-              child: Text('جميع المنتجات تعمل بشكل جيد!'),
-            ),
+            child: Center(child: Text('جميع المنتجات تعمل بشكل جيد!')),
           ),
         );
       }
@@ -173,10 +174,14 @@ class ProductsNeedingAttentionList extends StatelessWidget {
                 style: TextStyle(fontSize: 12, color: Colors.grey),
               ),
               const SizedBox(height: 16),
-              ...products.take(3).map((product) => _ProductAnalyticsTile(
-                product: product,
-                showConversion: true,
-              )),
+              ...products
+                  .take(3)
+                  .map(
+                    (product) => _ProductAnalyticsTile(
+                      product: product,
+                      showConversion: true,
+                    ),
+                  ),
             ],
           ),
         ),
@@ -208,9 +213,7 @@ class RecentActivityList extends StatelessWidget {
         return const Card(
           child: Padding(
             padding: EdgeInsets.all(16.0),
-            child: Center(
-              child: Text('لا توجد أنشطة حديثة'),
-            ),
+            child: Center(child: Text('لا توجد أنشطة حديثة')),
           ),
         );
       }
@@ -226,9 +229,9 @@ class RecentActivityList extends StatelessWidget {
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 16),
-              ...activities.take(5).map((activity) => _ActivityTile(
-                activity: activity,
-              )),
+              ...activities
+                  .take(5)
+                  .map((activity) => _ActivityTile(activity: activity)),
             ],
           ),
         ),
@@ -256,9 +259,9 @@ class _StatCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: color.withOpacity(0.3)),
+        border: Border.all(color: color.withValues(alpha: 0.3)),
       ),
       child: Column(
         children: [
@@ -314,17 +317,19 @@ class _ProductAnalyticsTile extends StatelessWidget {
               color: Colors.grey[300],
               borderRadius: BorderRadius.circular(4),
             ),
-            child: product['image'] != null
-                ? ClipRRect(
-                    borderRadius: BorderRadius.circular(4),
-                    child: Image.network(
-                      product['image'],
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) =>
-                          const Icon(Icons.image),
-                    ),
-                  )
-                : const Icon(Icons.image),
+            child:
+                product['image'] != null
+                    ? ClipRRect(
+                      borderRadius: BorderRadius.circular(4),
+                      child: Image.network(
+                        product['image'],
+                        fit: BoxFit.cover,
+                        errorBuilder:
+                            (context, error, stackTrace) =>
+                                const Icon(Icons.image),
+                      ),
+                    )
+                    : const Icon(Icons.image),
           ),
           const SizedBox(width: 12),
           Expanded(
@@ -355,7 +360,8 @@ class _ProductAnalyticsTile extends StatelessWidget {
                       const SizedBox(width: 8),
                       _MetricChip(
                         label: 'تفاعل',
-                        value: '${(product['engagement_score'] ?? 0).toStringAsFixed(1)}',
+                        value:
+                            '${(product['engagement_score'] ?? 0).toStringAsFixed(1)}',
                         color: Colors.purple,
                       ),
                     ],
@@ -394,15 +400,21 @@ class _ActivityTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final type = activity['activity_type'] as String?;
     final isSaved = type == 'saved';
-    
+
     return Container(
       margin: const EdgeInsets.only(bottom: 8),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: isSaved ? Colors.orange.withOpacity(0.1) : Colors.green.withOpacity(0.1),
+        color:
+            isSaved
+                ? Colors.orange.withValues(alpha: 0.1)
+                : Colors.green.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
-          color: isSaved ? Colors.orange.withOpacity(0.3) : Colors.green.withOpacity(0.3),
+          color:
+              isSaved
+                  ? Colors.orange.withValues(alpha: 0.3)
+                  : Colors.green.withValues(alpha: 0.3),
         ),
       ),
       child: Row(
@@ -444,7 +456,7 @@ class _ActivityTile extends StatelessWidget {
       final time = DateTime.parse(timestamp.toString());
       final now = DateTime.now();
       final difference = now.difference(time);
-      
+
       if (difference.inMinutes < 60) {
         return 'منذ ${difference.inMinutes} دقيقة';
       } else if (difference.inHours < 24) {
@@ -475,9 +487,9 @@ class _MetricChip extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: color.withOpacity(0.3)),
+        border: Border.all(color: color.withValues(alpha: 0.3)),
       ),
       child: Text(
         '$label: $value',

@@ -116,7 +116,7 @@ class ViewPersonalInfoPage extends StatelessWidget {
                         ),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withOpacity(0.1),
+                            color: Colors.black.withValues(alpha: 0.1),
                             blurRadius: 10,
                             offset: Offset(0, 5),
                           ),
@@ -249,7 +249,7 @@ class ViewPersonalInfoPage extends StatelessWidget {
                           color: (user.accountType == 1
                                   ? Colors.green
                                   : Colors.blue)
-                              .withOpacity(0.3),
+                              .withValues(alpha: 0.3),
                           blurRadius: 15,
                           offset: Offset(0, 5),
                         ),
@@ -260,7 +260,7 @@ class ViewPersonalInfoPage extends StatelessWidget {
                         Container(
                           padding: EdgeInsets.all(12),
                           decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.3),
+                            color: Colors.white.withValues(alpha: 0.3),
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: Icon(
@@ -292,7 +292,7 @@ class ViewPersonalInfoPage extends StatelessWidget {
                                     ? 'business_account_description'.tr
                                     : 'personal_account_description'.tr,
                                 style: TextStyle(
-                                  color: Colors.white.withOpacity(0.9),
+                                  color: Colors.white.withValues(alpha: 0.9),
                                   fontSize: 13,
                                 ),
                               ),
@@ -383,7 +383,7 @@ class ViewPersonalInfoPage extends StatelessWidget {
         border: Border.all(color: Colors.grey.shade200),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: Offset(0, 2),
           ),
@@ -396,7 +396,7 @@ class ViewPersonalInfoPage extends StatelessWidget {
           Container(
             padding: EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: iconColor.withOpacity(0.1),
+              color: iconColor.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(10),
             ),
             child: Icon(icon, color: iconColor, size: 24),
@@ -446,9 +446,9 @@ class ViewPersonalInfoPage extends StatelessWidget {
     return Container(
       padding: EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: color.withOpacity(0.3)),
+        border: Border.all(color: color.withValues(alpha: 0.3)),
       ),
       child: Column(
         children: [

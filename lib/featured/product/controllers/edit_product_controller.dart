@@ -8,14 +8,13 @@ import 'package:image_picker/image_picker.dart';
 
 import 'package:istoreto/controllers/category_controller.dart';
 import 'package:istoreto/data/models/category_model.dart';
-import 'package:istoreto/data/models/upload_result.dart';
 import 'package:istoreto/featured/currency/controller/currency_controller.dart';
 import 'package:istoreto/featured/product/data/product_model.dart';
 import 'package:istoreto/featured/product/data/product_repository.dart';
 import 'package:istoreto/featured/custom_Excel_menu/controller/bulk_excel_product_control.dart';
+import 'package:istoreto/services/image_upload_service.dart';
 
 import 'package:istoreto/utils/loader/loaders.dart';
-import 'package:istoreto/utils/upload.dart';
 
 class EditProductController extends GetxController {
   static EditProductController get instance => Get.find();
@@ -30,9 +29,18 @@ class EditProductController extends GetxController {
     ever(initialImage, (_) => update()); // تحديث عند تغيير الصور
   }
 
-  // Upload media to server
-  Future<UploadResult> uploadMediaToServer(File file) async {
-    return await UploadService.instance.uploadMediaToServer(file);
+  // Upload media to server using Supabase
+  Future<Map<String, dynamic>> uploadMediaToServer(File file) async {
+    try {
+      final result = await ImageUploadService.instance.uploadImage(
+        imageFile: file,
+        folderName: 'products',
+        customFileName: 'product_${DateTime.now().millisecondsSinceEpoch}',
+      );
+      return result;
+    } catch (e) {
+      return {'success': false, 'error': e.toString()};
+    }
   }
 
   void removeInitialImage(int index) {
@@ -310,12 +318,12 @@ class EditProductController extends GetxController {
       snackPosition: SnackPosition.BOTTOM,
 
       margin: EdgeInsets.only(bottom: 20, left: 40, right: 40),
-      backgroundColor: Colors.black.withOpacity(0.9),
+      backgroundColor: Colors.black.withValues(alpha: 0.9),
       colorText: Colors.white,
       duration: Duration(seconds: 90),
       isDismissible: false,
       showProgressIndicator: true,
-      progressIndicatorBackgroundColor: Colors.white.withOpacity(0.3),
+      progressIndicatorBackgroundColor: Colors.white.withValues(alpha: 0.3),
       progressIndicatorValueColor: AlwaysStoppedAnimation<Color>(Colors.white),
       // padding: EdgeInsets.symmetric(vertical: 16, horizontal: 24),
       borderRadius: 25,
@@ -374,41 +382,61 @@ class EditProductController extends GetxController {
   Future<void> uploadThumbnail() async {
     message.value = "uploading thumbnail";
     if (localThumbnail.value == "") return;
+
     File img = File(localThumbnail.value);
     if (kDebugMode) {
-      print("================= befor ==upload category=======");
+      print("================= uploading thumbnail to Supabase =======");
       print(img.path);
     }
-    UploadResult s1 = await UploadService.instance.uploadMediaToServer(img);
-    var s = s1.fileUrl;
-    thumbnailUrl.value = "$mediaPath$s";
-    if (kDebugMode) {
-      print("uploading url===${thumbnailUrl.value}");
-      message.value = "uploading thumb done";
+
+    try {
+      // Use Supabase ImageUploadService
+      final result = await ImageUploadService.instance.uploadImage(
+        imageFile: img,
+        folderName: 'products',
+        customFileName: 'thumbnail_${DateTime.now().millisecondsSinceEpoch}',
+      );
+
+      if (result['success'] == true) {
+        thumbnailUrl.value = result['url'] ?? '';
+        if (kDebugMode) {
+          print("Thumbnail upload successful! URL: ${thumbnailUrl.value}");
+          message.value = "uploading thumb done";
+        }
+      } else {
+        throw Exception(result['error'] ?? 'Upload failed');
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print("Thumbnail upload error: $e");
+      }
+      message.value = "upload_error".tr;
+      throw e;
     }
-    return;
   }
 
   Future<List<String>> uploadImages(List<XFile> localImages) async {
     try {
-      List<String> s3 = [];
-      if (localImages == []) return s3;
+      List<String> uploadedUrls = [];
+      if (localImages.isEmpty) return uploadedUrls;
+
       for (var image in localImages) {
         File img = File(image.path);
 
-        UploadResult s = await uploadMediaToServer(img);
+        final result = await uploadMediaToServer(img);
 
-        s3.add("$mediaPath${s.fileUrl}");
-        print("uploaded images: $mediaPath${s.fileUrl}");
-
-        if (kDebugMode) {
-          print(
-            "================= uploaded= compressed ========== $mediaPath${s.fileUrl}",
-          );
+        if (result['success'] == true) {
+          final url = result['url'] ?? '';
+          uploadedUrls.add(url);
+          if (kDebugMode) {
+            print("Uploaded image: $url");
+          }
+        } else {
+          throw Exception(result['error'] ?? 'Upload failed');
         }
       }
 
-      return s3;
+      return uploadedUrls;
     } catch (e) {
       if (kDebugMode) {
         print("=========Exception while upload $e");

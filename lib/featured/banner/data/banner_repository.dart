@@ -115,6 +115,35 @@ class BannerRepository extends GetxController {
     }
   }
 
+  // Get all banners for specific vendor (regardless of scope or active status)
+  // للاستخدام في صفحة إدارة بانرات التاجر
+  Future<List<BannerModel>> getAllVendorBannersByVendorId(
+    String vendorId,
+  ) async {
+    try {
+      final response = await _client
+          .from('banners')
+          .select()
+          .eq('vendor_id', vendorId)
+          .order('created_at', ascending: false);
+
+      if (kDebugMode) {
+        print("=======All Vendor Banners for $vendorId==============");
+        print(response.toString());
+      }
+
+      final resultList =
+          (response as List).map((data) => BannerModel.fromJson(data)).toList();
+
+      return resultList;
+    } catch (e) {
+      if (kDebugMode) {
+        print("Error getting all vendor banners: $e");
+      }
+      throw 'Failed to get all vendor banners: ${e.toString()}';
+    }
+  }
+
   // Get mixed banners (company + specific vendor)
   Future<List<BannerModel>> getMixedBanners(String? vendorId) async {
     try {

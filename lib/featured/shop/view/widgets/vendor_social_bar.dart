@@ -29,11 +29,25 @@ class _VendorSocialLinksBarState extends State<VendorSocialLinksBar> {
       final controller = VendorController.instance;
       final profile = controller.vendorData.value;
       final userId = widget.vendorId;
-      if (profile.userId != userId || profile == VendorModel.empty()) {
+
+      // Debug: Print current state
+      debugPrint(
+        "VendorSocialLinksBar - userId: $userId, profile.userId: ${profile.userId}",
+      );
+      debugPrint(
+        "VendorSocialLinksBar - profile isEmpty: ${profile == VendorModel.empty()}",
+      );
+
+      if (profile.userId?.isEmpty == true || profile == VendorModel.empty()) {
         return TShimmerEffect(width: 180, height: 32);
       }
 
       final social = profile.socialLink;
+      if (social == null) {
+        debugPrint("VendorSocialLinksBar - social is null");
+        return const SizedBox.shrink();
+      }
+
       final links = <Map<String, String>>[];
 
       void addLink(String platform, String url, bool isVisible) {
@@ -42,7 +56,7 @@ class _VendorSocialLinksBarState extends State<VendorSocialLinksBar> {
         }
       }
 
-      addLink('website', social!.website, social!.visibleWebsite);
+      addLink('website', social.website, social.visibleWebsite);
       addLink('facebook', social.facebook, social.visibleFacebook);
       addLink('instagram', social.instagram, social.visibleInstagram);
       addLink('tiktok', social.tiktok, social.visibleTiktok);
@@ -54,9 +68,11 @@ class _VendorSocialLinksBarState extends State<VendorSocialLinksBar> {
 
       final phoneNumbers =
           social.phones.where((p) => p.trim().isNotEmpty).toList();
-      if (phoneNumbers.isNotEmpty) {
+      if (phoneNumbers.isNotEmpty && social.visiblePhones) {
         links.add({'platform': 'phone', 'url': 'showPhones'});
       }
+
+      debugPrint("VendorSocialLinksBar - links count: ${links.length}");
 
       if (links.isEmpty) return const SizedBox.shrink();
 
@@ -83,7 +99,7 @@ class _VendorSocialLinksBarState extends State<VendorSocialLinksBar> {
 
                     if (platform == 'whatsapp' && !url.startsWith('http')) {
                       final cleaned = url.replaceAll(RegExp(r'[^0-9]'), '');
-                      url = 'https://wa.me/cleaned';
+                      url = 'https://wa.me/$cleaned';
                     }
 
                     return GestureDetector(

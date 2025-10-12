@@ -1,4 +1,5 @@
 import 'package:istoreto/data/models/category_model.dart';
+import 'package:istoreto/featured/shop/data/vendor_model.dart';
 
 class ProductModel {
   String id;
@@ -16,6 +17,7 @@ class ProductModel {
   bool isDeleted;
   int minQuantity;
   int salePercentage;
+  VendorModel? vendor;
   String? currency; // Currency ISO code (e.g., 'USD', 'EUR')
   DateTime? createdAt;
   DateTime? updatedAt;
@@ -39,6 +41,7 @@ class ProductModel {
     this.currency = 'USD', // Default to USD
     this.createdAt,
     this.updatedAt,
+    this.vendor,
   });
 
   Map<String, dynamic> toJson() {

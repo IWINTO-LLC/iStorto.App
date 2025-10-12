@@ -6,10 +6,8 @@ import 'package:istoreto/featured/vendor/analytics/widgets/vendor_analytics_widg
 class VendorAnalyticsPage extends StatefulWidget {
   final String vendorId;
 
-  const VendorAnalyticsPage({
-    Key? key,
-    required this.vendorId,
-  }) : super(key: key);
+  const VendorAnalyticsPage({Key? key, required this.vendorId})
+    : super(key: key);
 
   @override
   State<VendorAnalyticsPage> createState() => _VendorAnalyticsPageState();
@@ -24,7 +22,7 @@ class _VendorAnalyticsPageState extends State<VendorAnalyticsPage>
   void initState() {
     super.initState();
     _tabController = TabController(length: 4, vsync: this);
-    
+
     // Set vendor ID and load analytics
     analyticsController.setVendorId(widget.vendorId);
     analyticsController.loadVendorAnalytics();
@@ -67,13 +65,13 @@ class _VendorAnalyticsPageState extends State<VendorAnalyticsPage>
           children: [
             // Summary Tab
             _buildSummaryTab(),
-            
+
             // Performance Tab
             _buildPerformanceTab(),
-            
+
             // Attention Tab
             _buildAttentionTab(),
-            
+
             // Activity Tab
             _buildActivityTab(),
           ],
@@ -150,27 +148,30 @@ class _VendorAnalyticsPageState extends State<VendorAnalyticsPage>
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
-            Obx(() => Row(
-              children: [
-                Expanded(
-                  child: _QuickStatItem(
-                    title: 'المستخدمين الفريدين',
-                    value: '${analyticsController.totalUniqueSavers}',
-                    subtitle: 'حفظوا منتجاتك',
-                    color: Colors.blue,
+            Obx(
+              () => Row(
+                children: [
+                  Expanded(
+                    child: _QuickStatItem(
+                      title: 'المستخدمين الفريدين',
+                      value: '${analyticsController.totalUniqueSavers}',
+                      subtitle: 'حفظوا منتجاتك',
+                      color: Colors.blue,
+                    ),
                   ),
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: _QuickStatItem(
-                    title: 'معدل التفاعل',
-                    value: '${analyticsController.averageEngagementScore.toStringAsFixed(1)}',
-                    subtitle: 'نقاط التفاعل',
-                    color: Colors.purple,
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: _QuickStatItem(
+                      title: 'معدل التفاعل',
+                      value:
+                          '${analyticsController.averageEngagementScore.toStringAsFixed(1)}',
+                      subtitle: 'نقاط التفاعل',
+                      color: Colors.purple,
+                    ),
                   ),
-                ),
-              ],
-            )),
+                ],
+              ),
+            ),
           ],
         ),
       ),
@@ -190,52 +191,62 @@ class _VendorAnalyticsPageState extends State<VendorAnalyticsPage>
             ),
             const SizedBox(height: 16),
             Obx(() {
-              final products = analyticsController.topEngagementProducts.take(5).toList();
+              final products =
+                  analyticsController.topEngagementProducts.take(5).toList();
               if (products.isEmpty) {
-                return const Center(
-                  child: Text('لا توجد بيانات متاحة'),
-                );
+                return const Center(child: Text('لا توجد بيانات متاحة'));
               }
 
               return Column(
-                children: products.map((product) {
-                  final score = (product['engagement_score'] as num?)?.toDouble() ?? 0;
-                  final maxScore = products.first['engagement_score'] as num? ?? 1;
-                  final percentage = maxScore > 0 ? (score / maxScore) * 100 : 0;
+                children:
+                    products.map((product) {
+                      final score =
+                          (product['engagement_score'] as num?)?.toDouble() ??
+                          0;
+                      final maxScore =
+                          products.first['engagement_score'] as num? ?? 1;
+                      final percentage =
+                          maxScore > 0 ? (score / maxScore) * 100 : 0;
 
-                  return Padding(
-                    padding: const EdgeInsets.only(bottom: 8),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          flex: 2,
-                          child: Text(
-                            product['product_title'] ?? 'منتج غير محدد',
-                            style: const TextStyle(fontSize: 12),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                        Expanded(
-                          flex: 3,
-                          child: LinearProgressIndicator(
-                            value: percentage / 100,
-                            backgroundColor: Colors.grey[300],
-                            valueColor: AlwaysStoppedAnimation<Color>(
-                              percentage > 70 ? Colors.green : 
-                              percentage > 40 ? Colors.orange : Colors.red,
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 8),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              flex: 2,
+                              child: Text(
+                                product['product_title'] ?? 'منتج غير محدد',
+                                style: const TextStyle(fontSize: 12),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
                             ),
-                          ),
+                            Expanded(
+                              flex: 3,
+                              child: LinearProgressIndicator(
+                                value: percentage / 100,
+                                backgroundColor: Colors.grey[300],
+                                valueColor: AlwaysStoppedAnimation<Color>(
+                                  percentage > 70
+                                      ? Colors.green
+                                      : percentage > 40
+                                      ? Colors.orange
+                                      : Colors.red,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            Text(
+                              score.toStringAsFixed(1),
+                              style: const TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
                         ),
-                        const SizedBox(width: 8),
-                        Text(
-                          score.toStringAsFixed(1),
-                          style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
-                        ),
-                      ],
-                    ),
-                  );
-                }).toList(),
+                      );
+                    }).toList(),
               );
             }),
           ],
@@ -297,9 +308,11 @@ class _VendorAnalyticsPageState extends State<VendorAnalyticsPage>
             ),
             const SizedBox(height: 16),
             Obx(() {
-              final highSaveLowCart = analyticsController.productsNeedingAttention;
-              final highCartLowSave = analyticsController.highCartLowSaveProducts;
-              
+              final highSaveLowCart =
+                  analyticsController.productsNeedingAttention;
+              final highCartLowSave =
+                  analyticsController.highCartLowSaveProducts;
+
               return Column(
                 children: [
                   _AnalysisItem(
@@ -339,58 +352,65 @@ class _VendorAnalyticsPageState extends State<VendorAnalyticsPage>
             Obx(() {
               final recentActivity = analyticsController.recentActivity;
               if (recentActivity.isEmpty) {
-                return const Center(
-                  child: Text('لا توجد أنشطة حديثة'),
-                );
+                return const Center(child: Text('لا توجد أنشطة حديثة'));
               }
 
               // Group activities by hour
               final Map<int, int> hourlyActivity = {};
               for (var activity in recentActivity) {
-                final time = DateTime.parse(activity['activity_time'].toString());
+                final time = DateTime.parse(
+                  activity['activity_time'].toString(),
+                );
                 final hour = time.hour;
                 hourlyActivity[hour] = (hourlyActivity[hour] ?? 0) + 1;
               }
 
               return Column(
-                children: hourlyActivity.entries
-                    .toList()
-                    .reversed
-                    .take(6)
-                    .map((entry) {
-                  final hour = entry.key;
-                  final count = entry.value;
-                  final maxCount = hourlyActivity.values.reduce((a, b) => a > b ? a : b);
-                  final percentage = maxCount > 0 ? (count / maxCount) * 100 : 0;
+                children:
+                    hourlyActivity.entries.toList().reversed.take(6).map((
+                      entry,
+                    ) {
+                      final hour = entry.key;
+                      final count = entry.value;
+                      final maxCount = hourlyActivity.values.reduce(
+                        (a, b) => a > b ? a : b,
+                      );
+                      final percentage =
+                          maxCount > 0 ? (count / maxCount) * 100 : 0;
 
-                  return Padding(
-                    padding: const EdgeInsets.only(bottom: 8),
-                    child: Row(
-                      children: [
-                        SizedBox(
-                          width: 60,
-                          child: Text(
-                            '${hour.toString().padLeft(2, '0')}:00',
-                            style: const TextStyle(fontSize: 12),
-                          ),
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 8),
+                        child: Row(
+                          children: [
+                            SizedBox(
+                              width: 60,
+                              child: Text(
+                                '${hour.toString().padLeft(2, '0')}:00',
+                                style: const TextStyle(fontSize: 12),
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: LinearProgressIndicator(
+                                value: percentage / 100,
+                                backgroundColor: Colors.grey[300],
+                                valueColor: const AlwaysStoppedAnimation<Color>(
+                                  Colors.blue,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            Text(
+                              '$count',
+                              style: const TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
                         ),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: LinearProgressIndicator(
-                            value: percentage / 100,
-                            backgroundColor: Colors.grey[300],
-                            valueColor: const AlwaysStoppedAnimation<Color>(Colors.blue),
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        Text(
-                          '$count',
-                          style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
-                        ),
-                      ],
-                    ),
-                  );
-                }).toList(),
+                      );
+                    }).toList(),
               );
             }),
           ],
@@ -418,9 +438,9 @@ class _QuickStatItem extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: color.withOpacity(0.3)),
+        border: Border.all(color: color.withValues(alpha: 0.3)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -436,17 +456,11 @@ class _QuickStatItem extends StatelessWidget {
           const SizedBox(height: 4),
           Text(
             title,
-            style: const TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.bold,
-            ),
+            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
           ),
           Text(
             subtitle,
-            style: const TextStyle(
-              fontSize: 12,
-              color: Colors.grey,
-            ),
+            style: const TextStyle(fontSize: 12, color: Colors.grey),
           ),
         ],
       ),
@@ -472,9 +486,9 @@ class _AnalysisItem extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: color.withOpacity(0.3)),
+        border: Border.all(color: color.withValues(alpha: 0.3)),
       ),
       child: Row(
         children: [
@@ -509,10 +523,7 @@ class _AnalysisItem extends StatelessWidget {
                 ),
                 Text(
                   description,
-                  style: const TextStyle(
-                    fontSize: 12,
-                    color: Colors.grey,
-                  ),
+                  style: const TextStyle(fontSize: 12, color: Colors.grey),
                 ),
               ],
             ),

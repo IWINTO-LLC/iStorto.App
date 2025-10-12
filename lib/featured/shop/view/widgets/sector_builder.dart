@@ -699,7 +699,7 @@ class _SectorBuilderState extends State<SectorBuilder> {
                       color:
                           isActive
                               ? TColors.primary
-                              : Colors.grey.withOpacity(0.5),
+                              : Colors.grey.withValues(alpha: 0.5),
                       borderRadius: BorderRadius.circular(4),
                     ),
                   );
@@ -717,6 +717,7 @@ class _SectorBuilderState extends State<SectorBuilder> {
               right: TranslationController.instance.isRTL ? null : 47,
               left: TranslationController.instance.isRTL ? 47 : null,
               child: CustomFloatActionButton(
+                heroTag: 'menu_${widget.vendorId}_${widget.sectorName}',
                 icon: Icons.menu_open_rounded,
                 onTap: () {
                   showExcelBottomSheet(context, spotList, widget.vendorId);
@@ -743,6 +744,7 @@ class _SectorBuilderState extends State<SectorBuilder> {
             child: Visibility(
               visible: spotList.length > 2,
               child: CustomFloatActionButton(
+                heroTag: 'add_product_${widget.vendorId}_${widget.sectorName}',
                 onTap: () {
                   var controller = Get.put(ProductController());
                   controller.deleteTempItems();

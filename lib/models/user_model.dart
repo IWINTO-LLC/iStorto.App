@@ -7,6 +7,7 @@ class UserModel {
   final String? email;
   final String? phoneNumber;
   final String profileImage;
+  final String cover; // Cover image for business accounts
   final String bio;
   final String brief;
   final String defaultCurrency;
@@ -26,6 +27,7 @@ class UserModel {
     this.email,
     this.phoneNumber,
     this.profileImage = '',
+    this.cover = '', // Default empty cover
     this.bio = '',
     this.brief = '',
     this.defaultCurrency = 'USD',
@@ -48,6 +50,7 @@ class UserModel {
       email: json['email'] as String?,
       phoneNumber: json['phone_number'] as String?,
       profileImage: json['profile_image'] as String? ?? '',
+      cover: json['cover'] as String? ?? '', // ✨ cover from JSON
       bio: json['bio'] as String? ?? '',
       brief: json['brief'] as String? ?? '',
       defaultCurrency: json['default_currency'] as String? ?? 'USD',
@@ -74,6 +77,7 @@ class UserModel {
       email: json['email'] as String?,
       phoneNumber: rawUserMetaData['phone_number'] as String?,
       profileImage: rawUserMetaData['profile_image'] as String? ?? '',
+      cover: rawUserMetaData['cover'] as String? ?? '', // ✨ cover from auth
       bio: rawUserMetaData['bio'] as String? ?? '',
       brief: rawUserMetaData['brief'] as String? ?? '',
       defaultCurrency: rawUserMetaData['default_currency'] as String? ?? 'USD',
@@ -97,6 +101,7 @@ class UserModel {
       'email': email,
       'phone_number': phoneNumber,
       'profile_image': profileImage,
+      'cover': cover, // ✨ cover to JSON
       'bio': bio,
       'brief': brief,
       'default_currency': defaultCurrency,
@@ -127,6 +132,7 @@ class UserModel {
       email: email,
       phoneNumber: phoneNumber,
       profileImage: '',
+      cover: '', // Empty cover for new users
       bio: '',
       brief: '',
       defaultCurrency: 'USD',
@@ -157,6 +163,7 @@ class UserModel {
       email: email,
       phoneNumber: null,
       profileImage: profileImage ?? '',
+      cover: '', // Empty cover for social login users
       bio: '',
       brief: '',
       defaultCurrency: 'USD',
@@ -179,6 +186,7 @@ class UserModel {
     String? email,
     String? phoneNumber,
     String? profileImage,
+    String? cover,
     String? bio,
     String? brief,
     String? defaultCurrency,
@@ -198,6 +206,7 @@ class UserModel {
       email: email ?? this.email,
       phoneNumber: phoneNumber ?? this.phoneNumber,
       profileImage: profileImage ?? this.profileImage,
+      cover: cover ?? this.cover, // ✨ cover in copyWith
       bio: bio ?? this.bio,
       brief: brief ?? this.brief,
       defaultCurrency: defaultCurrency ?? this.defaultCurrency,

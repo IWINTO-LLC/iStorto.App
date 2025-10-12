@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:istoreto/controllers/translation_controller.dart';
+import 'package:istoreto/featured/home-page/views/widgets/cart_white.dart';
 import 'package:readmore/readmore.dart';
 import 'package:sizer/sizer.dart';
 
@@ -73,7 +74,7 @@ class ProductDetailsPage extends StatelessWidget {
                   alignment: Alignment.topRight,
                   child: Padding(
                     padding: EdgeInsets.all(8.0),
-                    child: CartWidget(),
+                    child: CartWhite(),
                   ),
                 ),
                 InkWell(

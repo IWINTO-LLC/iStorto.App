@@ -6,6 +6,7 @@ import 'package:istoreto/featured/cart/view/widgets/dynamic_add_cart.dart';
 import 'package:istoreto/featured/product/data/product_model.dart';
 import 'package:istoreto/utils/common/widgets/custom_shapes/containers/rounded_container.dart';
 import 'package:istoreto/utils/common/widgets/custom_widgets.dart';
+import 'package:istoreto/utils/constants/sizes.dart';
 
 class BottomAddToCart extends StatelessWidget {
   const BottomAddToCart({super.key, required this.product});
@@ -23,7 +24,12 @@ class BottomAddToCart extends StatelessWidget {
         topRight: Radius.circular(25),
       ),
       child: Padding(
-        padding: const EdgeInsets.only(bottom: 10, top: 5, left: 0, right: 0),
+        padding: const EdgeInsets.only(
+          bottom: TSizes.paddingSizeDefault,
+          top: 5,
+          left: 0,
+          right: 0,
+        ),
         child: Center(
           child: Directionality(
             textDirection: TextDirection.rtl,

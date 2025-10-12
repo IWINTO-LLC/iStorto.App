@@ -86,10 +86,10 @@ class CurrencyPriceWidget extends StatelessWidget {
                         vertical: 4,
                       ),
                       decoration: BoxDecoration(
-                        color: TColors.primary.withOpacity(0.1),
+                        color: TColors.primary.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(12),
                         border: Border.all(
-                          color: TColors.primary.withOpacity(0.3),
+                          color: TColors.primary.withValues(alpha: 0.3),
                         ),
                       ),
                       child: Row(
@@ -142,7 +142,7 @@ class CurrencyPriceWidget extends StatelessWidget {
                         vertical: 2,
                       ),
                       decoration: BoxDecoration(
-                        color: Colors.red.withOpacity(0.1),
+                        color: Colors.red.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Text(
@@ -388,4 +388,3 @@ class CurrencyToggleWidget extends StatelessWidget {
     );
   }
 }
-

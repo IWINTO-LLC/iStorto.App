@@ -76,7 +76,7 @@ class FloatingButtonsController extends GetxController {
             return Stack(
               children: [
                 // طبقة تعتيم تغطي الشاشة.
-                Container(color: Colors.black.withOpacity(0.2)),
+                Container(color: Colors.black.withValues(alpha: 0.2)),
                 // رسم الدائرة الشفافة في موقع الضغط.
                 if (pressPosition != null)
                   Positioned(

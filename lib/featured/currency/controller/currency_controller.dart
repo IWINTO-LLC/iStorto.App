@@ -45,25 +45,42 @@ class CurrencyController extends GetxController {
   double convertToDefaultCurrency(double amount) {
     if (amount == 0.0) return 0.0;
 
-    // Get user's default currency ISO code
-    final defaultCurrencyISO =
-        AuthController.instance.currentUser.value?.defaultCurrency;
+    try {
+      // Get user's default currency ISO code
+      final defaultCurrencyISO =
+          AuthController.instance.currentUser.value?.defaultCurrency;
 
-    // إذا كان المستخدم زائر (غير مسجل) أو لم يحدد عملة افتراضية، استخدم الدولار
-    String currencyToUse;
-    if (defaultCurrencyISO == null || defaultCurrencyISO.isEmpty) {
-      currencyToUse = 'USD'; // العملة الافتراضية للزوار
-    } else {
-      currencyToUse = defaultCurrencyISO;
+      // إذا كان المستخدم زائر (غير مسجل) أو لم يحدد عملة افتراضية، استخدم الدولار
+      String currencyToUse;
+      if (defaultCurrencyISO == null || defaultCurrencyISO.isEmpty) {
+        currencyToUse = 'USD'; // العملة الافتراضية للزوار
+      } else {
+        currencyToUse = defaultCurrencyISO;
+      }
+
+      // Get currency model from currencies map
+      final defaultCurrency = currencies[currencyToUse];
+      if (defaultCurrency == null) {
+        if (kDebugMode) {
+          print('Error converting currency: Currency data not found for $currencyToUse, falling back to USD');
+        }
+        // Fallback to USD if currency not found
+        final usdCurrency = currencies['USD'];
+        if (usdCurrency == null) {
+          // If even USD is not available, return the amount as is
+          return amount;
+        }
+        return amount * usdCurrency.usdToCoinExchangeRate;
+      }
+
+      return amount * defaultCurrency.usdToCoinExchangeRate;
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error converting currency: $e');
+      }
+      // Return amount as is if conversion fails
+      return amount;
     }
-
-    // Get currency model from currencies map
-    final defaultCurrency = currencies[currencyToUse];
-    if (defaultCurrency == null) {
-      throw Exception("Currency data not found for $currencyToUse");
-    }
-
-    return amount * defaultCurrency.usdToCoinExchangeRate;
   }
 
   Future<void> fetchAllCurrencies() async {

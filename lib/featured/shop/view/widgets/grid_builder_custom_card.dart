@@ -194,14 +194,15 @@ class _GridBuilderCustomCardState extends State<GridBuilderCustomCard>
                                               vertical: 8,
                                             ),
                                             decoration: BoxDecoration(
-                                              color: TColors.primary
-                                                  .withOpacity(0.9),
+                                              color: TColors.primary.withValues(
+                                                alpha: 0.9,
+                                              ),
                                               borderRadius:
                                                   BorderRadius.circular(20),
                                               boxShadow: [
                                                 BoxShadow(
                                                   color: TColors.primary
-                                                      .withOpacity(0.3),
+                                                      .withValues(alpha: 0.3),
                                                   spreadRadius: 2,
                                                   blurRadius: 8,
                                                   offset: const Offset(0, 2),
@@ -209,7 +210,8 @@ class _GridBuilderCustomCardState extends State<GridBuilderCustomCard>
                                               ],
                                             ),
                                             child: Row(
-                                              mainAxisSize: MainAxisSize.min,
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
                                               children: [
                                                 const Icon(
                                                   Icons.add_shopping_cart,

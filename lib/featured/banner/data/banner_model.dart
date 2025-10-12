@@ -1,3 +1,5 @@
+import 'package:uuid/uuid.dart';
+
 enum BannerScope {
   company, // بنرات الشركة
   vendor, // بنرات التجار
@@ -40,7 +42,7 @@ class BannerModel {
 
   Map<String, dynamic> toJson() {
     return {
-      'id': id,
+      'id': id ?? Uuid().v4(),
       'image': image,
       'target_screen': targetScreen,
       'active': active,

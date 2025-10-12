@@ -46,23 +46,23 @@ class ScrollingFabAnimated extends StatefulWidget {
   /// Double value to set the button radius
   final double? radius;
 
-  const ScrollingFabAnimated(
-      {Key? key,
-      required this.icon,
-      required this.text,
-      required this.onPress,
-      required this.scrollController,
-      this.elevation = 5.0,
-      this.width = 120.0,
-      this.height = 60.0,
-      this.duration = const Duration(milliseconds: 250),
-      this.curve,
-      this.limitIndicator = 10.0,
-      this.color,
-      this.animateIcon = true,
-      this.inverted = false,
-      this.radius})
-      : super(key: key);
+  const ScrollingFabAnimated({
+    Key? key,
+    required this.icon,
+    required this.text,
+    required this.onPress,
+    required this.scrollController,
+    this.elevation = 5.0,
+    this.width = 120.0,
+    this.height = 60.0,
+    this.duration = const Duration(milliseconds: 250),
+    this.curve,
+    this.limitIndicator = 10.0,
+    this.color,
+    this.animateIcon = true,
+    this.inverted = false,
+    this.radius,
+  }) : super(key: key);
 
   @override
   ScrollingFabAnimatedState createState() => ScrollingFabAnimatedState();
@@ -118,15 +118,17 @@ class ScrollingFabAnimatedState extends State<ScrollingFabAnimated> {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-          color: Theme.of(context).cardColor,
-          borderRadius: BorderRadius.circular(10),
-          boxShadow: [
-            BoxShadow(
-                color: Theme.of(context).primaryColor.withValues(alpha: .075),
-                blurRadius: 5,
-                spreadRadius: 1,
-                offset: const Offset(1, 1))
-          ]),
+        color: Theme.of(context).cardColor,
+        borderRadius: BorderRadius.circular(10),
+        boxShadow: [
+          BoxShadow(
+            color: Theme.of(context).primaryColor.withValues(alpha: .075),
+            blurRadius: 5,
+            spreadRadius: 1,
+            offset: const Offset(1, 1),
+          ),
+        ],
+      ),
       child: TweenAnimationBuilder(
         tween: Tween<double>(begin: 0, end: _endTween),
         duration: widget.duration,
@@ -136,41 +138,46 @@ class ScrollingFabAnimatedState extends State<ScrollingFabAnimated> {
           double radius = widget.radius ?? (widget.height / 2);
           return Container(
             decoration: BoxDecoration(
-                borderRadius: BorderRadius.all(Radius.circular(radius)),
-                color: widget.color ?? Theme.of(context).primaryColor),
+              borderRadius: BorderRadius.all(Radius.circular(radius)),
+              color: widget.color ?? Theme.of(context).primaryColor,
+            ),
             height: widget.height,
             width: widget.height + widthPercent * size,
             child: InkWell(
               onTap: widget.onPress,
               child: Ink(
                 child: Row(
-                  mainAxisAlignment: isFull
-                      ? MainAxisAlignment.spaceEvenly
-                      : MainAxisAlignment.center,
+                  mainAxisAlignment:
+                      isFull
+                          ? MainAxisAlignment.spaceEvenly
+                          : MainAxisAlignment.center,
                   children: [
                     ...(isFull
                         ? [
-                            Expanded(
-                              child: Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 15),
-                                child: AnimatedOpacity(
-                                  opacity: size > 90 ? 1 : 0,
-                                  duration: const Duration(milliseconds: 100),
-                                  child: widget.text,
-                                ),
+                          Expanded(
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 15,
                               ),
-                            )
-                          ]
+                              child: AnimatedOpacity(
+                                opacity: size > 90 ? 1 : 0,
+                                duration: const Duration(milliseconds: 100),
+                                child: widget.text,
+                              ),
+                            ),
+                          ),
+                        ]
                         : []),
                     Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 15),
-                        child: Transform.rotate(
-                          angle: widget.animateIcon
-                              ? (3.6 * math.pi / 180) * size
-                              : 0,
-                          child: widget.icon,
-                        )),
+                      padding: const EdgeInsets.symmetric(horizontal: 15),
+                      child: Transform.rotate(
+                        angle:
+                            widget.animateIcon
+                                ? (3.6 * math.pi / 180) * size
+                                : 0,
+                        child: widget.icon,
+                      ),
+                    ),
                   ],
                 ),
               ),

@@ -46,7 +46,7 @@ class ShareVendorButton extends StatelessWidget {
           }
 
           // فحص إذا كانت البيانات صحيحة
-          if (vendorData.userId == null || vendorData.userId!.isEmpty) {
+          if (vendorData.id?.isEmpty ?? true) {
             if (context.mounted) {
               Navigator.pop(context);
               scaffoldMessenger.showSnackBar(

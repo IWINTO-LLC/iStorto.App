@@ -100,12 +100,12 @@ class CategoryListItem extends StatelessWidget {
                           decoration: BoxDecoration(
                             color: _getStatusColor(
                               category.status,
-                            ).withOpacity(0.1),
+                            ).withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(12),
                             border: Border.all(
                               color: _getStatusColor(
                                 category.status,
-                              ).withOpacity(0.3),
+                              ).withValues(alpha: 0.3),
                               width: 1,
                             ),
                           ),
@@ -129,10 +129,10 @@ class CategoryListItem extends StatelessWidget {
                               vertical: 4,
                             ),
                             decoration: BoxDecoration(
-                              color: Colors.amber.withOpacity(0.1),
+                              color: Colors.amber.withValues(alpha: 0.1),
                               borderRadius: BorderRadius.circular(12),
                               border: Border.all(
-                                color: Colors.amber.withOpacity(0.3),
+                                color: Colors.amber.withValues(alpha: 0.3),
                                 width: 1,
                               ),
                             ),
@@ -231,7 +231,7 @@ class CategoryListItem extends StatelessWidget {
           end: Alignment.bottomRight,
           colors: [
             _getCategoryColor(categoryName),
-            _getCategoryColor(categoryName).withOpacity(0.7),
+            _getCategoryColor(categoryName).withValues(alpha: 0.7),
           ],
         ),
       ),

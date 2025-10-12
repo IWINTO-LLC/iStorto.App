@@ -16,16 +16,6 @@ class SharedRoute {
       );
     }
 
-    if (uri?.pathSegments.contains('vendor') == true) {
-      final vendorId = uri!.pathSegments.last;
-      return MaterialPageRoute(
-        builder:
-            (_) => SafeArea(
-              child: MarketPlaceView(vendorId: vendorId, editMode: false),
-            ),
-      );
-    }
-
     // cart share
     // if (uri?.pathSegments.contains('shared_cart') == true) {
     //   final sharedCartId = uri!.queryParameters['id'];

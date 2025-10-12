@@ -40,7 +40,7 @@ class PaymentMethodSelector extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.08),
+            color: Colors.grey.withValues(alpha: 0.08),
             spreadRadius: 1,
             blurRadius: 6,
             offset: const Offset(0, 2),
@@ -121,7 +121,9 @@ class PaymentMethodSelector extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 8),
       decoration: BoxDecoration(
         color:
-            isSelected ? TColors.primary.withOpacity(0.1) : Colors.grey.shade50,
+            isSelected
+                ? TColors.primary.withValues(alpha: 0.1)
+                : Colors.grey.shade50,
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
           color: isSelected ? TColors.primary : Colors.grey.shade300,
@@ -139,7 +141,7 @@ class PaymentMethodSelector extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: iconColor.withOpacity(0.1),
+                  color: iconColor.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(6),
                 ),
                 child: Icon(icon, color: iconColor, size: 20),

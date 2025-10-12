@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:istoreto/controllers/auth_controller.dart';
+import 'package:istoreto/controllers/image_edit_controller.dart';
+import 'package:istoreto/featured/shop/controller/vendor_controller.dart';
+import 'package:istoreto/featured/shop/controller/vendor_image_controller.dart';
 import 'package:istoreto/featured/shop/view/market_place_view.dart';
 import 'package:istoreto/views/initial_commercial_page.dart';
 import 'package:istoreto/views/admin/admin_zone_page.dart';
 import 'package:istoreto/views/settings_page.dart';
 import 'package:istoreto/views/edit_personal_info_page.dart';
+import 'package:istoreto/featured/product/views/saved_products_list.dart';
 
 /// مكون قائمة الملف الشخصي - يعرض خيارات الإعدادات والإجراءات
 class ProfileMenuWidget extends StatelessWidget {
@@ -26,6 +30,12 @@ class ProfileMenuWidget extends StatelessWidget {
             onTap: () => _showEditProfileDialog(Get.context!),
           ),
           _buildMenuItem(
+            icon: Icons.bookmark,
+            title: 'saved_products'.tr,
+            subtitle: 'view_your_saved_products'.tr,
+            onTap: () => Get.to(() => SavedProductsPage()),
+          ),
+          _buildMenuItem(
             icon: Icons.business,
             title: 'business_account'.tr,
             subtitle:
@@ -36,7 +46,7 @@ class ProfileMenuWidget extends StatelessWidget {
           ),
           _buildMenuItem(
             icon: Icons.admin_panel_settings,
-            title: 'admin_zone'.tr,
+            title: 'admin_zone_title'.tr,
             subtitle: 'manage_categories_and_content'.tr,
             onTap: () => Get.to(() => const AdminZonePage()),
           ),
@@ -86,7 +96,7 @@ class ProfileMenuWidget extends StatelessWidget {
         border: Border.all(color: Colors.grey.shade200),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 4,
             offset: Offset(0, 2),
           ),
@@ -98,13 +108,13 @@ class ProfileMenuWidget extends StatelessWidget {
           decoration: BoxDecoration(
             color:
                 isDestructive
-                    ? Colors.red.withOpacity(0.1)
-                    : Colors.blue.withOpacity(0.1),
+                    ? Colors.red.withValues(alpha: 0.1)
+                    : Colors.black.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(8),
           ),
           child: Icon(
             icon,
-            color: isDestructive ? Colors.red : Colors.blue,
+            color: isDestructive ? Colors.red : Colors.black,
             size: 20,
           ),
         ),
@@ -257,10 +267,10 @@ class ProfileMenuWidget extends StatelessWidget {
         leading: Container(
           padding: EdgeInsets.all(8),
           decoration: BoxDecoration(
-            color: Colors.blue.withOpacity(0.1),
+            color: Colors.black.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(8),
           ),
-          child: Icon(icon, color: Colors.blue, size: 20),
+          child: Icon(icon, color: Colors.black, size: 20),
         ),
         title: Text(
           title,
@@ -342,27 +352,44 @@ class ProfileMenuWidget extends StatelessWidget {
 
   /// تعديل صورة الغلاف
   void _editCoverPhoto() {
-    // TODO: تنفيذ تعديل صورة الغلاف
-    Get.snackbar(
-      'edit_cover_photo'.tr,
-      'feature_coming_soon'.tr,
-      snackPosition: SnackPosition.BOTTOM,
-      backgroundColor: Colors.blue.shade100,
-      colorText: Colors.blue.shade800,
-      duration: Duration(seconds: 2),
-    );
+    final authController = Get.find<AuthController>();
+    final user = authController.currentUser.value;
+
+    // التحقق من أن المستخدم بائع
+    if (user?.accountType != 1 || user?.vendorId == null) {
+      Get.snackbar(
+        'error'.tr,
+        'feature_for_business_accounts_only'.tr,
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.orange.shade100,
+        colorText: Colors.orange.shade800,
+      );
+      return;
+    }
+
+    // تهيئة VendorImageController
+    if (!Get.isRegistered<VendorImageController>()) {
+      Get.put(VendorImageController());
+    }
+
+    // فتح محرر صورة الغلاف
+    VendorImageController.instance.editVendorCoverImage(user!.vendorId!);
   }
 
   /// تعديل الصورة الشخصية
   void _editProfilePhoto() {
-    // TODO: تنفيذ تعديل الصورة الشخصية
-    Get.snackbar(
-      'edit_profile_photo'.tr,
-      'feature_coming_soon'.tr,
-      snackPosition: SnackPosition.BOTTOM,
-      backgroundColor: Colors.blue.shade100,
-      colorText: Colors.blue.shade800,
-      duration: Duration(seconds: 2),
+    // تهيئة ImageEditController
+    if (!Get.isRegistered<ImageEditController>()) {
+      Get.put(ImageEditController());
+    }
+
+    final imageController = ImageEditController.instance;
+
+    // عرض نافذة اختيار مصدر الصورة
+    imageController.showImageSourceDialog(
+      title: 'edit_profile_photo'.tr,
+      onCamera: () => imageController.pickFromCamera(isProfile: true),
+      onGallery: () => imageController.pickFromGallery(isProfile: true),
     );
   }
 
@@ -373,25 +400,174 @@ class ProfileMenuWidget extends StatelessWidget {
 
   /// تعديل السيرة الذاتية
   void _editBio() {
-    Get.snackbar(
-      'edit_bio'.tr,
-      'feature_coming_soon'.tr,
-      snackPosition: SnackPosition.BOTTOM,
-      backgroundColor: Colors.blue.shade100,
-      colorText: Colors.blue.shade800,
-      duration: Duration(seconds: 2),
+    final authController = Get.find<AuthController>();
+    final user = authController.currentUser.value;
+
+    // التحقق من أن المستخدم بائع
+    if (user?.accountType != 1 || user?.vendorId == null) {
+      Get.snackbar(
+        'error'.tr,
+        'feature_for_business_accounts_only'.tr,
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.orange.shade100,
+        colorText: Colors.orange.shade800,
+      );
+      return;
+    }
+
+    // الحصول على VendorController
+    if (!Get.isRegistered<VendorController>()) {
+      Get.put(VendorController());
+    }
+
+    final vendorController = VendorController.instance;
+    final currentBio = vendorController.vendorData.value.organizationBio;
+    final bioController = TextEditingController(text: currentBio);
+
+    // عرض نافذة التعديل
+    Get.dialog(
+      AlertDialog(
+        title: Text('edit_bio'.tr),
+        content: TextField(
+          controller: bioController,
+          maxLines: 5,
+          maxLength: 500,
+          decoration: InputDecoration(
+            hintText: 'enter_store_bio'.tr,
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+          ),
+        ),
+        actions: [
+          TextButton(onPressed: () => Get.back(), child: Text('cancel'.tr)),
+          ElevatedButton(
+            onPressed: () async {
+              final newBio = bioController.text.trim();
+              if (newBio.isNotEmpty) {
+                try {
+                  // تحديث قاعدة البيانات
+                  await vendorController.repository.updateField(
+                    vendorId: user!.vendorId!,
+                    fieldName: 'organization_bio',
+                    newValue: newBio,
+                  );
+
+                  // تحديث البيانات المحلية
+                  await vendorController.fetchVendorData(user.vendorId!);
+
+                  Get.back();
+                  Get.snackbar(
+                    'success'.tr,
+                    'bio_updated_successfully'.tr,
+                    snackPosition: SnackPosition.BOTTOM,
+                    backgroundColor: Colors.green.shade100,
+                    colorText: Colors.green.shade800,
+                  );
+                } catch (e) {
+                  Get.snackbar(
+                    'error'.tr,
+                    '${'update_failed'.tr}: $e',
+                    snackPosition: SnackPosition.BOTTOM,
+                    backgroundColor: Colors.red.shade100,
+                    colorText: Colors.red.shade800,
+                  );
+                }
+              }
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.black,
+              foregroundColor: Colors.white,
+            ),
+            child: Text('save'.tr),
+          ),
+        ],
+      ),
     );
   }
 
   /// تعديل الوصف المختصر
   void _editBrief() {
-    Get.snackbar(
-      'edit_brief'.tr,
-      'feature_coming_soon'.tr,
-      snackPosition: SnackPosition.BOTTOM,
-      backgroundColor: Colors.blue.shade100,
-      colorText: Colors.blue.shade800,
-      duration: Duration(seconds: 2),
+    final authController = Get.find<AuthController>();
+    final user = authController.currentUser.value;
+
+    // التحقق من أن المستخدم بائع
+    if (user?.accountType != 1 || user?.vendorId == null) {
+      Get.snackbar(
+        'error'.tr,
+        'feature_for_business_accounts_only'.tr,
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.orange.shade100,
+        colorText: Colors.orange.shade800,
+      );
+      return;
+    }
+
+    // الحصول على VendorController
+    if (!Get.isRegistered<VendorController>()) {
+      Get.put(VendorController());
+    }
+
+    final vendorController = VendorController.instance;
+    final currentBrief = vendorController.vendorData.value.brief;
+    final briefController = TextEditingController(text: currentBrief);
+
+    // عرض نافذة التعديل
+    Get.dialog(
+      AlertDialog(
+        title: Text('edit_brief'.tr),
+        content: TextField(
+          controller: briefController,
+          maxLines: 3,
+          maxLength: 200,
+          decoration: InputDecoration(
+            hintText: 'enter_brief_description'.tr,
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+            helperText: 'brief_helper_text'.tr,
+          ),
+        ),
+        actions: [
+          TextButton(onPressed: () => Get.back(), child: Text('cancel'.tr)),
+          ElevatedButton(
+            onPressed: () async {
+              final newBrief = briefController.text.trim();
+              if (newBrief.isNotEmpty) {
+                try {
+                  // تحديث قاعدة البيانات
+                  await vendorController.repository.updateField(
+                    vendorId: user!.vendorId!,
+                    fieldName: 'brief',
+                    newValue: newBrief,
+                  );
+
+                  // تحديث البيانات المحلية
+                  await vendorController.fetchVendorData(user.vendorId!);
+
+                  Get.back();
+                  Get.snackbar(
+                    'success'.tr,
+                    'brief_updated_successfully'.tr,
+                    snackPosition: SnackPosition.BOTTOM,
+                    backgroundColor: Colors.green.shade100,
+                    colorText: Colors.green.shade800,
+                  );
+                } catch (e) {
+                  Get.snackbar(
+                    'error'.tr,
+                    '${'update_failed'.tr}: $e',
+                    snackPosition: SnackPosition.BOTTOM,
+                    backgroundColor: Colors.red.shade100,
+                    colorText: Colors.red.shade800,
+                  );
+                }
+              }
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.black,
+              foregroundColor: Colors.white,
+            ),
+            child: Text('save'.tr),
+          ),
+        ],
+      ),
     );
   }
 }

@@ -7,7 +7,7 @@ import '../../services/supabase_service.dart';
 class MajorCategoryRepository {
   static final SupabaseClient _client = SupabaseService.client;
 
-  // Get all major_categories
+  // Get all major_categories (for admin panel - includes all statuses)
   static Future<List<MajorCategoryModel>> getAllCategories() async {
     try {
       print('🔍 [MajorCategoryRepository] Fetching all major_categories...');
@@ -15,8 +15,7 @@ class MajorCategoryRepository {
       // Test basic connection first
       print('🧪 [MajorCategoryRepository] Testing Supabase connection...');
       try {
-        final testResponse =
-            await _client.from('major_categories').select();
+        final testResponse = await _client.from('major_categories').select();
         print(
           '✅ [MajorCategoryRepository] Connection test successful: $testResponse',
         );
@@ -27,7 +26,7 @@ class MajorCategoryRepository {
       final response = await _client
           .from('major_categories')
           .select()
-          .eq('status', 1) // Only active major_categories
+          // Load all categories regardless of status for admin panel
           .order('is_feature', ascending: false)
           .order('name', ascending: true);
 
@@ -251,19 +250,38 @@ class MajorCategoryRepository {
     }
   }
 
-  // Get active major_categories only
+  // Get active major_categories only (for public use)
   static Future<List<MajorCategoryModel>> getActiveCategories() async {
     try {
+      print(
+        '🔍 [MajorCategoryRepository] Fetching active major_categories only...',
+      );
+
       final response = await _client
           .from('major_categories')
           .select()
-          .eq('status', 1)
-          .order('created_at', ascending: false);
+          .eq('status', 1) // Only active categories
+          .order('is_feature', ascending: false)
+          .order('name', ascending: true);
 
-      return response
-          .map<MajorCategoryModel>((json) => MajorCategoryModel.fromJson(json))
-          .toList();
+      print(
+        '📊 [MajorCategoryRepository] Active categories response: ${response.length} found',
+      );
+
+      final categories =
+          response
+              .map<MajorCategoryModel>(
+                (json) => MajorCategoryModel.fromJson(json),
+              )
+              .toList();
+
+      print(
+        '✅ [MajorCategoryRepository] Successfully parsed ${categories.length} active categories',
+      );
+
+      return categories;
     } catch (e) {
+      print('❌ [MajorCategoryRepository] Error fetching active categories: $e');
       throw Exception('Failed to fetch active major_categories: $e');
     }
   }

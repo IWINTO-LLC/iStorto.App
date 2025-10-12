@@ -32,7 +32,7 @@ class CategorySection extends StatelessWidget {
                     borderRadius: BorderRadius.circular(16),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.05),
+                        color: Colors.black.withValues(alpha: 0.05),
                         blurRadius: 10,
                         offset: const Offset(0, 2),
                       ),
@@ -45,7 +45,7 @@ class CategorySection extends StatelessWidget {
                         width: 60,
                         height: 60,
                         decoration: BoxDecoration(
-                          color: Colors.blue.withOpacity(0.1),
+                          color: Colors.blue.withValues(alpha: 0.1),
                           shape: BoxShape.circle,
                         ),
                         child: const Icon(
@@ -196,7 +196,7 @@ class CategorySection extends StatelessWidget {
           end: Alignment.bottomRight,
           colors: [
             controller.getCategoryColor(categoryName),
-            controller.getCategoryColor(categoryName).withOpacity(0.7),
+            controller.getCategoryColor(categoryName).withValues(alpha: 0.7),
           ],
         ),
       ),
@@ -269,7 +269,7 @@ class CategorySection extends StatelessWidget {
                 borderRadius: BorderRadius.circular(30),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
+                    color: Colors.black.withValues(alpha: 0.1),
                     blurRadius: 8,
                     offset: const Offset(0, 2),
                   ),
@@ -319,10 +319,14 @@ class CategorySection extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
-                  color: _getStatusColor(category.status).withOpacity(0.1),
+                  color: _getStatusColor(
+                    category.status,
+                  ).withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                    color: _getStatusColor(category.status).withOpacity(0.3),
+                    color: _getStatusColor(
+                      category.status,
+                    ).withValues(alpha: 0.3),
                     width: 1,
                   ),
                 ),

@@ -174,7 +174,7 @@ class CategoryGridItem extends StatelessWidget {
           end: Alignment.bottomRight,
           colors: [
             _getCategoryColor(categoryName),
-            _getCategoryColor(categoryName).withOpacity(0.7),
+            _getCategoryColor(categoryName).withValues(alpha: 0.7),
           ],
         ),
       ),
