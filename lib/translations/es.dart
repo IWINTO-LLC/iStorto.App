@@ -6,6 +6,7 @@ class Es {
     'welcome': 'Bienvenido',
     'loading': 'Cargando...',
     'error': 'Error',
+    'vendor_not_found': 'Vendedor no encontrado',
     'success': 'Éxito',
     'cancel': 'Cancelar',
     'confirm': 'Confirmar',
@@ -99,5 +100,9 @@ class Es {
     'accessories': 'Accesorios',
     'test_snackbar': 'Mensaje de Prueba',
     'coming_soon': 'Próximamente',
+
+    // Gallery
+    'gallery.discover_latest_products': 'Descubre los últimos productos',
+    'gallery.browse_thousands_of_photos': 'Explora miles de fotos de productos',
   };
 }

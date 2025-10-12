@@ -3,7 +3,6 @@ import 'package:get/get.dart';
 import 'package:istoreto/featured/product/cashed_network_image_free.dart';
 import 'package:istoreto/featured/shop/data/vendor_model.dart';
 import 'package:istoreto/featured/shop/data/vendor_repository.dart';
-import 'package:istoreto/featured/shop/view/market_place_view.dart';
 import 'package:istoreto/utils/common/styles/styles.dart';
 import 'package:istoreto/utils/common/widgets/custom_shapes/containers/rounded_container.dart';
 import 'package:istoreto/utils/common/widgets/shimmers/shimmer.dart';
@@ -44,7 +43,8 @@ class VendorProfilePreview extends StatelessWidget {
       future: _getVendorProfile(vendorId),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return Center(
+          return Padding(
+            padding: EdgeInsets.all(withPadding ? 10.0 : 0),
             child: Row(
               children: [
                 if (withPhoto)
@@ -54,7 +54,7 @@ class VendorProfilePreview extends StatelessWidget {
                     raduis: BorderRadius.circular(300),
                     baseColor: TColors.grey,
                   ),
-                if (withPhoto) SizedBox(width: 12),
+                if (withPhoto) const SizedBox(width: 12),
                 TShimmerEffect(
                   width: 100,
                   height: 20,
@@ -67,7 +67,13 @@ class VendorProfilePreview extends StatelessWidget {
         }
 
         if (!snapshot.hasData || snapshot.data == null) {
-          return Center(child: Text("vendor.unknown".tr));
+          return Padding(
+            padding: EdgeInsets.all(withPadding ? 10.0 : 0),
+            child: Text(
+              "vendor.unknown".tr,
+              style: titilliumBold.copyWith(fontSize: 17, color: color),
+            ),
+          );
         }
 
         final profile = snapshot.data!;
@@ -96,7 +102,7 @@ class VendorProfilePreview extends StatelessWidget {
                       ),
                     )
                     : const SizedBox.shrink(),
-                withPhoto ? const SizedBox(width: 12) : SizedBox.shrink(),
+                withPhoto ? const SizedBox(width: 12) : const SizedBox.shrink(),
                 Expanded(
                   child: Text(
                     name,

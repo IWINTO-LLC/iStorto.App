@@ -78,10 +78,46 @@ class _CheckoutStepperScreenState extends State<CheckoutStepperScreen> {
         if (mounted) {
           cartController.toggleSelectAll(true);
           _loadVendorProfiles();
+          _loadUserAddresses();
         }
       });
     } catch (e) {
       print('❌ Error in initState: $e');
+    }
+  }
+
+  /// تحميل عناوين المستخدم
+  Future<void> _loadUserAddresses() async {
+    if (!mounted) return;
+
+    try {
+      final authController = AuthController.instance;
+      final userId = authController.currentUser.value?.id;
+
+      if (userId != null) {
+        print('📍 Loading user addresses for userId: $userId');
+        final addressService = AddressService.instance;
+
+        // تحميل العناوين
+        await addressService.getUserAddresses(userId);
+
+        // اختيار العنوان الافتراضي تلقائياً
+        if (addressService.addresses.isNotEmpty) {
+          final defaultAddress = addressService.getDefaultAddress();
+          if (defaultAddress != null) {
+            addressService.selectAddress(defaultAddress);
+            print('✅ Default address selected: ${defaultAddress.fullAddress}');
+          } else {
+            // اختيار أول عنوان إذا لم يكن هناك عنوان افتراضي
+            addressService.selectAddress(addressService.addresses.first);
+            print(
+              '✅ First address selected: ${addressService.addresses.first.fullAddress}',
+            );
+          }
+        }
+      }
+    } catch (e) {
+      print('❌ Error loading user addresses: $e');
     }
   }
 
@@ -137,6 +173,27 @@ class _CheckoutStepperScreenState extends State<CheckoutStepperScreen> {
     super.dispose();
   }
 
+  /// إتمام الطلب لتاجر واحد فقط
+  void checkoutSingleVendor(String vendorId, List<dynamic> items) {
+    final selectedVendorItems =
+        items
+            .where(
+              (item) => cartController.selectedItems[item.product?.id] == true,
+            )
+            .toList();
+
+    if (selectedVendorItems.isEmpty) {
+      TLoader.warningSnackBar(
+        title: 'alert'.tr,
+        message: 'please_select_product_from_store'.tr,
+      );
+      return;
+    }
+
+    // الانتقال للخطوة التالية
+    _nextStep();
+  }
+
   /// الانتقال للخطوة التالية
   void _nextStep() {
     if (_currentStep < 2) {
@@ -145,8 +202,8 @@ class _CheckoutStepperScreenState extends State<CheckoutStepperScreen> {
         // التحقق من اختيار منتجات
         if (cartController.selectedItemsCount == 0) {
           TLoader.warningSnackBar(
-            title: 'تنبيه',
-            message: 'الرجاء اختيار منتج واحد على الأقل',
+            title: 'alert'.tr,
+            message: 'please_select_product'.tr,
           );
           return;
         }
@@ -159,15 +216,15 @@ class _CheckoutStepperScreenState extends State<CheckoutStepperScreen> {
         final selectedAddress = addressService.selectedAddress.value;
         if (selectedAddress == null) {
           TLoader.warningSnackBar(
-            title: 'تنبيه',
-            message: 'الرجاء اختيار عنوان التوصيل',
+            title: 'alert'.tr,
+            message: 'please_select_delivery_address'.tr,
           );
           return;
         }
         if (selectedAddress.phoneNumber?.isEmpty ?? true) {
           TLoader.warningSnackBar(
-            title: 'تنبيه',
-            message: 'الرجاء اختيار عنوان يحتوي على رقم هاتف',
+            title: 'alert'.tr,
+            message: 'please_select_address_with_phone'.tr,
           );
           return;
         }
@@ -203,8 +260,8 @@ class _CheckoutStepperScreenState extends State<CheckoutStepperScreen> {
 
       if (selectedAddress == null) {
         TLoader.warningSnackBar(
-          message: 'الرجاء اختيار عنوان التوصيل',
-          title: 'تنبيه',
+          message: 'please_select_delivery_address'.tr,
+          title: 'alert'.tr,
         );
         return;
       }
@@ -328,9 +385,6 @@ class _CheckoutStepperScreenState extends State<CheckoutStepperScreen> {
               return _buildStepContent();
             }),
           ),
-
-          // أزرار التنقل
-          _buildNavigationButtons(),
         ],
       ),
     );
@@ -490,9 +544,7 @@ class _CheckoutStepperScreenState extends State<CheckoutStepperScreen> {
           Padding(
             padding: const EdgeInsets.only(bottom: 16),
             child: Text(
-              Get.locale?.languageCode == 'ar'
-                  ? 'منتجات حسب المتاجر'
-                  : 'Products by Vendors',
+              'products_by_vendors'.tr,
               style: titilliumBold.copyWith(fontSize: 18, color: Colors.black),
             ),
           ),
@@ -508,7 +560,11 @@ class _CheckoutStepperScreenState extends State<CheckoutStepperScreen> {
 
             return Padding(
               padding: const EdgeInsets.only(bottom: 16),
-              child: VendorCartBlock(vendorId: vendorId, items: items),
+              child: VendorCartBlock(
+                vendorId: vendorId,
+                items: items,
+                onCheckout: () => checkoutSingleVendor(vendorId, items),
+              ),
             );
           }),
         ];
@@ -550,7 +606,7 @@ class _CheckoutStepperScreenState extends State<CheckoutStepperScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'order.payment_method'.tr,
+                'payment_method_title'.tr,
                 style: titilliumBold.copyWith(
                   fontSize: 16,
                   color: Colors.black87,
@@ -629,7 +685,7 @@ class _CheckoutStepperScreenState extends State<CheckoutStepperScreen> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        'المجموع',
+                        'total_label'.tr,
                         style: titilliumBold.copyWith(fontSize: 16),
                       ),
                       TCustomWidgets.formattedPrice(total, 18, TColors.primary),
@@ -656,7 +712,7 @@ class _CheckoutStepperScreenState extends State<CheckoutStepperScreen> {
                       const Icon(Icons.location_on, color: Colors.black),
                       const SizedBox(width: 8),
                       Text(
-                        'عنوان التوصيل',
+                        'delivery_address'.tr,
                         style: titilliumBold.copyWith(fontSize: 16),
                       ),
                     ],
@@ -700,14 +756,14 @@ class _CheckoutStepperScreenState extends State<CheckoutStepperScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'وسيلة الدفع',
+                        'payment_method_title'.tr,
                         style: titilliumBold.copyWith(fontSize: 16),
                       ),
                       const SizedBox(height: 4),
                       Text(
                         selectedPaymentMethod == 'cod'
-                            ? 'الدفع عند الاستلام'
-                            : 'محفظة iStoreto',
+                            ? 'cash_on_delivery'.tr
+                            : 'istoreto_wallet'.tr,
                         style: titilliumRegular.copyWith(fontSize: 14),
                       ),
                     ],
@@ -730,7 +786,7 @@ class _CheckoutStepperScreenState extends State<CheckoutStepperScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'المجموع الكلي',
+                  'grand_total'.tr,
                   style: titilliumBold.copyWith(fontSize: 18),
                 ),
                 Obx(
@@ -740,6 +796,7 @@ class _CheckoutStepperScreenState extends State<CheckoutStepperScreen> {
                     TColors.primary,
                   ),
                 ),
+                _buildCheckoutButton(),
               ],
             ),
           ),
@@ -758,40 +815,41 @@ class _CheckoutStepperScreenState extends State<CheckoutStepperScreen> {
       child: Row(
         children: [
           // المجموع الكلي
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  'المجموع الكلي',
-                  style: titilliumRegular.copyWith(
-                    fontSize: 12,
-                    color: Colors.grey.shade600,
-                  ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'grand_total'.tr,
+                style: titilliumRegular.copyWith(
+                  fontSize: 12,
+                  color: Colors.grey.shade600,
                 ),
-                const SizedBox(height: 4),
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    TCustomWidgets.formattedPrice(total, 20, TColors.primary),
-                    const SizedBox(width: 8),
-                    Text(
-                      '($selectedCount منتج)',
-                      style: titilliumRegular.copyWith(
-                        fontSize: 12,
-                        color: Colors.grey.shade600,
-                      ),
+              ),
+              const SizedBox(height: 4),
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  TCustomWidgets.formattedPrice(total, 20, TColors.primary),
+                  const SizedBox(width: 8),
+                  Text(
+                    '($selectedCount ${'products'.tr})',
+                    style: titilliumRegular.copyWith(
+                      fontSize: 12,
+                      color: Colors.grey.shade600,
                     ),
-                  ],
-                ),
-              ],
-            ),
+                  ),
+                ],
+              ),
+            ],
           ),
 
           // زر Checkout الكامل
           ElevatedButton.icon(
-            onPressed: selectedCount > 0 ? _nextStep : null,
+            onPressed:
+                selectedCount > 0
+                    ? (_currentStep == 2 ? _completeOrder : _nextStep)
+                    : null,
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color(0xFF1E88E5),
               disabledBackgroundColor: Colors.grey.shade300,
@@ -802,122 +860,11 @@ class _CheckoutStepperScreenState extends State<CheckoutStepperScreen> {
             ),
             icon: const Icon(Icons.shopping_cart_checkout, size: 20),
             label: Text(
-              'إكمال الطلب',
+              _currentStep == 2 ? 'complete_order'.tr : 'next'.tr,
               style: titilliumBold.copyWith(fontSize: 16, color: Colors.white),
             ),
           ),
         ],
-      ),
-    );
-  }
-
-  /// أزرار التنقل
-  Widget _buildNavigationButtons() {
-    return SafeArea(
-      child: Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.05),
-              blurRadius: 10,
-              offset: const Offset(0, -5),
-            ),
-          ],
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            // زر Checkout للسلة الكاملة (فقط في الخطوة الأولى)
-
-            // أزرار التنقل العادية
-            Row(
-              children: [
-                // زر الرجوع
-                if (_currentStep > 0)
-                  Expanded(
-                    child: OutlinedButton(
-                      onPressed: _previousStep,
-                      style: OutlinedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        side: const BorderSide(color: Colors.black),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                      child: Text(
-                        'رجوع',
-                        style: titilliumBold.copyWith(
-                          fontSize: 16,
-                          color: Colors.black,
-                        ),
-                      ),
-                    ),
-                  ),
-
-                if (_currentStep > 0) const SizedBox(width: 16),
-
-                // زر التالي/إتمام (فقط في الخطوة 2 و 3)
-                if (_currentStep > 0)
-                  Expanded(
-                    child: Obx(() {
-                      final isLastStep = _currentStep == 2;
-                      final isLoading =
-                          OrderController.instance.isSubmitting.value;
-
-                      return ElevatedButton(
-                        onPressed:
-                            isLoading
-                                ? null
-                                : (isLastStep ? _completeOrder : _nextStep),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.black,
-                          disabledBackgroundColor: Colors.grey.shade300,
-                          padding: const EdgeInsets.symmetric(vertical: 16),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                        ),
-                        child:
-                            isLoading
-                                ? const SizedBox(
-                                  width: 24,
-                                  height: 24,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2,
-                                    color: Colors.white,
-                                  ),
-                                )
-                                : Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Text(
-                                      isLastStep ? 'إتمام الطلب' : 'التالي',
-                                      style: titilliumBold.copyWith(
-                                        fontSize: 16,
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                    const SizedBox(width: 8),
-                                    Icon(
-                                      isLastStep
-                                          ? Icons.check
-                                          : Icons.arrow_forward,
-                                      color: Colors.white,
-                                      size: 20,
-                                    ),
-                                  ],
-                                ),
-                      );
-                    }),
-                  ),
-              ],
-            ),
-            // if (_currentStep == 0) _buildCheckoutButton(),
-            // const SizedBox(height: 100),
-          ],
-        ),
       ),
     );
   }

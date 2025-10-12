@@ -6,6 +6,7 @@ class Ru {
     'welcome': 'Добро пожаловать',
     'loading': 'Загрузка...',
     'error': 'Ошибка',
+    'vendor_not_found': 'Продавец не найден',
     'success': 'Успех',
     'cancel': 'Отмена',
     'confirm': 'Подтвердить',
@@ -99,5 +100,10 @@ class Ru {
     'accessories': 'Аксессуары',
     'test_snackbar': 'Тестовое Сообщение',
     'coming_soon': 'Скоро Доступно',
+
+    // Gallery
+    'gallery.discover_latest_products': 'Откройте новейшие продукты',
+    'gallery.browse_thousands_of_photos':
+        'Просматривайте тысячи фотографий продуктов',
   };
 }

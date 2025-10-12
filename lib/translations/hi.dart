@@ -6,6 +6,7 @@ class Hi {
     'welcome': 'स्वागत है',
     'loading': 'लोड हो रहा है...',
     'error': 'त्रुटि',
+    'vendor_not_found': 'विक्रेता नहीं मिला',
     'success': 'सफलता',
     'cancel': 'रद्द करें',
     'confirm': 'पुष्टि करें',
@@ -99,5 +100,9 @@ class Hi {
     'accessories': 'सामान',
     'test_snackbar': 'परीक्षण संदेश',
     'coming_soon': 'जल्द आ रहा है',
+
+    // Gallery
+    'gallery.discover_latest_products': 'नवीनतम उत्पादों की खोज करें',
+    'gallery.browse_thousands_of_photos': 'हजारों उत्पाद फ़ोटो ब्राउज़ करें',
   };
 }

@@ -6,6 +6,7 @@ class Ko {
     'welcome': '환영합니다',
     'loading': '로딩 중...',
     'error': '오류',
+    'vendor_not_found': '판매자를 찾을 수 없습니다',
     'success': '성공',
     'cancel': '취소',
     'confirm': '확인',
@@ -99,5 +100,9 @@ class Ko {
     'accessories': '액세서리',
     'test_snackbar': '테스트 메시지',
     'coming_soon': '곧 출시',
+
+    // Gallery
+    'gallery.discover_latest_products': '최신 제품 발견',
+    'gallery.browse_thousands_of_photos': '수천 개의 제품 사진 탐색',
   };
 }

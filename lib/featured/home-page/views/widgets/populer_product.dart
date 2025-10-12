@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:istoreto/featured/home-page/views/widgets/discover_product.dart';
 import 'package:istoreto/featured/product/cashed_network_image.dart';
 import 'package:istoreto/featured/product/controllers/product_controller.dart';
 import 'package:istoreto/featured/product/data/product_model.dart';
@@ -360,6 +361,11 @@ class _ProductsListGrid extends StatelessWidget {
         ),
         SizedBox(height: TSizes.spaceBtWsections),
         SizedBox(height: TSizes.spaceBtWsections),
+
+        DiscoverProductWidget(),
+        SizedBox(height: TSizes.spaceBtWsections),
+        SizedBox(height: TSizes.spaceBtWsections),
+
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Row(

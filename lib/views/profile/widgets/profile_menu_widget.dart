@@ -10,6 +10,8 @@ import 'package:istoreto/views/admin/admin_zone_page.dart';
 import 'package:istoreto/views/settings_page.dart';
 import 'package:istoreto/views/edit_personal_info_page.dart';
 import 'package:istoreto/featured/product/views/saved_products_list.dart';
+import 'package:istoreto/featured/cart/view/cart_screen.dart';
+import 'package:istoreto/featured/payment/views/addresses_list_page.dart';
 
 /// مكون قائمة الملف الشخصي - يعرض خيارات الإعدادات والإجراءات
 class ProfileMenuWidget extends StatelessWidget {
@@ -34,6 +36,18 @@ class ProfileMenuWidget extends StatelessWidget {
             title: 'saved_products'.tr,
             subtitle: 'view_your_saved_products'.tr,
             onTap: () => Get.to(() => SavedProductsPage()),
+          ),
+          _buildMenuItem(
+            icon: Icons.shopping_cart,
+            title: 'my_cart'.tr,
+            subtitle: 'view_your_shopping_cart'.tr,
+            onTap: () => Get.to(() => CartScreen()),
+          ),
+          _buildMenuItem(
+            icon: Icons.location_on,
+            title: 'my_addresses'.tr,
+            subtitle: 'manage_your_delivery_addresses'.tr,
+            onTap: () => Get.to(() => const AddressesListPage()),
           ),
           _buildMenuItem(
             icon: Icons.business,

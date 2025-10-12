@@ -6,6 +6,7 @@ class Ar {
     'welcome': 'مرحباً',
     'loading': 'جاري التحميل...',
     'error': 'خطأ',
+    'vendor_not_found': 'المتجر غير موجود',
     'success': 'نجح',
     'cancel': 'إلغاء',
     'confirm': 'تأكيد',
@@ -252,6 +253,8 @@ class Ar {
     'cart.item_saved_for_later': 'تم حفظ العنصر للاحقاً',
     'cart.failed_to_save_item': 'فشل في حفظ العنصر',
     'cart.item_removed_from_saved': 'تم إزالة العنصر من المحفوظات',
+    'cart.shopList': 'سلة التسوق',
+    'cart.total': 'المجموع',
     'cart.failed_to_remove_item': 'فشل في إزالة العنصر',
     'cart.item_added_to_cart': 'تم إضافة العنصر للسلة',
     'cart.failed_to_add_to_cart': 'فشل في إضافة العنصر للسلة',
@@ -648,6 +651,54 @@ class Ar {
     // Profile Menu
     'saved_products': 'المنتجات المحفوظة',
     'view_your_saved_products': 'عرض منتجاتك المحفوظة',
+    'my_cart': 'سلتي',
+    'view_your_shopping_cart': 'عرض المنتجات في سلة التسوق',
+    'my_addresses': 'عناويني',
+    'manage_your_delivery_addresses': 'إدارة عناوين التوصيل الخاصة بك',
+    'no_addresses_yet': 'لا توجد عناوين بعد',
+    'add_your_first_address': 'أضف عنوان التوصيل الأول',
+    'add_new_address': 'إضافة عنوان جديد',
+    'set_as_default': 'تعيين كافتراضي',
+    'edit_address': 'تعديل العنوان',
+    'delete_address': 'حذف العنوان',
+    'delete_address_confirmation': 'هل أنت متأكد من حذف هذا العنوان؟',
+    'address_deleted_successfully': 'تم حذف العنوان بنجاح',
+    'default_address_updated': 'تم تحديث العنوان الافتراضي بنجاح',
+    'edit_address_coming_soon': 'ميزة تعديل العنوان قريباً',
+    'add_address_coming_soon':
+        'ميزة إضافة عنوان قريباً. اتبع دليل دمج خرائط جوجل.',
+    'delete_failed': 'فشل الحذف',
+    'default': 'افتراضي',
+    'address_title_label': 'عنوان العنوان',
+    'address_title': 'العنوان',
+    'address_title_hint': 'مثال: المنزل، العمل، أخرى',
+    'address_title_required': 'الرجاء إدخال عنوان العنوان',
+    'full_address_label': 'العنوان الكامل',
+    'full_address': 'العنوان الكامل',
+    'full_address_hint': 'أدخل عنوانك بالكامل',
+    'full_address_required': 'الرجاء إدخال العنوان الكامل',
+    'pick_from_map': 'اختر من الخريطة',
+    'additional_details': 'تفاصيل إضافية',
+    'city': 'المدينة',
+    'city_hint': 'أدخل اسم المدينة',
+    'street': 'الشارع',
+    'street_hint': 'أدخل اسم الشارع',
+    'building_number': 'رقم المبنى',
+    'building_number_hint': 'أدخل رقم المبنى/الوحدة',
+    'contact_info': 'معلومات الاتصال',
+
+    'phone_number_hint': 'أدخل رقم الهاتف',
+    'phone_number_required': 'الرجاء إدخال رقم الهاتف',
+    'set_as_default_address': 'تعيين كعنوان افتراضي',
+    'default_address_description': 'سيتم استخدام هذا العنوان افتراضياً للتوصيل',
+    'location_saved': 'تم حفظ الموقع',
+    'lat': 'خط العرض',
+    'lng': 'خط الطول',
+    'map_picker_coming_soon':
+        'اختيار الموقع من الخريطة قريباً. أدخل العنوان يدوياً الآن.',
+    'address_added_successfully': 'تم إضافة العنوان بنجاح',
+    'address_updated_successfully': 'تم تحديث العنوان بنجاح',
+    'add_failed': 'فشلت الإضافة',
 
     // Add Product Page
     'add_new_product': 'إضافة منتج جديد',
@@ -782,7 +833,7 @@ class Ar {
     'failed_to_save_address': 'فشل في حفظ العنوان',
     'address_add_new_address': 'إضافة عنوان جديد',
     'address_custom_title': 'عنوان مخصص',
-    'address_title_hint': 'مثل: المنزل، العمل، الجامعة',
+
     'address_city': 'المدينة',
     'address_street': 'الشارع',
     'address_building_number': 'رقم المبنى',
@@ -795,6 +846,22 @@ class Ar {
     'address_set_as_default': 'تعيين كعنوان افتراضي',
     'address_cancel': 'إلغاء',
     'address_save_address': 'حفظ العنوان',
+
+    // Map Picker
+    'map_picker_title': 'اختر الموقع على الخريطة',
+    'map_picker_fetching_address': 'جاري الحصول على العنوان...',
+    'map_picker_current_location': 'موقعي الحالي',
+    'map_picker_confirm_location': 'تأكيد الموقع',
+    'map_picker_location_fetch_error': 'تعذر الحصول على الموقع الحالي',
+    'map_picker_address_fetch_error': 'تعذر الحصول على العنوان',
+    'map_picker_select_address': 'اختر عنوان',
+    'map_picker_no_addresses': 'لا توجد عناوين محفوظة',
+    'map_picker_add_new': 'إضافة عنوان جديد',
+    'map_picker_default': 'افتراضي',
+    'map_picker_set_default': 'تعيين كافتراضي',
+    'map_picker_edit': 'تعديل',
+    'map_picker_delete': 'حذف',
+
     'album_search_start_typing': 'ابدأ بالكتابة للبحث في الألبومات والصور',
     'album_search_no_results': 'لا توجد نتائج لـ "{query}"',
     'album_search_albums_count': 'الألبومات ({count})',
@@ -853,6 +920,10 @@ class Ar {
     'order.phone_number': 'رقم الهاتف:',
     'order.no_phone': 'لا يوجد هاتف',
     'order.edit_phone': 'تعديل رقم الهاتف',
+    'order.address_section': 'العنوان',
+    'order.details': 'تفاصيل الطلب',
+    'order.address_payment': 'العنوان ووسيلة الدفع',
+    'order.order_summary': 'ملخص الطلب',
     'order.payment_method': 'وسيلة الدفع:',
     'order.edit_payment_method': 'تعديل وسيلة الدفع',
     'order.payment_method_updated_successfully': 'تم تحديث وسيلة الدفع بنجاح',
@@ -920,6 +991,24 @@ class Ar {
     // Loader Messages
     'progress': 'جاري',
     'warning': 'تحذير',
+    'alert': 'تنبيه',
+    'products_by_vendors': 'منتجات حسب المتاجر',
+    'please_select_product': 'الرجاء اختيار منتج واحد على الأقل',
+    'please_select_product_from_store':
+        'الرجاء اختيار منتج واحد على الأقل من هذا المتجر',
+    'please_select_delivery_address': 'الرجاء اختيار عنوان التوصيل',
+    'please_select_address_with_phone':
+        'الرجاء اختيار عنوان يحتوي على رقم هاتف',
+    'delivery_address': 'عنوان التوصيل',
+    'payment_method_title': 'وسيلة الدفع',
+    'cash_on_delivery': 'الدفع عند الاستلام',
+    'istoreto_wallet': 'محفظة iStoreto',
+    'grand_total': 'المجموع الكلي',
+    'total_label': 'المجموع',
+    'complete_order': 'إكمال الطلب',
+    'next': 'التالي',
+    'processing': 'جاري المعالجة',
+    'order_will_be_completed': 'سيتم إتمام الطلب لـ {count} منتج من هذا المتجر',
 
     // Banner Messages
     'banner.image': 'صورة البانر',
@@ -1240,7 +1329,7 @@ class Ar {
     'add_more': 'إضافة المزيد',
 
     // Gallery
-    'gallery.discover_latest_products': 'اكتشف أحدث المنتجات 📸',
+    'gallery.discover_latest_products': 'اكتشف أحدث المنتجات',
     'gallery.browse_thousands_of_photos': 'تصفح آلاف الصور لجميع المنتجات',
   };
 }

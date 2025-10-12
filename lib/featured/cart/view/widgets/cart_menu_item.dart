@@ -107,6 +107,15 @@ class CartMenuItem extends StatelessWidget {
                     // صورة المنتج بالأبعاد الأصلية
                     GestureDetector(
                       onTap: () {
+                        if (item.product.vendorId == null) {
+                          Get.snackbar(
+                            'error'.tr,
+                            'vendor_not_found'.tr,
+                            backgroundColor: Colors.red,
+                            colorText: Colors.white,
+                          );
+                          return;
+                        }
                         Navigator.push(
                           context,
                           MaterialPageRoute(
@@ -174,6 +183,15 @@ class CartMenuItem extends StatelessWidget {
                     Expanded(
                       child: GestureDetector(
                         onTap: () {
+                          if (item.product.vendorId == null) {
+                            Get.snackbar(
+                              'error'.tr,
+                              'vendor_not_found'.tr,
+                              backgroundColor: Colors.red,
+                              colorText: Colors.white,
+                            );
+                            return;
+                          }
                           Navigator.push(
                             context,
                             MaterialPageRoute(

@@ -6,6 +6,7 @@ class Tr {
     'welcome': 'Hoş geldiniz',
     'loading': 'Yükleniyor...',
     'error': 'Hata',
+    'vendor_not_found': 'Satıcı bulunamadı',
     'success': 'Başarılı',
     'cancel': 'İptal',
     'confirm': 'Onayla',
@@ -99,5 +100,9 @@ class Tr {
     'accessories': 'Aksesuar',
     'test_snackbar': 'Test Mesajı',
     'coming_soon': 'Yakında Geliyor',
+
+    // Gallery
+    'gallery.discover_latest_products': 'En Yeni Ürünleri Keşfedin',
+    'gallery.browse_thousands_of_photos': 'Binlerce ürün fotoğrafına göz atın',
   };
 }
