@@ -31,6 +31,8 @@ class SocialMediaController extends GetxController {
 class SocialMediaIcons extends StatelessWidget {
   final SocialMediaController controller = Get.put(SocialMediaController());
 
+  SocialMediaIcons({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Row(

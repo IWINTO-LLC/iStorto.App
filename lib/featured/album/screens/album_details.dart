@@ -182,8 +182,9 @@ class _AlbumDetailsPageState extends State<AlbumDetailsPage> {
                                           child,
                                           loadingProgress,
                                         ) {
-                                          if (loadingProgress == null)
+                                          if (loadingProgress == null) {
                                             return child;
+                                          }
                                           return SizedBox(
                                             height: 300,
                                             width: 200,
@@ -334,8 +335,8 @@ class _AlbumDetailsPageState extends State<AlbumDetailsPage> {
 
   Future<void> _pickImagesFromGallery() async {
     final ImagePicker picker = ImagePicker();
-    final List<XFile>? pickedFiles = await picker.pickMultiImage();
-    if (pickedFiles != null && pickedFiles.isNotEmpty) {
+    final List<XFile> pickedFiles = await picker.pickMultiImage();
+    if (pickedFiles.isNotEmpty) {
       setState(() {
         tempImages.addAll(pickedFiles.map((f) => File(f.path)));
       });

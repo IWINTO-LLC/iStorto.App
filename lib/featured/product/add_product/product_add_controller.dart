@@ -26,13 +26,11 @@ class ProductAddController extends GetxController {
   // استدعاء اختيار الصور
   Future<void> pickImages() async {
     final ImagePicker picker = ImagePicker();
-    final List<XFile>? images = await picker.pickMultiImage();
-    if (images != null) {
-      for (var image in images) {
-        pickedImages.add(File(image.path));
-      }
+    final List<XFile> images = await picker.pickMultiImage();
+    for (var image in images) {
+      pickedImages.add(File(image.path));
     }
-  }
+    }
 
   // اقتصاص صورة
   Future<void> cropImage(int index) async {
@@ -77,7 +75,7 @@ class ProductAddController extends GetxController {
           'فشل في رفع الصورة رقم ${i + 1}: ${e.toString()}',
           snackPosition: SnackPosition.BOTTOM,
         );
-        throw e;
+        rethrow;
       }
     }
 

@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:istoreto/controllers/create_category_controller.dart';
@@ -19,10 +18,6 @@ class VendorCategoriesController extends GetxController {
   final RxString currentFilter = 'all'.obs;
   final TextEditingController searchController = TextEditingController();
 
-  @override
-  void onInit() {
-    super.onInit();
-  }
 
   @override
   void onClose() {

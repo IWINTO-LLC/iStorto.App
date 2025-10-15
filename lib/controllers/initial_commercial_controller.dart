@@ -252,7 +252,7 @@ class InitialCommercialController extends GetxController {
   void showLogoSourceDialog() {
     Get.dialog(
       AlertDialog(
-        title: Text('select_image'.tr + ' ${'logo'.tr}'),
+        title: Text('${'select_image'.tr} ${'logo'.tr}'),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -284,7 +284,7 @@ class InitialCommercialController extends GetxController {
   void showCoverSourceDialog() {
     Get.dialog(
       AlertDialog(
-        title: Text('select_image'.tr + ' ${'cover'.tr}'),
+        title: Text('${'select_image'.tr} ${'cover'.tr}'),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [

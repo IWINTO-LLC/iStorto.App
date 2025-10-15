@@ -4,7 +4,6 @@ import 'package:istoreto/featured/shop/controller/policy_controller.dart';
 import 'package:istoreto/utils/common/styles/styles.dart';
 import 'package:istoreto/utils/constants/color.dart';
 import 'package:istoreto/utils/constants/sizes.dart';
-import 'package:istoreto/utils/common/widgets/custom_widgets.dart';
 
 class BasicPoliciesSection extends StatelessWidget {
   const BasicPoliciesSection({super.key});

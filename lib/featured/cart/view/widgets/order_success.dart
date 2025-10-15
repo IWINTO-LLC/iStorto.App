@@ -575,24 +575,17 @@ class _OrderSuccessScreenState extends State<OrderSuccessScreen> {
                     SizedBox(
                       width: 60.w,
                       child: ElevatedButton(
-                        onPressed: () {
-                          Navigator.pushAndRemoveUntil(
-                            context,
-                            MaterialPageRoute(
-                              builder:
-                                  (context) => const Scaffold(
-                                    body: Center(child: Text('Home')),
-                                  ),
+                        onPressed:
+                            () => Get.to(
+                              () => const NavigationMenu(),
+                              transition: Transition.cupertino,
                             ),
-                            (route) => false,
-                          );
-                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.black,
+                        ),
                         child: Text(
                           "order.back_to_home".tr,
                           style: TextStyle(color: Colors.white),
-                        ),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.black,
                         ),
                       ),
                     ),

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:istoreto/featured/product/data/product_model.dart';
 import 'package:istoreto/featured/product/widgets/currency_price_widget.dart';
 import 'package:istoreto/utils/constants/color.dart';

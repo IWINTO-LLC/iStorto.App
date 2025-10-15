@@ -46,7 +46,7 @@ class ImageUploadService {
       final timestamp = DateTime.now().millisecondsSinceEpoch;
       final extension = imageFile.path.split('.').last.toLowerCase();
       final fileName =
-          customFileName ?? '${folderName}_${timestamp}.$extension';
+          customFileName ?? '${folderName}_$timestamp.$extension';
       final path = '$folderName/$fileName';
 
       // رفع الصورة إلى Supabase Storage

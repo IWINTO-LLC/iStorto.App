@@ -132,7 +132,7 @@ class SearchAndSort extends StatelessWidget {
                 onChanged: (value) => searchQuery.value = value.toLowerCase(),
                 onSubmitted: (value) => searchQuery.value = value.toLowerCase(),
                 decoration: InputDecoration(
-                  hintText: "search.search".tr + " ...",
+                  hintText: "${"search.search".tr} ...",
                   hintStyle: const TextStyle(color: Colors.grey),
                   prefixIcon: const Icon(Icons.search, color: Colors.grey),
                   filled: true,

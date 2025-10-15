@@ -10,7 +10,6 @@ import 'package:istoreto/featured/cart/view/widgets/dynamic_add_cart.dart';
 import 'package:istoreto/featured/product/controllers/floating_button_vendor_controller.dart';
 import 'package:istoreto/featured/product/controllers/product_controller.dart';
 import 'package:istoreto/featured/product/data/product_model.dart';
-import 'package:istoreto/featured/product/views/add/add_product.dart';
 import 'package:istoreto/featured/product/views/widgets/product_actions_menu.dart';
 import 'package:istoreto/featured/product/views/widgets/product_details.dart';
 import 'package:istoreto/featured/product/views/widgets/product_image_slider_mini.dart';
@@ -18,6 +17,7 @@ import 'package:istoreto/featured/product/views/widgets/product_widget_medium_fi
 import 'package:istoreto/featured/product/views/widgets/product_widget_small.dart';
 import 'package:istoreto/featured/sector/controller/sector_controller.dart';
 import 'package:istoreto/featured/sector/model/sector_model.dart';
+import 'package:istoreto/views/vendor/add_product_page.dart';
 
 import 'package:istoreto/featured/shop/view/widgets/sector_stuff.dart';
 import 'package:istoreto/utils/actions.dart';
@@ -752,15 +752,9 @@ class _SectorBuilderState extends State<SectorBuilder> {
                     context,
                     MaterialPageRoute(
                       builder:
-                          (context) => CreateProduct(
-                            initialList: spotList,
+                          (context) => AddProductPage(
                             vendorId: widget.vendorId,
-                            type: widget.sectorName,
-                            sectorTitle:
-                                SectorController.instance.sectors
-                                    .where((s) => s.name == widget.sectorName)
-                                    .first,
-                            sectionId: widget.sectorName,
+                            initialSection: widget.sectorName,
                           ),
                     ),
                   );
@@ -808,12 +802,9 @@ class EmptyAddItem extends StatelessWidget {
                 context,
                 MaterialPageRoute(
                   builder:
-                      (context) => CreateProduct(
+                      (context) => AddProductPage(
                         vendorId: vendorId,
-                        initialList: [],
-                        type: sectorTitle.name,
-                        sectorTitle: sectorTitle,
-                        sectionId: sctionTitle,
+                        initialSection: sectorTitle.name,
                       ),
                 ),
               );

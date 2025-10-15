@@ -4,13 +4,13 @@ import 'package:istoreto/utils/constants/enums.dart';
 
 class TBrandTitleText extends StatelessWidget {
   const TBrandTitleText({
-    Key? key,
+    super.key,
     required this.title,
     this.maxLines = 1,
     this.color,
     this.textAlign = TextAlign.center,
     this.brandTextSize = TextSizes.small,
-  }) : super(key: key);
+  });
 
   final String title;
   final int maxLines;

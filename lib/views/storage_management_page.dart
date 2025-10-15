@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:istoreto/controllers/storage_management_controller.dart';
 import 'package:istoreto/utils/common/styles/styles.dart';
-import 'package:istoreto/utils/common/widgets/appbar/appbar.dart';
 import 'package:istoreto/utils/common/widgets/appbar/custom_app_bar.dart';
 
 /// Storage Management Page

@@ -3,12 +3,9 @@ import 'package:get/get.dart';
 import 'package:sizer/sizer.dart';
 import 'package:istoreto/controllers/translate_controller.dart';
 import 'package:istoreto/featured/cart/view/add_to_cart_wid_small.dart';
-import 'package:istoreto/featured/cart/view/widgets/dynamic_add_cart.dart';
 import 'package:istoreto/featured/product/controllers/product_controller.dart';
 import 'package:istoreto/featured/product/data/product_model.dart';
-import 'package:istoreto/featured/product/views/widgets/favorite_widget.dart';
 import 'package:istoreto/featured/product/views/widgets/product_image_slider_mini.dart';
-import 'package:istoreto/featured/product/views/widgets/saved_widget.dart';
 import 'package:istoreto/utils/common/styles/styles.dart';
 import 'package:istoreto/utils/common/widgets/custom_widgets.dart';
 import 'package:istoreto/utils/constants/color.dart';
@@ -35,7 +32,6 @@ class ProductWidgetSmall extends StatelessWidget {
     //         : "0";
 
     var prefferHeight = 33.333.w * (4 / 3);
-    final langCode = Localizations.localeOf(context).languageCode;
     return Stack(
       children: [
         Column(
@@ -60,7 +56,7 @@ class ProductWidgetSmall extends StatelessWidget {
                           .value
                       ? FutureBuilder<String>(
                         future: TranslateController.instance.getTranslatedText(
-                          text: product.title ?? "",
+                          text: product.title,
                           targetLangCode:
                               Localizations.localeOf(context).languageCode,
                         ),
@@ -70,7 +66,7 @@ class ProductWidgetSmall extends StatelessWidget {
                                           ConnectionState.done &&
                                       snapshot.hasData
                                   ? snapshot.data!
-                                  : product.title ?? "";
+                                  : product.title;
                           return Text(
                             displayText,
                             style: titilliumBold.copyWith(

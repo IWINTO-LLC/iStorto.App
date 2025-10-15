@@ -7,13 +7,11 @@ import 'package:istoreto/featured/product/controllers/product_controller.dart';
 import 'package:istoreto/featured/product/data/product_model.dart';
 import 'package:istoreto/featured/product/views/widgets/product_actions_menu.dart';
 import 'package:istoreto/featured/product/views/widgets/product_image_slider_mini.dart';
-import 'package:istoreto/featured/product/views/widgets/saved_widget.dart';
 import 'package:istoreto/utils/common/styles/styles.dart';
 import 'package:istoreto/utils/common/widgets/custom_shapes/containers/rounded_container.dart';
 import 'package:istoreto/utils/common/widgets/custom_widgets.dart';
 import 'package:istoreto/utils/constants/color.dart';
 import 'package:istoreto/utils/constants/sizes.dart';
-import 'package:istoreto/controllers/translate_controller.dart';
 
 class ProductWidgetMedium extends StatelessWidget {
   const ProductWidgetMedium({
@@ -36,7 +34,7 @@ class ProductWidgetMedium extends StatelessWidget {
       product.price,
       product.oldPrice,
     );
-    final localizedTitle = product.title ?? '';
+
     final localizedDescription = product.description ?? '';
 
     return TRoundedContainer(
@@ -85,7 +83,7 @@ class ProductWidgetMedium extends StatelessWidget {
                                   ? FutureBuilder<String>(
                                     future: TranslateController.instance
                                         .getTranslatedText(
-                                          text: product.title ?? "",
+                                          text: product.title,
                                           targetLangCode:
                                               Localizations.localeOf(
                                                 context,
@@ -97,7 +95,7 @@ class ProductWidgetMedium extends StatelessWidget {
                                                       ConnectionState.done &&
                                                   snapshot.hasData
                                               ? snapshot.data!
-                                              : product.title ?? "";
+                                              : product.title;
                                       return Text(
                                         displayText,
                                         style: titilliumBold.copyWith(
@@ -110,7 +108,7 @@ class ProductWidgetMedium extends StatelessWidget {
                                     },
                                   )
                                   : Text(
-                                    product.title ?? "",
+                                    product.title,
                                     style: titilliumBold.copyWith(
                                       fontSize: 14,
                                       fontWeight: FontWeight.w700,

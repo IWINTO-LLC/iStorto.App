@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:istoreto/featured/shop/view/store_settings_new.dart';
+import 'package:istoreto/featured/shop/view/vendor_social_links_page.dart';
 import 'package:istoreto/utils/common/widgets/appbar/custom_app_bar.dart';
 import 'package:istoreto/views/vendor/vendor_banners_page.dart';
 import 'package:istoreto/views/vendor/vendor_categories_management_page.dart';
@@ -159,6 +160,22 @@ class VendorAdminZone extends StatelessWidget {
                       colorText: Colors.white,
                     );
                   },
+                ),
+
+                const SizedBox(height: 12),
+
+                // Social Links Management
+                _buildManagementCard(
+                  icon: Icons.link,
+                  title: 'vendor_admin_zone_social_links'.tr,
+                  subtitle: 'vendor_admin_zone_social_links_desc'.tr,
+                  color: Colors.black,
+                  onTap:
+                      () => Get.to(
+                        () => VendorSocialLinksPage(vendorId: vendorId),
+                        transition: Transition.cupertino,
+                        duration: const Duration(milliseconds: 900),
+                      ),
                 ),
 
                 const SizedBox(height: 12),

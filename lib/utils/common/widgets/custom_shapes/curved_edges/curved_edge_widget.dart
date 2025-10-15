@@ -4,9 +4,9 @@ import "curved_edges.dart";
 
 class TCurvedEdgesWidget extends StatelessWidget {
   const TCurvedEdgesWidget({
-    Key? key,
+    super.key,
     this.child,
-  }) : super(key: key);
+  });
   final Widget? child;
   @override
   Widget build(BuildContext context) {

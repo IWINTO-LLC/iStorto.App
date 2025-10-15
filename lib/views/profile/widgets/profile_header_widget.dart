@@ -28,7 +28,7 @@ class ProfileHeaderWidget extends StatelessWidget {
       _loadUserImages(authController, imageController);
     });
 
-    return Container(
+    return SizedBox(
       height: 280,
       child: Stack(
         children: [
@@ -340,7 +340,7 @@ class ProfileHeaderWidget extends StatelessWidget {
           ),
           SizedBox(height: 4),
           Text(
-            '${authController.currentUser.value?.email ?? 'user@example.com'}',
+            authController.currentUser.value?.email ?? 'user@example.com',
             style: TextStyle(
               fontSize: 14,
               color: Colors.white,

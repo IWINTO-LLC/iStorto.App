@@ -466,7 +466,7 @@ class _BannerTestPageState extends State<BannerTestPage> {
                           ],
                         ),
                       );
-                    }).toList(),
+                    }),
                   ],
                 ),
               ),

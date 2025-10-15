@@ -5,10 +5,9 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:istoreto/controllers/auth_controller.dart';
-import 'package:istoreto/featured/cart/view/cart_screen.dart';
-import 'package:istoreto/featured/cart/view/new_cart_screen.dart';
 import 'package:istoreto/featured/home-page/views/home_page.dart';
 import 'package:istoreto/featured/product/views/favorite_products_list.dart';
+import 'package:istoreto/featured/search/view/comprehensive_search_page.dart';
 import 'package:istoreto/featured/shop/view/market_place_view.dart';
 import 'package:istoreto/views/profile_page.dart';
 import 'package:line_icons/line_icons.dart';
@@ -77,7 +76,7 @@ class _NavigationMenuState extends State<NavigationMenu> {
                     tabs: [
                       GButton(icon: LineIcons.home, text: 'home'.tr),
                       GButton(icon: LineIcons.heart, text: 'favorites'.tr),
-                      GButton(icon: LineIcons.shoppingCart, text: 'cart'.tr),
+                      GButton(icon: LineIcons.search, text: 'search'.tr),
                       GButton(icon: LineIcons.user, text: 'profile'.tr),
                       if (AuthController.instance.isVendorAcount.value)
                         GButton(icon: LineIcons.store, text: 'store'.tr),
@@ -170,7 +169,7 @@ class NavigationController extends GetxController {
   List<Widget> get screens => [
     const HomePage(), // Home page
     const FavoriteProductsPage(), // Likes page
-    const NewCartScreen(), // Cart page
+    const ComprehensiveSearchPage(), // Search page
     const ProfilePage(), // Profile page
     if (AuthController.instance.isVendorAcount.value)
       MarketPlaceView(

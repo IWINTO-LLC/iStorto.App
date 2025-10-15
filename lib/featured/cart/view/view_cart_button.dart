@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:istoreto/featured/cart/view/cart_screen.dart';
+import 'package:get/get.dart';
+import 'package:istoreto/featured/cart/view/checkout_stepper_screen.dart';
 import 'package:istoreto/utils/common/styles/styles.dart';
 import 'package:istoreto/utils/common/widgets/custom_shapes/containers/rounded_container.dart';
 
@@ -11,12 +12,13 @@ class ViewCartButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => const CartScreen()),
-        );
-      },
+      onTap:
+          () => Get.to(
+            () => const CheckoutStepperScreen(),
+            transition: Transition.cupertino,
+            duration: const Duration(milliseconds: 900),
+          ),
+
       child: TRoundedContainer(
         // borderColor: Colors.black,
         // borderWidth: 2,

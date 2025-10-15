@@ -11,28 +11,28 @@ import 'package:istoreto/featured/product/views/edit/edit_product.dart';
 import 'package:istoreto/featured/product/views/widgets/product_image_slider_mini.dart';
 import 'package:istoreto/utils/common/styles/styles.dart';
 import 'package:istoreto/utils/common/widgets/custom_widgets.dart';
-import 'package:istoreto/utils/constants/image_strings.dart';
+
 import 'package:istoreto/utils/constants/sizes.dart';
 
 class TProductItem extends StatelessWidget {
   TProductItem({super.key, required this.product});
   final ProductModel product;
 
-  var renderOverlay = true;
-  var visible = true;
-  var switchLabelPosition = false;
-  var extend = false.obs;
-  var mini = false;
-  var customDialRoot = false;
-  var closeManually = false;
-  var useRAnimation = true;
-  var isDialOpen = ValueNotifier<bool>(false);
-  var speedDialDirection =
+  final renderOverlay = true;
+  final visible = true;
+  final switchLabelPosition = false;
+  final extend = false.obs;
+  final mini = false;
+  final customDialRoot = false;
+  final closeManually = false;
+  final useRAnimation = true;
+  final isDialOpen = ValueNotifier<bool>(false);
+  final speedDialDirection =
       TranslationController.instance.isRTL
           ? SpeedDialDirection.right
           : SpeedDialDirection.left;
-  var buttonSize = const Size(35.0, 35.0);
-  var childrenButtonSize = const Size(45.0, 45.0);
+  final buttonSize = const Size(35.0, 35.0);
+  final childrenButtonSize = const Size(45.0, 45.0);
 
   @override
   Widget build(BuildContext context) {

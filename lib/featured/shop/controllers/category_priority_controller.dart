@@ -11,15 +11,7 @@ class CategoryPriorityController extends GetxController {
   final isLoading = false.obs;
   final vendorId = ''.obs;
 
-  @override
-  void onInit() {
-    super.onInit();
-  }
 
-  @override
-  void onClose() {
-    super.onClose();
-  }
 
   /// Initialize the controller with categories and vendor ID
   void initialize(List<dynamic> initialCategories, String vendorIdValue) {

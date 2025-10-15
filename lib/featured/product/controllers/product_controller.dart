@@ -304,10 +304,9 @@ class ProductController extends GetxController {
     var salePriceNumber = double.parse(
       price.text.replaceAll(RegExp(r'[,.]'), ''),
     );
-    print("===========salePriceNumber is ====$salePriceNumber");
     var oldPriceNumber =
         double.tryParse(oldPrice.text.replaceAll(RegExp(r'[,.]'), '')) ?? 0.00;
-    print("===========oldPriceNumber is ====$oldPriceNumber");
+
     if (oldPriceNumber < salePriceNumber && oldPriceNumber > 0.00) {
       TLoader.warningSnackBar(
         title: '',
@@ -404,7 +403,7 @@ class ProductController extends GetxController {
     int maxLines,
     bool isBold,
   ) {
-    final title = product.title ?? "";
+    final title = product.title;
     return Text(
       title,
       style: titilliumSemiBold.copyWith(
@@ -417,7 +416,7 @@ class ProductController extends GetxController {
   }
 
   static String getTitleString(ProductModel product) {
-    return product.title ?? "";
+    return product.title;
   }
 
   //final NumberFormat formatter = NumberFormat("#,##0", "en_US");
@@ -446,9 +445,7 @@ class ProductController extends GetxController {
 
       // Filter out deleted products
       allItems.value =
-          fetchedItem
-              .where((product) => !(product.isDeleted ?? false))
-              .toList();
+          fetchedItem.where((product) => !(product.isDeleted)).toList();
 
       // saleProduct = getSaleProduct();
       if (kDebugMode) {
@@ -474,7 +471,6 @@ class ProductController extends GetxController {
   RxList<ProductModel> mostdeamandDynamic = <ProductModel>[].obs;
   RxList<ProductModel> newArrivalDynamic = <ProductModel>[].obs;
   RxList<ProductModel> fetchedTypeItem = <ProductModel>[].obs;
-  var lastDocument;
 
   void fetchOffersData(String vendorId, String type) async {
     resetDynamicLists(vendorId);
@@ -506,8 +502,9 @@ class ProductController extends GetxController {
         if (type == 'mostdeamand') mixoneDynamic.value = filteredItems;
         if (type == 'mixlin1') mixline1Dynamic.value = filteredItems;
         if (type == 'mixlin2') mixline2Dynamic.value = filteredItems;
-        if (type == 'newArrival')
+        if (type == 'newArrival') {
           newArrivalDynamic.value = filteredItems; //newArrival
+        }
       });
 
       // تأجيل تحديث حالة التحميل إلى ما بعد اكتمال البناء لتجنب مشاكل البناء
@@ -548,8 +545,9 @@ class ProductController extends GetxController {
         if (type == 'mostdeamand') mixoneDynamic.value = filteredItems;
         if (type == 'mixlin1') mixline1Dynamic.value = filteredItems;
         if (type == 'mixlin2') mixline2Dynamic.value = filteredItems;
-        if (type == 'newArrival')
+        if (type == 'newArrival') {
           newArrivalDynamic.value = filteredItems; //newArrival
+        }
 
         fetchedTypeItem.value = filteredItems;
       });
@@ -608,7 +606,7 @@ class ProductController extends GetxController {
 
       // Filter out deleted products
       var filteredProducts =
-          allProduct.where((product) => !(product.isDeleted ?? false)).toList();
+          allProduct.where((product) => !(product.isDeleted)).toList();
 
       // تأجيل تحديث القوائم إلى ما بعد اكتمال البناء لتجنب مشاكل البناء
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -1128,8 +1126,7 @@ class ProductController extends GetxController {
       );
 
       // Filter out deleted products
-      var filteredList =
-          list.where((product) => !(product.isDeleted ?? false)).toList();
+      var filteredList = list.where((product) => !(product.isDeleted)).toList();
 
       products.assignAll(filteredList);
     } catch (e) {

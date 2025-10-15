@@ -18,13 +18,10 @@ import 'package:istoreto/featured/currency/controller/currency_controller.dart';
 import 'package:istoreto/featured/home-page/views/widgets/banner_section.dart';
 import 'package:istoreto/featured/home-page/views/widgets/home_search_widget.dart';
 import 'package:istoreto/featured/home-page/views/widgets/major_category_section.dart';
-import 'package:istoreto/featured/home-page/views/widgets/most_popular_section.dart';
 import 'package:istoreto/featured/home-page/views/widgets/populer_product.dart';
 import 'package:istoreto/featured/home-page/views/widgets/the_last_vendor_section.dart';
 import 'package:istoreto/featured/home-page/views/widgets/topseller_section.dart';
 import 'package:istoreto/featured/payment/controller/order_controller.dart';
-import 'package:istoreto/views/product_images_gallery_page.dart';
-import 'package:istoreto/utils/constants/color.dart';
 import 'package:istoreto/featured/payment/services/address_service.dart';
 import 'package:istoreto/featured/product/controllers/edit_product_controller.dart';
 import 'package:istoreto/featured/product/controllers/favorite_product_controller.dart';
@@ -62,14 +59,17 @@ class HomePage extends StatelessWidget {
     if (!Get.isRegistered<CategoryRepository>()) Get.put(CategoryRepository());
     if (!Get.isRegistered<SavedController>()) Get.put(SavedController());
     if (!Get.isRegistered<BannerController>()) Get.put(BannerController());
-    if (!Get.isRegistered<SaveForLaterController>())
+    if (!Get.isRegistered<SaveForLaterController>()) {
       Get.put(SaveForLaterController());
-    if (!Get.isRegistered<FavoriteProductsController>())
+    }
+    if (!Get.isRegistered<FavoriteProductsController>()) {
       Get.put(FavoriteProductsController());
+    }
     if (!Get.isRegistered<ProductController>()) Get.put(ProductController());
     if (!Get.isRegistered<OrderController>()) Get.put(OrderController());
-    if (!Get.isRegistered<EditProductController>())
+    if (!Get.isRegistered<EditProductController>()) {
       Get.put(EditProductController());
+    }
     if (!Get.isRegistered<AlbumRepository>()) Get.put(AlbumRepository());
     if (!Get.isRegistered<PhotoRepository>()) Get.put(PhotoRepository());
     if (!Get.isRegistered<PhotoController>()) Get.put(PhotoController());
@@ -77,14 +77,17 @@ class HomePage extends StatelessWidget {
     if (!Get.isRegistered<AlbumController>()) Get.put(AlbumController());
     if (!Get.isRegistered<CartController>()) Get.put(CartController());
     if (!Get.isRegistered<AddressService>()) Get.put(AddressService());
-    if (!Get.isRegistered<EditCategoryController>())
+    if (!Get.isRegistered<EditCategoryController>()) {
       Get.put(EditCategoryController());
+    }
     if (!Get.isRegistered<ImageUploadService>()) Get.put(ImageUploadService());
-    if (!Get.isRegistered<TranslateController>())
+    if (!Get.isRegistered<TranslateController>()) {
       Get.put(TranslateController());
+    }
     if (!Get.isRegistered<CurrencyController>()) Get.put(CurrencyController());
-    if (!Get.isRegistered<ProductCurrencyService>())
+    if (!Get.isRegistered<ProductCurrencyService>()) {
       Get.put(ProductCurrencyService());
+    }
 
     return SingleChildScrollView(
       child: Column(

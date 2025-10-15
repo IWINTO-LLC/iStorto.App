@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:istoreto/controllers/auth_controller.dart';
 import 'package:sizer/sizer.dart';
 import 'package:istoreto/controllers/translate_controller.dart';
-import 'package:istoreto/featured/product/cashed_network_image.dart';
 import 'package:istoreto/featured/product/data/product_model.dart';
 import 'package:istoreto/featured/product/views/widgets/product_image_slider_mini.dart';
 import 'package:istoreto/utils/common/styles/styles.dart';
@@ -54,7 +52,7 @@ class ProductWidgetXSmall extends StatelessWidget {
                           .value
                       ? FutureBuilder<String>(
                         future: TranslateController.instance.getTranslatedText(
-                          text: product.title ?? "",
+                          text: product.title,
                           targetLangCode:
                               Localizations.localeOf(context).languageCode,
                         ),
@@ -64,7 +62,7 @@ class ProductWidgetXSmall extends StatelessWidget {
                                           ConnectionState.done &&
                                       snapshot.hasData
                                   ? snapshot.data!
-                                  : product.title ?? "";
+                                  : product.title;
                           return Text(
                             displayText,
                             style: titilliumBold.copyWith(
@@ -77,7 +75,7 @@ class ProductWidgetXSmall extends StatelessWidget {
                         },
                       )
                       : Text(
-                        product.title ?? "",
+                        product.title,
                         style: titilliumBold.copyWith(
                           fontSize: 13,
                           fontWeight: FontWeight.w700,

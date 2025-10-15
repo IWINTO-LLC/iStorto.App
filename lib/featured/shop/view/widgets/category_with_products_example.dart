@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:istoreto/data/models/category_model.dart';
 import 'package:istoreto/featured/category/view/all_category/widgets/category_grid_item.dart';
 import 'package:istoreto/featured/product/data/product_model.dart';

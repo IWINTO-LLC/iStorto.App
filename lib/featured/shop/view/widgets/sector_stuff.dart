@@ -5,9 +5,9 @@ import 'package:istoreto/controllers/translation_controller.dart';
 
 import 'package:istoreto/featured/product/controllers/product_controller.dart';
 import 'package:istoreto/featured/product/data/product_model.dart';
-import 'package:istoreto/featured/product/views/add/add_product.dart';
 import 'package:istoreto/featured/sector/controller/sector_controller.dart';
 import 'package:istoreto/featured/sector/view/build_sector_title.dart';
+import 'package:istoreto/views/vendor/add_product_page.dart';
 import 'package:istoreto/utils/common/widgets/custom_shapes/containers/rounded_container.dart';
 import 'package:istoreto/utils/common/widgets/custom_widgets.dart';
 import 'package:istoreto/utils/constants/color.dart';
@@ -145,17 +145,9 @@ Container getEmptyEdit(
                                   context,
                                   MaterialPageRoute(
                                     builder:
-                                        (context) => CreateProduct(
+                                        (context) => AddProductPage(
                                           vendorId: vendorId,
-                                          type: sectorName,
-                                          initialList: spotList,
-                                          sectorTitle:
-                                              SectorController.instance.sectors
-                                                  .where(
-                                                    (s) => s.name == sectorName,
-                                                  )
-                                                  .first,
-                                          sectionId: sectorName,
+                                          initialSection: sectorName,
                                         ),
                                   ),
                                 );
@@ -243,15 +235,9 @@ Container getEmptyEdit(
                             context,
                             MaterialPageRoute(
                               builder:
-                                  (context) => CreateProduct(
+                                  (context) => AddProductPage(
                                     vendorId: vendorId,
-                                    initialList: spotList,
-                                    type: sectorName,
-                                    sectorTitle:
-                                        SectorController.instance.sectors
-                                            .where((s) => s.name == sectorName)
-                                            .first,
-                                    sectionId: sectorName,
+                                    initialSection: sectorName,
                                   ),
                             ),
                           );

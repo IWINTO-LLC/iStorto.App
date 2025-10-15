@@ -95,7 +95,7 @@ class TCategoryGridHorizental extends StatelessWidget {
 
         Wrap(
           children: [
-            Container(
+            SizedBox(
               width: 85,
 
               //   height: 60,

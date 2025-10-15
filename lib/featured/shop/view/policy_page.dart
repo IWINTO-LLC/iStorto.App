@@ -4,8 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:istoreto/featured/shop/data/policy_repository.dart';
 import 'package:istoreto/featured/shop/controller/policy_controller.dart';
-import 'package:istoreto/featured/shop/view/widgets/basic_policies_section.dart';
-import 'package:istoreto/featured/shop/view/widgets/custom_policies_section.dart';
 import 'package:istoreto/utils/common/styles/styles.dart';
 import 'package:istoreto/utils/common/widgets/appbar/custom_app_bar.dart';
 import 'package:istoreto/utils/common/widgets/buttons/custom_button.dart';
@@ -14,7 +12,7 @@ import 'package:istoreto/utils/constants/sizes.dart';
 import 'package:istoreto/utils/loader/loader_widget.dart';
 
 class PolicyPage extends StatelessWidget {
-  PolicyPage({super.key, required this.vendorId});
+  const PolicyPage({super.key, required this.vendorId});
 
   final String vendorId;
 
@@ -541,72 +539,6 @@ class PolicyPage extends StatelessWidget {
                       ),
                       onChanged: (value) => linkValue.value = value,
                       maxLines: 1,
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildTextField(
-    String label,
-    RxString controllerValue,
-    String fieldKey,
-    PolicyController controller,
-  ) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 10),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Header with arrow
-          InkWell(
-            onTap: () => controller.toggleAccordion(fieldKey),
-            child: Container(
-              padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      label,
-                      style: titilliumBold.copyWith(fontSize: 18),
-                    ),
-                  ),
-                  Obx(
-                    () => AnimatedRotation(
-                      turns: controller.getAccordionState(fieldKey) ? 0.5 : 0.0,
-                      duration: const Duration(milliseconds: 300),
-                      child: Icon(
-                        Icons.keyboard_arrow_down,
-                        size: 24,
-                        color: TColors.darkerGray,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          // Accordion content
-          Obx(
-            () => AnimatedContainer(
-              duration: const Duration(milliseconds: 300),
-              height: controller.getAccordionState(fieldKey) ? null : 0,
-              child: AnimatedOpacity(
-                opacity: controller.getAccordionState(fieldKey) ? 1.0 : 0.0,
-                duration: const Duration(milliseconds: 300),
-                child: Column(
-                  children: [
-                    const SizedBox(height: TSizes.spaceBtWItems),
-                    TextFormField(
-                      initialValue: controllerValue.value,
-
-                      onChanged: (value) => controllerValue.value = value,
-                      maxLines: 20,
                     ),
                   ],
                 ),

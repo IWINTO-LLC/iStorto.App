@@ -2,16 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:istoreto/controllers/auth_controller.dart';
 import 'package:istoreto/controllers/image_edit_controller.dart';
+import 'package:istoreto/featured/cart/view/checkout_stepper_screen.dart';
 import 'package:istoreto/featured/shop/controller/vendor_controller.dart';
-import 'package:istoreto/featured/shop/controller/vendor_image_controller.dart';
 import 'package:istoreto/featured/shop/view/market_place_view.dart';
 import 'package:istoreto/views/initial_commercial_page.dart';
 import 'package:istoreto/views/admin/admin_zone_page.dart';
 import 'package:istoreto/views/settings_page.dart';
 import 'package:istoreto/views/edit_personal_info_page.dart';
 import 'package:istoreto/featured/product/views/saved_products_list.dart';
-import 'package:istoreto/featured/cart/view/cart_screen.dart';
 import 'package:istoreto/featured/payment/views/addresses_list_page.dart';
+import 'package:istoreto/featured/chat/views/chat_list_screen.dart';
 
 /// مكون قائمة الملف الشخصي - يعرض خيارات الإعدادات والإجراءات
 class ProfileMenuWidget extends StatelessWidget {
@@ -41,13 +41,24 @@ class ProfileMenuWidget extends StatelessWidget {
             icon: Icons.shopping_cart,
             title: 'my_cart'.tr,
             subtitle: 'view_your_shopping_cart'.tr,
-            onTap: () => Get.to(() => CartScreen()),
+            onTap:
+                () => Get.to(
+                  () => CheckoutStepperScreen(),
+                  transition: Transition.cupertino,
+                  duration: const Duration(milliseconds: 900),
+                ),
           ),
           _buildMenuItem(
             icon: Icons.location_on,
             title: 'my_addresses'.tr,
             subtitle: 'manage_your_delivery_addresses'.tr,
             onTap: () => Get.to(() => const AddressesListPage()),
+          ),
+          _buildMenuItem(
+            icon: Icons.chat,
+            title: 'chats'.tr,
+            subtitle: 'conversations'.tr,
+            onTap: () => Get.to(() => const ChatListScreen()),
           ),
           _buildMenuItem(
             icon: Icons.business,
@@ -366,28 +377,31 @@ class ProfileMenuWidget extends StatelessWidget {
 
   /// تعديل صورة الغلاف
   void _editCoverPhoto() {
-    final authController = Get.find<AuthController>();
-    final user = authController.currentUser.value;
-
-    // التحقق من أن المستخدم بائع
-    if (user?.accountType != 1 || user?.vendorId == null) {
-      Get.snackbar(
-        'error'.tr,
-        'feature_for_business_accounts_only'.tr,
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.orange.shade100,
-        colorText: Colors.orange.shade800,
-      );
-      return;
+    // تأكد من تهيئة ImageEditController
+    if (!Get.isRegistered<ImageEditController>()) {
+      Get.put(ImageEditController());
     }
 
-    // تهيئة VendorImageController
-    if (!Get.isRegistered<VendorImageController>()) {
-      Get.put(VendorImageController());
-    }
+    final imageController = ImageEditController.instance;
 
-    // فتح محرر صورة الغلاف
-    VendorImageController.instance.editVendorCoverImage(user!.vendorId!);
+    // عرض نافذة اختيار المصدر ثم الحفظ إلى قاعدة البيانات مع إظهار التقدم
+    imageController.showImageSourceDialog(
+      title: 'edit_cover_photo'.tr,
+      onCamera: () async {
+        await imageController.pickFromCamera(isProfile: false);
+        final file = imageController.coverImage;
+        if (file != null) {
+          await imageController.saveCoverImageToDatabase(file);
+        }
+      },
+      onGallery: () async {
+        await imageController.pickFromGallery(isProfile: false);
+        final file = imageController.coverImage;
+        if (file != null) {
+          await imageController.saveCoverImageToDatabase(file);
+        }
+      },
+    );
   }
 
   /// تعديل الصورة الشخصية

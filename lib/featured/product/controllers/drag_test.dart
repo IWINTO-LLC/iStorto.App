@@ -238,6 +238,8 @@ class ProductListScreen extends StatelessWidget {
     FloatingButtonsController(),
   );
 
+  ProductListScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     List<String> products = [

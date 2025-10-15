@@ -3,12 +3,12 @@ import 'package:flutter/material.dart';
 
 class TGridGalleryLayout extends StatelessWidget {
   const TGridGalleryLayout({
-    Key? key,
+    super.key,
     required this.itemCount,
     required this.crossCount,
     this.maxAxisExtent = 150,
     required this.itemBuilder,
-  }) : super(key: key);
+  });
   final int itemCount;
   final int crossCount;
   final double? maxAxisExtent;

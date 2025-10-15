@@ -5,13 +5,9 @@ import 'package:istoreto/featured/home-page/views/widgets/category_section.dart'
 import 'package:istoreto/featured/home-page/views/widgets/category_vendors_page.dart';
 import 'package:istoreto/featured/home-page/views/widgets/small-widgets/category_squer_item.dart';
 import 'package:istoreto/featured/home-page/views/widgets/small-widgets/view_all.dart';
-import 'package:istoreto/featured/product/cashed_network_image.dart';
-import 'package:istoreto/utils/common/widgets/custom_shapes/containers/rounded_container.dart';
 import 'package:istoreto/utils/common/widgets/shimmers/catrgory_shimmer.dart';
-import 'package:istoreto/utils/constants/sizes.dart';
 
 import '../../../../../controllers/major_category_controller.dart';
-import '../../../../../data/models/major_category_model.dart';
 
 class MajorCategorySection extends StatelessWidget {
   const MajorCategorySection({super.key});

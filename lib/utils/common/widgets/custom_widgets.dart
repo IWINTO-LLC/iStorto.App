@@ -297,23 +297,13 @@ void onBackFromEdit(String userId, BuildContext context) {
     ],
   );
 
-  Navigator.of(context).pushAndRemoveUntil(
-    MaterialPageRoute(
-      builder: (context) => MarketPlaceView(vendorId: userId, editMode: false),
-    ),
-    (route) => false,
-  );
+  Get.offAll(() => MarketPlaceView(vendorId: userId, editMode: false));
 }
 
 Future<void> returnMethodeFromEdit(String user, BuildContext context) async {
   onBackFromEdit(user, context);
   HapticFeedback.lightImpact;
-  Navigator.push(
-    context,
-    MaterialPageRoute(
-      builder: (context) => MarketPlaceView(vendorId: user, editMode: false),
-    ),
-  );
+  Get.to(() => MarketPlaceView(vendorId: user, editMode: false));
   // await CartController.instance.saveCartToFirestore();
 }
 
@@ -326,7 +316,7 @@ void openDeleteSelectionDialog(BuildContext context) {
       ProductControllerx().deleteSelectedProducts;
     },
   );
-  Navigator.of(context).pop();
+  Get.back();
 }
 
 void openCategorySelectionDialog(BuildContext context) {
@@ -934,29 +924,36 @@ void showEditDialog(BuildContext context, SectorModel sector) {
                   );
 
                   // استخدام GetX controller لتحديث القطاع
-                  await ctr.updateSectorName(updatedSector);
+                  await ctr.updateSection(updatedSector);
 
                   // إغلاق Dialog باستخدام GetX
                   Get.back();
 
-                  // عرض رسالة نجاح
+                  // عرض رسالة نجاح واحدة بخلفية خضراء سفلية
                   Get.snackbar(
                     "success".tr,
-                    "sector_updated_successfully".tr,
+                    "تم تحديث القسم بنجاح",
                     snackPosition: SnackPosition.BOTTOM,
-                    backgroundColor: Colors.green,
-                    colorText: Colors.white,
-                    duration: const Duration(seconds: 3),
+                    backgroundColor: Colors.green.shade100,
+                    colorText: Colors.green.shade800,
+                    duration: const Duration(seconds: 2),
+                    margin: const EdgeInsets.all(10),
+                    borderRadius: 8,
                   );
                 } catch (e) {
+                  // إغلاق Dialog في حالة الخطأ
+                  Get.back();
+
                   // عرض رسالة خطأ
                   Get.snackbar(
                     "error".tr,
-                    "failed_to_update_sector".tr,
+                    "فشل في تحديث القسم",
                     snackPosition: SnackPosition.BOTTOM,
-                    backgroundColor: Colors.red,
-                    colorText: Colors.white,
+                    backgroundColor: Colors.red.shade100,
+                    colorText: Colors.red.shade800,
                     duration: const Duration(seconds: 3),
+                    margin: const EdgeInsets.all(10),
+                    borderRadius: 8,
                   );
                 }
               },
@@ -1009,13 +1006,13 @@ void showEditDialosg(BuildContext context, SectorModel sector) {
                 const SizedBox(width: 19),
                 CustomButtonBlack(
                   width: 20.w,
-                  onTap: () {
+                  onTap: () async {
                     // Create updated sector using copyWith for immutability
                     final updatedSector = sector.copyWith(
                       englishName: englishNameController.text.trim(),
                     );
 
-                    ctr.updateSectorName(updatedSector);
+                    await ctr.updateSection(updatedSector);
                     Navigator.of(context).pop();
                   },
                   text: "post".tr,

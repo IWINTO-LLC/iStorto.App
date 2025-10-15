@@ -4,14 +4,14 @@ import 'package:istoreto/utils/constants/color.dart';
 
 class TProductPriceText extends StatelessWidget {
   const TProductPriceText({
-    Key? key,
+    super.key,
     required this.price,
     this.color = TColors.primary,
     this.currentSign = ' SAR',
     this.maxLines = 1,
     this.isLarg = false,
     this.linethrough = false,
-  }) : super(key: key);
+  });
 
   final String currentSign, price;
   final int maxLines;

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:istoreto/featured/product/data/product_model.dart';
 import 'package:istoreto/featured/share/controller/share_services.dart';
 import 'package:istoreto/utils/common/widgets/custom_shapes/containers/rounded_container.dart';
-import 'package:istoreto/utils/common/widgets/custom_widgets.dart';
 
 class ShareButton extends StatelessWidget {
   final Color backgroundColor;

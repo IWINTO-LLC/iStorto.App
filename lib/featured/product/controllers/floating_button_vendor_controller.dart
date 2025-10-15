@@ -64,7 +64,6 @@ class FloatingButtonsController extends GetxController {
     removeFloatingButtons();
     iconCenters.clear();
     _actionTriggered = false;
-    var isFavorite = false.obs;
     _lastHoveredIndex = -1;
     pressPosition = position;
     currentDragPosition.value = position; // تحديث أولي لموضع الإصبع

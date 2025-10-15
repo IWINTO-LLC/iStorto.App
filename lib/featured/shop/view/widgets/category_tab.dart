@@ -5,10 +5,9 @@ import 'package:istoreto/controllers/category_controller.dart';
 import 'package:istoreto/data/models/category_model.dart';
 import 'package:istoreto/featured/product/controllers/product_controller.dart';
 import 'package:istoreto/featured/product/data/product_model.dart';
-import 'package:istoreto/featured/product/views/add/add_product.dart';
 import 'package:istoreto/featured/product/views/shemmer/product_horizental_list_shimmer.dart';
 import 'package:istoreto/featured/product/views/widgets/product_widget_small.dart';
-import 'package:istoreto/featured/sector/model/sector_model.dart';
+import 'package:istoreto/views/vendor/add_product_page.dart';
 import 'package:istoreto/utils/common/styles/styles.dart';
 import 'package:istoreto/utils/common/widgets/custom_shapes/containers/rounded_container.dart';
 import 'package:istoreto/utils/common/widgets/shimmers/shimmer.dart';
@@ -32,7 +31,7 @@ class TCategoryTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = CategoryController.instance;
-    List<ProductModel> featuredItems = [];
+    final List<ProductModel> featuredItems = [];
     List<ProductModel> offersItems = [];
     List<ProductModel> lastItems = [];
 
@@ -87,19 +86,9 @@ class TCategoryTab extends StatelessWidget {
                                         context,
                                         MaterialPageRoute(
                                           builder:
-                                              (context) => CreateProduct(
+                                              (context) => AddProductPage(
                                                 vendorId: userId,
-                                                initialList: [],
-                                                sectorTitle: SectorModel(
-                                                  id: '',
-                                                  englishName: '',
-                                                  name: '',
-                                                  vendorId: '',
-                                                ),
-                                                type: '',
-                                                sectionId: 'all',
-                                                // suggestingCategory:
-                                                //     category,
+                                                // لا يوجد قسم محدد
                                               ),
                                         ),
                                       ),
@@ -144,19 +133,9 @@ class TCategoryTab extends StatelessWidget {
                                     context,
                                     MaterialPageRoute(
                                       builder:
-                                          (context) => CreateProduct(
+                                          (context) => AddProductPage(
                                             vendorId: userId,
-                                            initialList: [],
-                                            type: '',
-                                            sectionId: 'all',
-                                            sectorTitle: SectorModel(
-                                              id: '',
-                                              englishName: '',
-                                              name: '',
-                                              vendorId: '',
-                                            ),
-                                            // suggestingCategory:
-                                            //     category,
+                                            // لا يوجد قسم محدد
                                           ),
                                     ),
                                   );

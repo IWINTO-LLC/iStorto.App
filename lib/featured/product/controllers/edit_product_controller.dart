@@ -411,7 +411,7 @@ class EditProductController extends GetxController {
         print("Thumbnail upload error: $e");
       }
       message.value = "upload_error".tr;
-      throw e;
+      rethrow;
     }
   }
 

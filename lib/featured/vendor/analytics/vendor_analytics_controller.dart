@@ -27,12 +27,6 @@ class VendorAnalyticsController extends GetxController {
   // Current vendor ID
   String? _currentVendorId;
 
-  @override
-  void onInit() {
-    super.onInit();
-    // Initialize with current user's vendor ID if available
-    // _currentVendorId = getCurrentVendorId();
-  }
 
   /// Set current vendor ID
   void setVendorId(String vendorId) {

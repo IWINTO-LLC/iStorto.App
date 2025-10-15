@@ -72,7 +72,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                   padding: const EdgeInsets.only(top: 10.0),
                   child: IconButton(
                     style: Theme.of(context).iconButtonTheme.style?.copyWith(
-                      backgroundColor: MaterialStateProperty.all(
+                      backgroundColor: WidgetStateProperty.all(
                         Theme.of(context).cardColor,
                       ),
                     ),

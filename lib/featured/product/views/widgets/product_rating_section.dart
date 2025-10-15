@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:istoreto/featured/product/data/product_model.dart';
 import 'package:istoreto/utils/constants/color.dart';
-import 'package:istoreto/utils/constants/sizes.dart';
 
 /// قسم تقييم المنتج
 /// Product Rating Section

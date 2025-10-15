@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:istoreto/featured/product/controllers/all_select_product_controller.dart';
 import 'package:istoreto/featured/product/data/product_model.dart';

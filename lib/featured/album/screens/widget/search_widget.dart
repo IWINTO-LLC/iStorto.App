@@ -7,7 +7,7 @@ class SearchAndSort extends StatelessWidget {
   final String sortBy;
   final ValueChanged<String> onSortChanged;
 
-  const SearchAndSort({
+  const SearchAndSort({super.key, 
     required this.controller,
     required this.sortBy,
     required this.onSortChanged,

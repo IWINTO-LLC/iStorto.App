@@ -329,7 +329,7 @@ class VendorCategoriesManagementPage extends StatelessWidget {
                       ),
                       const SizedBox(width: 4),
                       Text(
-                        'vendor_priority'.tr + ': ${_getPriority(category)}',
+                        '${'vendor_priority'.tr}: ${_getPriority(category)}',
                         style: TextStyle(
                           fontSize: 12,
                           color: Colors.blue.shade600,

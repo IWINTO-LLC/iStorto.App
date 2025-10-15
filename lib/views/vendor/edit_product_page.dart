@@ -101,7 +101,7 @@ class _EditProductPageState extends State<EditProductPage> {
       text: widget.product.oldPrice?.toString() ?? '',
     );
     _minQuantityController = TextEditingController(
-      text: widget.product.minQuantity?.toString() ?? '1',
+      text: widget.product.minQuantity.toString() ?? '1',
     );
 
     // حساب نسبة الخصم
@@ -566,8 +566,9 @@ class _EditProductPageState extends State<EditProductPage> {
               ),
             ),
             validator: (value) {
-              if (value == null || value.isEmpty)
+              if (value == null || value.isEmpty) {
                 return 'product.price_required'.tr;
+              }
               return null;
             },
             onChanged: (value) => _calculateDiscount(),
@@ -1150,7 +1151,7 @@ class _EditProductPageState extends State<EditProductPage> {
                       Navigator.pop(context);
                     },
                   );
-                }).toList(),
+                }),
               ],
             ),
           ),
@@ -1258,8 +1259,7 @@ class _EditProductPageState extends State<EditProductPage> {
           try {
             debugPrint('Uploading new image $newImagesCount');
             _uploadStatus.value =
-                'uploading_image'.tr +
-                ' $newImagesCount/${_selectedImages.length}';
+                '${'uploading_image'.tr} $newImagesCount/${_selectedImages.length}';
 
             final File imageFile = File((image as XFile).path);
 
@@ -1325,7 +1325,7 @@ class _EditProductPageState extends State<EditProductPage> {
 
       Get.snackbar(
         'error'.tr,
-        'failed_to_update_product'.tr + ': $e',
+        '${'failed_to_update_product'.tr}: $e',
         snackPosition: SnackPosition.BOTTOM,
         backgroundColor: Colors.red.shade100,
         colorText: Colors.red.shade800,

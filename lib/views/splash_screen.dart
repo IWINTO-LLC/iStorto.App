@@ -1,16 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:istoreto/controllers/auth_controller.dart';
-import 'package:istoreto/featured/currency/controller/currency_controller.dart';
-import 'package:istoreto/featured/product/services/product_currency_service.dart';
-import 'package:istoreto/featured/shop/controller/vendor_controller.dart';
-import 'package:istoreto/featured/shop/data/vendor_repository.dart';
 import 'package:istoreto/navigation_menu.dart';
-import 'package:istoreto/services/image_upload_service.dart';
 import 'package:istoreto/utils/constants/image_strings.dart';
-import 'package:istoreto/utils/constants/sizes.dart';
 import 'package:istoreto/views/login_page.dart';
-import 'package:istoreto/utils/constants/color.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -85,7 +78,7 @@ class _SplashScreenState extends State<SplashScreen>
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       // App Logo/Icon
-                      Container(
+                      SizedBox(
                         width: 160,
                         height: 120,
                         child: const Image(

@@ -310,8 +310,7 @@ class _VendorCard extends StatelessWidget {
                         ),
                         const SizedBox(width: 4),
                         Text(
-                          'specialization_level'.tr +
-                              ': ${vendorCategory.specializationLevel}/5',
+                          '${'specialization_level'.tr}: ${vendorCategory.specializationLevel}/5',
                           style: TextStyle(
                             fontSize: 12,
                             color: Colors.grey.shade600,

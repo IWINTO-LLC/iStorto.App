@@ -115,7 +115,7 @@ class CategoryPriorityManagementPage extends StatelessWidget {
             ),
           ),
           subtitle: Text(
-            'priority_level'.tr + ': ${index + 1}',
+            '${'priority_level'.tr}: ${index + 1}',
             style: titilliumRegular.copyWith(
               fontSize: 12.sp,
               color: Colors.grey.shade600,

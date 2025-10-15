@@ -141,6 +141,7 @@ class ProductImagesGalleryController extends GetxController {
   }
 
   /// تحديث القائمة
+  @override
   Future<void> refresh() async {
     await loadImages(refresh: true);
   }

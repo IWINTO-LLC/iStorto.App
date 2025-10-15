@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:istoreto/controllers/initial_commercial_controller.dart';
@@ -116,8 +115,7 @@ class InitialCommercialPage extends StatelessWidget {
                                         ),
                                         const SizedBox(height: 4),
                                         Text(
-                                          'uploading'.tr +
-                                              ' ${(controller.uploadProgress.value * 100).toInt()}%',
+                                          '${'uploading'.tr} ${(controller.uploadProgress.value * 100).toInt()}%',
                                           style: const TextStyle(
                                             color: Colors.white,
                                             fontSize: 12,
@@ -228,7 +226,7 @@ class InitialCommercialPage extends StatelessWidget {
               TextFormField(
                 controller: controller.organizationNameController,
                 decoration: InputDecoration(
-                  labelText: 'organization_name'.tr + ' *',
+                  labelText: '${'organization_name'.tr} *',
                   hintText: 'enter_organization_name'.tr,
                   border: const OutlineInputBorder(),
                 ),
@@ -240,7 +238,7 @@ class InitialCommercialPage extends StatelessWidget {
               TextFormField(
                 controller: controller.briefController,
                 decoration: InputDecoration(
-                  labelText: 'store_settings_brief'.tr + ' *',
+                  labelText: '${'store_settings_brief'.tr} *',
                   hintText: 'slug_example'.tr,
                   border: const OutlineInputBorder(),
                 ),

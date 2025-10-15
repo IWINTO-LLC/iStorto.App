@@ -7,13 +7,12 @@ import 'package:sizer/sizer.dart';
 import 'package:istoreto/featured/product/controllers/floating_button_vendor_controller.dart';
 import 'package:istoreto/featured/product/controllers/product_controller.dart';
 import 'package:istoreto/featured/product/data/product_model.dart';
-import 'package:istoreto/featured/product/views/add/add_product.dart';
 import 'package:istoreto/featured/product/views/widgets/product_details.dart';
 import 'package:istoreto/featured/product/views/widgets/product_widget_medium.dart';
 import 'package:istoreto/featured/sector/controller/sector_controller.dart';
-import 'package:istoreto/featured/sector/model/sector_model.dart';
 import 'package:istoreto/featured/sector/view/build_sector_title.dart';
 import 'package:istoreto/featured/shop/controller/vendor_controller.dart';
+import 'package:istoreto/views/vendor/add_product_page.dart';
 
 import 'package:istoreto/controllers/category_controller.dart';
 import 'package:istoreto/utils/actions.dart';
@@ -26,7 +25,7 @@ import 'package:istoreto/utils/constants/color.dart';
 import 'package:istoreto/utils/constants/sizes.dart';
 
 class GridBuilderCustomCard extends StatefulWidget {
-  GridBuilderCustomCard({
+  const GridBuilderCustomCard({
     super.key,
     required this.vendorId,
     required this.editMode,
@@ -249,17 +248,9 @@ class _GridBuilderCustomCardState extends State<GridBuilderCustomCard>
                                     context,
                                     MaterialPageRoute(
                                       builder:
-                                          (context) => CreateProduct(
-                                            initialList: spotList,
+                                          (context) => AddProductPage(
                                             vendorId: widget.vendorId,
-                                            sectorTitle: SectorModel(
-                                              id: '',
-                                              vendorId: widget.vendorId,
-                                              englishName: 'try this',
-                                              name: 'mixlin1',
-                                            ),
-                                            type: 'mixlin1',
-                                            sectionId: 'all',
+                                            initialSection: 'mixlin1',
                                           ),
                                     ),
                                   );
@@ -391,17 +382,9 @@ class _GridBuilderCustomCardState extends State<GridBuilderCustomCard>
                                           context,
                                           MaterialPageRoute(
                                             builder:
-                                                (context) => CreateProduct(
-                                                  initialList: spotList,
+                                                (context) => AddProductPage(
                                                   vendorId: widget.vendorId,
-                                                  sectorTitle: SectorModel(
-                                                    id: '',
-                                                    vendorId: widget.vendorId,
-                                                    englishName: 'try this',
-                                                    name: 'mixlin1',
-                                                  ),
-                                                  type: 'mixlin1',
-                                                  sectionId: 'all',
+                                                  initialSection: 'mixlin1',
                                                 ),
                                           ),
                                         );
@@ -425,17 +408,9 @@ class _GridBuilderCustomCardState extends State<GridBuilderCustomCard>
                                           context,
                                           MaterialPageRoute(
                                             builder:
-                                                (context) => CreateProduct(
-                                                  sectorTitle: SectorModel(
-                                                    id: '',
-                                                    englishName: 'try this',
-                                                    name: 'mixlin1',
-                                                    vendorId: '',
-                                                  ),
-                                                  initialList: spotList,
+                                                (context) => AddProductPage(
                                                   vendorId: widget.vendorId,
-                                                  type: 'mixlin1',
-                                                  sectionId: 'all',
+                                                  initialSection: 'mixlin1',
                                                 ),
                                           ),
                                         );
@@ -572,21 +547,9 @@ class _GridBuilderCustomCardState extends State<GridBuilderCustomCard>
                                           context,
                                           MaterialPageRoute(
                                             builder:
-                                                (context) => CreateProduct(
-                                                  sectorTitle:
-                                                      SectorController
-                                                          .instance
-                                                          .sectors
-                                                          .where(
-                                                            (e) =>
-                                                                e.name ==
-                                                                sectorName,
-                                                          )
-                                                          .first,
-                                                  initialList: spotList,
+                                                (context) => AddProductPage(
                                                   vendorId: widget.vendorId,
-                                                  type: 'mixlin1',
-                                                  sectionId: 'all',
+                                                  initialSection: sectorName,
                                                 ),
                                           ),
                                         );
@@ -610,17 +573,9 @@ class _GridBuilderCustomCardState extends State<GridBuilderCustomCard>
                                           context,
                                           MaterialPageRoute(
                                             builder:
-                                                (context) => CreateProduct(
-                                                  sectorTitle: SectorModel(
-                                                    id: '',
-                                                    vendorId: widget.vendorId,
-                                                    englishName: 'try this',
-                                                    name: 'mixlin1',
-                                                  ),
-                                                  initialList: spotList,
+                                                (context) => AddProductPage(
                                                   vendorId: widget.vendorId,
-                                                  type: 'mixlin1',
-                                                  sectionId: 'all',
+                                                  initialSection: 'mixlin1',
                                                 ),
                                           ),
                                         );
@@ -725,17 +680,9 @@ class _GridBuilderCustomCardState extends State<GridBuilderCustomCard>
                               context,
                               MaterialPageRoute(
                                 builder:
-                                    (context) => CreateProduct(
-                                      sectorTitle: SectorModel(
-                                        id: '',
-                                        vendorId: widget.vendorId,
-                                        englishName: 'try this',
-                                        name: 'mixlin1',
-                                      ),
-                                      initialList: spotList,
+                                    (context) => AddProductPage(
                                       vendorId: widget.vendorId,
-                                      type: 'mixlin1',
-                                      sectionId: 'all',
+                                      initialSection: 'mixlin1',
                                     ),
                               ),
                             );

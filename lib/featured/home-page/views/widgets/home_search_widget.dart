@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:istoreto/featured/cart/controller/cart_controller.dart';
-import 'package:istoreto/featured/cart/view/checkout_stepper_screen.dart';
-import 'package:istoreto/featured/cart/view/checkout_stepper_screen_simple.dart';
 import 'package:istoreto/featured/home-page/views/widgets/cart_white.dart';
-import 'package:istoreto/utils/common/widgets/custom_shapes/containers/rounded_container.dart';
 import 'package:istoreto/utils/constants/image_strings.dart';
 import 'package:istoreto/views/global_product_search_page.dart';
 import 'package:sizer/sizer.dart';
@@ -16,12 +13,12 @@ class HomeSearchWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // التأكد من وجود CartController
-    final cartController = Get.put(CartController());
+    Get.put(CartController());
 
     return Row(
       children: [
         // شعار التطبيق
-        Container(
+        SizedBox(
           width: 20.w,
           child: const Image(image: AssetImage(TImages.istortoLogo)),
         ),

@@ -22,7 +22,7 @@ class BannerRepository extends GetxController {
 
       final resultList =
           (response as List).map((data) => BannerModel.fromJson(data)).toList();
-      print("=======Banners Data result ==========${resultList}====");
+      print("=======Banners Data result ==========$resultList====");
       return resultList;
     } catch (e) {
       if (kDebugMode) {

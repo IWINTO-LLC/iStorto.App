@@ -16,6 +16,9 @@ import 'package:istoreto/views/vendor/vendor_admin_zone.dart';
 import 'package:istoreto/views/vendor/vendor_offers_page.dart';
 import 'package:istoreto/views/vendor/vendor_product_search_page.dart';
 import 'package:istoreto/views/view_personal_info_page.dart';
+import 'package:istoreto/featured/chat/views/chat_screen.dart';
+import 'package:istoreto/featured/chat/views/vendor_chat_list_screen.dart';
+import 'package:istoreto/featured/chat/services/chat_service.dart';
 import 'package:sizer/sizer.dart';
 
 /// A modern vendor header widget that displays vendor information including:
@@ -786,6 +789,8 @@ class MarketHeader extends StatelessWidget {
                   children: [
                     if (!editMode) _buildFollowButton(vendorId),
                     _buildShareButton(vendor),
+                    if (editMode) _buildInboxButton(vendorId),
+                    if (!editMode) _buildChatButton(vendorId),
                     if (editMode) _buildManageButton(vendorId),
                   ],
                 ),
@@ -932,6 +937,98 @@ class MarketHeader extends StatelessWidget {
                 Text(
                   'Share',
                   style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildChatButton(String vendorId) {
+    return TRoundedContainer(
+      width: 120,
+      height: 40,
+      borderWidth: 1,
+      radius: BorderRadius.circular(20),
+      showBorder: true,
+      borderColor: const Color(0xFF1E88E5),
+      backgroundColor: const Color(0xFF1E88E5),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: () async {
+            // تسجيل ChatService إذا لم يكن مسجلاً
+            if (!Get.isRegistered<ChatService>()) {
+              Get.put(ChatService());
+            }
+
+            final chatService = ChatService.instance;
+            final conversation = await chatService.startConversationWithVendor(
+              vendorId,
+            );
+
+            if (conversation != null) {
+              Get.to(() => ChatScreen(conversation: conversation));
+            }
+          },
+          borderRadius: BorderRadius.circular(20),
+          child: const Center(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.chat, size: 20, color: Colors.white),
+                SizedBox(width: 8),
+                Text(
+                  'Chat',
+                  style: TextStyle(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 14,
+                    color: Colors.white,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildInboxButton(String vendorId) {
+    return TRoundedContainer(
+      width: 120,
+      height: 40,
+      borderWidth: 1,
+      radius: BorderRadius.circular(20),
+      showBorder: true,
+      borderColor: Colors.green,
+      backgroundColor: Colors.green,
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: () {
+            Get.to(
+              () => VendorChatListScreen(vendorId: vendorId),
+              transition: Transition.cupertino,
+              duration: const Duration(milliseconds: 300),
+            );
+          },
+          borderRadius: BorderRadius.circular(20),
+          child: Center(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(Icons.inbox_rounded, size: 20, color: Colors.white),
+                const SizedBox(width: 8),
+                Text(
+                  'inbox'.tr,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 14,
+                    color: Colors.white,
+                  ),
                 ),
               ],
             ),

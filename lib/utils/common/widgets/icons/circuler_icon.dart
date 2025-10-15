@@ -5,7 +5,7 @@ import 'package:istoreto/utils/constants/sizes.dart';
 
 class TCircularIcon extends StatelessWidget {
   const TCircularIcon({
-    Key? key,
+    super.key,
     this.width,
     this.height,
     this.size = TSizes.lg,
@@ -13,7 +13,7 @@ class TCircularIcon extends StatelessWidget {
     this.color,
     this.backgroundColor,
     this.onPressed,
-  }) : super(key: key);
+  });
   final double? width, height, size;
   final IconData icon;
   final Color? backgroundColor, color;

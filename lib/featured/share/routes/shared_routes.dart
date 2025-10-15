@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:istoreto/featured/share/view/product_loader.dart';
-import 'package:istoreto/featured/shop/view/market_place_view.dart';
 import 'package:istoreto/navigation_menu.dart';
 
 class SharedRoute {

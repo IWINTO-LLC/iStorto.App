@@ -104,7 +104,7 @@ class EditCategoryController extends GetxController {
         print("Upload error: $e");
       }
       message.value = "upload_error".tr;
-      throw e;
+      rethrow;
     }
   }
 

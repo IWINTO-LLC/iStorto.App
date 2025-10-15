@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:istoreto/featured/banner/view/front/promo_slider.dart';
 import 'package:istoreto/utils/constants/color.dart';
 

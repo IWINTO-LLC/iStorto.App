@@ -39,7 +39,12 @@ class CategoryController extends GetxController {
     var count = await ProductRepository.instance.getUserProductCount(vendorId);
     productCount.value = count;
     print("📌 product count is $count");
-    await SectorController.instance.initialSectors(vendorId);
+
+    // تحميل الأقسام من قاعدة البيانات
+    if (!Get.isRegistered<SectorController>()) {
+      Get.put(SectorController(vendorId));
+    }
+    await SectorController.instance.fetchSectors();
 
     if (lastFetchedUserId == vendorId && allItems.isNotEmpty) {
       print("📌 البيانات مخزنة بالفعل، لا حاجة لإعادة الجلب!");

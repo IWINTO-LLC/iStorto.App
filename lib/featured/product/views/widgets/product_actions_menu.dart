@@ -19,8 +19,7 @@ class FloatingHearts extends StatefulWidget {
   final VoidCallback? onComplete;
   final Offset? tapPosition; // إضافة موقع الضغط
 
-  const FloatingHearts({Key? key, this.onComplete, this.tapPosition})
-    : super(key: key);
+  const FloatingHearts({super.key, this.onComplete, this.tapPosition});
 
   @override
   State<FloatingHearts> createState() => _FloatingHeartsState();

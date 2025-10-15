@@ -39,6 +39,8 @@ class _CheckoutStepperScreenState extends State<CheckoutStepperScreen> {
   String selectedPaymentMethod = 'cod';
   Map<String, VendorModel?> vendorProfiles = {};
   bool isLoadingVendors = true;
+  String? selectedSingleVendorId; // معرف التاجر المحدد للطلب الفردي
+  bool isSingleVendorCheckout = false; // هل هو checkout لتاجر واحد فقط
 
   @override
   void initState() {
@@ -190,6 +192,12 @@ class _CheckoutStepperScreenState extends State<CheckoutStepperScreen> {
       return;
     }
 
+    // تعيين وضع الطلب الفردي
+    setState(() {
+      selectedSingleVendorId = vendorId;
+      isSingleVendorCheckout = true;
+    });
+
     // الانتقال للخطوة التالية
     _nextStep();
   }
@@ -266,18 +274,26 @@ class _CheckoutStepperScreenState extends State<CheckoutStepperScreen> {
         return;
       }
 
-      // إنشاء طلبات منفصلة لكل تاجر
       final groupedItems = cartController.groupedByVendor;
       final selectedItems = cartController.selectedItems;
 
-      for (var entry in groupedItems.entries) {
-        final vendorId = entry.key;
+      // إذا كان checkout لتاجر واحد فقط
+      if (isSingleVendorCheckout && selectedSingleVendorId != null) {
+        // معالجة طلب تاجر واحد فقط
+        final vendorId = selectedSingleVendorId!;
         final vendorItems =
-            entry.value
-                .where((item) => selectedItems[item.product.id] == true)
-                .toList();
+            groupedItems[vendorId]
+                ?.where((item) => selectedItems[item.product.id] == true)
+                .toList() ??
+            [];
 
-        if (vendorItems.isEmpty) continue;
+        if (vendorItems.isEmpty) {
+          TLoader.warningSnackBar(
+            title: 'alert'.tr,
+            message: 'please_select_product_from_store'.tr,
+          );
+          return;
+        }
 
         final total = vendorItems.fold<double>(
           0,
@@ -308,40 +324,90 @@ class _CheckoutStepperScreenState extends State<CheckoutStepperScreen> {
         for (var item in vendorItems) {
           cartController.removeFromCart(item.product);
         }
-      }
 
-      // الانتقال لصفحة النجاح
-      Navigator.pushAndRemoveUntil(
-        context,
-        MaterialPageRoute(
-          builder:
-              (context) => OrderSuccessScreen(
-                order: OrderModel(
-                  docId: "",
-                  id: "multiple_orders",
-                  buyerId: profile.userId ?? '',
-                  vendorId: "multiple",
-                  totalPrice: cartController.selectedTotalPrice,
-                  state: selectedPaymentMethod == 'cod' ? '4' : '1',
-                  orderDate: DateTime.now(),
-                  productList:
-                      cartController.cartItems
-                          .where(
-                            (item) => selectedItems[item.product.id] == true,
-                          )
-                          .toList(),
-                  phoneNumber: selectedAddress.phoneNumber,
-                  fullAddress: selectedAddress.fullAddress,
-                  buildingNumber: selectedAddress.buildingNumber,
-                  paymentMethod: selectedPaymentMethod,
-                  locationLat: selectedAddress.latitude,
-                  locationLng: selectedAddress.longitude,
-                  buyerDetails: AuthController.instance.currentUser.value!,
+        // الانتقال لصفحة النجاح
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(
+            builder: (context) => OrderSuccessScreen(order: order),
+          ),
+          (route) => false,
+        );
+      } else {
+        // معالجة طلبات لجميع التجار (الوضع القديم)
+        for (var entry in groupedItems.entries) {
+          final vendorId = entry.key;
+          final vendorItems =
+              entry.value
+                  .where((item) => selectedItems[item.product.id] == true)
+                  .toList();
+
+          if (vendorItems.isEmpty) continue;
+
+          final total = vendorItems.fold<double>(
+            0,
+            (sum, item) => sum + item.totalPrice,
+          );
+
+          final order = OrderModel(
+            docId: "",
+            id: UniqueKey().toString(),
+            buyerId: profile.userId ?? '',
+            vendorId: vendorId,
+            totalPrice: total,
+            state: selectedPaymentMethod == 'cod' ? '4' : '1',
+            orderDate: DateTime.now(),
+            productList: vendorItems,
+            phoneNumber: selectedAddress.phoneNumber,
+            fullAddress: selectedAddress.fullAddress,
+            buildingNumber: selectedAddress.buildingNumber,
+            paymentMethod: selectedPaymentMethod,
+            locationLat: selectedAddress.latitude,
+            locationLng: selectedAddress.longitude,
+            buyerDetails: AuthController.instance.currentUser.value!,
+          );
+
+          await OrderController.instance.submitOrder(order);
+
+          // حذف المنتجات من السلة
+          for (var item in vendorItems) {
+            cartController.removeFromCart(item.product);
+          }
+        }
+
+        // الانتقال لصفحة النجاح
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(
+            builder:
+                (context) => OrderSuccessScreen(
+                  order: OrderModel(
+                    docId: "",
+                    id: "multiple_orders",
+                    buyerId: profile.userId ?? '',
+                    vendorId: "multiple",
+                    totalPrice: cartController.selectedTotalPrice,
+                    state: selectedPaymentMethod == 'cod' ? '4' : '1',
+                    orderDate: DateTime.now(),
+                    productList:
+                        cartController.cartItems
+                            .where(
+                              (item) => selectedItems[item.product.id] == true,
+                            )
+                            .toList(),
+                    phoneNumber: selectedAddress.phoneNumber,
+                    fullAddress: selectedAddress.fullAddress,
+                    buildingNumber: selectedAddress.buildingNumber,
+                    paymentMethod: selectedPaymentMethod,
+                    locationLat: selectedAddress.latitude,
+                    locationLng: selectedAddress.longitude,
+                    buyerDetails: AuthController.instance.currentUser.value!,
+                  ),
                 ),
-              ),
-        ),
-        (route) => false,
-      );
+          ),
+          (route) => false,
+        );
+      }
     } catch (e) {
       TLoader.erroreSnackBar(message: 'حدث خطأ أثناء إرسال الطلب');
     } finally {
@@ -385,6 +451,9 @@ class _CheckoutStepperScreenState extends State<CheckoutStepperScreen> {
               return _buildStepContent();
             }),
           ),
+
+          // أزرار التنقل في الأسفل
+          _buildNavigationButtons(),
         ],
       ),
     );
@@ -640,13 +709,21 @@ class _CheckoutStepperScreenState extends State<CheckoutStepperScreen> {
 
     print('📋 Building Summary Step');
     print('✅ Selected address: ${selectedAddress?.fullAddress ?? "None"}');
+    print('🏪 Single vendor checkout: $isSingleVendorCheckout');
+    print('🏪 Selected vendor ID: $selectedSingleVendorId');
+
+    // تصفية التجار بناءً على وضع الطلب
+    final vendorsToShow =
+        isSingleVendorCheckout && selectedSingleVendorId != null
+            ? {selectedSingleVendorId!: groupedItems[selectedSingleVendorId]!}
+            : groupedItems;
 
     return ListView(
       controller: _scrollController,
       padding: const EdgeInsets.all(16),
       children: [
         // ملخص المنتجات حسب التاجر
-        ...groupedItems.entries.map((entry) {
+        ...vendorsToShow.entries.map((entry) {
           final vendorId = entry.key;
           final vendorItems =
               entry.value
@@ -695,7 +772,7 @@ class _CheckoutStepperScreenState extends State<CheckoutStepperScreen> {
               ),
             ),
           );
-        }).toList(),
+        }),
 
         const SizedBox(height: 16),
 
@@ -789,82 +866,145 @@ class _CheckoutStepperScreenState extends State<CheckoutStepperScreen> {
                   'grand_total'.tr,
                   style: titilliumBold.copyWith(fontSize: 18),
                 ),
-                Obx(
-                  () => TCustomWidgets.formattedPrice(
-                    cartController.selectedTotalPrice,
+                Obx(() {
+                  // حساب المجموع بناءً على وضع الطلب
+                  double totalPrice;
+                  if (isSingleVendorCheckout &&
+                      selectedSingleVendorId != null) {
+                    // مجموع التاجر المحدد فقط
+                    final vendorItems =
+                        groupedItems[selectedSingleVendorId]
+                            ?.where(
+                              (item) => selectedItems[item.product.id] == true,
+                            )
+                            .toList() ??
+                        [];
+                    totalPrice = vendorItems.fold<double>(
+                      0,
+                      (sum, item) => sum + item.totalPrice,
+                    );
+                  } else {
+                    // مجموع جميع التجار
+                    totalPrice = cartController.selectedTotalPrice;
+                  }
+
+                  return TCustomWidgets.formattedPrice(
+                    totalPrice,
                     20,
                     TColors.primary,
-                  ),
-                ),
-                _buildCheckoutButton(),
+                  );
+                }),
               ],
             ),
           ),
         ),
+
+        const SizedBox(height: 100), // مساحة للأزرار السفلية
       ],
     );
   }
 
-  /// زر Checkout للسلة الكاملة
-  Widget _buildCheckoutButton() {
-    final selectedCount = cartController.selectedItemsCount;
-    final total = cartController.selectedTotalPrice;
-
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
-      child: Row(
-        children: [
-          // المجموع الكلي
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                'grand_total'.tr,
-                style: titilliumRegular.copyWith(
-                  fontSize: 12,
-                  color: Colors.grey.shade600,
-                ),
-              ),
-              const SizedBox(height: 4),
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  TCustomWidgets.formattedPrice(total, 20, TColors.primary),
-                  const SizedBox(width: 8),
-                  Text(
-                    '($selectedCount ${'products'.tr})',
-                    style: titilliumRegular.copyWith(
-                      fontSize: 12,
-                      color: Colors.grey.shade600,
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-
-          // زر Checkout الكامل
-          ElevatedButton.icon(
-            onPressed:
-                selectedCount > 0
-                    ? (_currentStep == 2 ? _completeOrder : _nextStep)
-                    : null,
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF1E88E5),
-              disabledBackgroundColor: Colors.grey.shade300,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
-            ),
-            icon: const Icon(Icons.shopping_cart_checkout, size: 20),
-            label: Text(
-              _currentStep == 2 ? 'complete_order'.tr : 'next'.tr,
-              style: titilliumBold.copyWith(fontSize: 16, color: Colors.white),
-            ),
+  /// أزرار التنقل في الأسفل
+  Widget _buildNavigationButtons() {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: const Offset(0, -2),
           ),
         ],
+      ),
+      child: SafeArea(
+        top: false,
+        child: Row(
+          children: [
+            // زر الرجوع (يظهر فقط إذا لم نكن في الخطوة الأولى)
+            if (_currentStep > 0)
+              Expanded(
+                child: OutlinedButton.icon(
+                  onPressed: _previousStep,
+                  style: OutlinedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    side: BorderSide(color: Colors.grey.shade300),
+                  ),
+                  icon: const Icon(Icons.arrow_back, size: 20),
+                  label: Text(
+                    'back'.tr,
+                    style: titilliumBold.copyWith(
+                      fontSize: 16,
+                      color: Colors.black87,
+                    ),
+                  ),
+                ),
+              ),
+
+            if (_currentStep > 0) const SizedBox(width: 12),
+
+            // زر التالي أو إتمام الطلب
+            Expanded(
+              flex: _currentStep == 0 ? 1 : 1,
+              child: Obx(() {
+                final isSubmitting =
+                    _currentStep == 2
+                        ? OrderController.instance.isSubmitting.value
+                        : false;
+                final selectedCount = cartController.selectedItemsCount;
+
+                return ElevatedButton.icon(
+                  onPressed:
+                      isSubmitting || selectedCount == 0
+                          ? null
+                          : (_currentStep == 2 ? _completeOrder : _nextStep),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.black,
+                    disabledBackgroundColor: Colors.grey.shade300,
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 14,
+                      horizontal: 20,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  icon:
+                      isSubmitting
+                          ? const SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                Colors.white,
+                              ),
+                            ),
+                          )
+                          : Icon(
+                            _currentStep == 2
+                                ? Icons.check_circle_outline
+                                : Icons.arrow_forward,
+                            size: 20,
+                          ),
+                  label: Text(
+                    isSubmitting
+                        ? 'processing'.tr
+                        : (_currentStep == 2 ? 'complete_order'.tr : 'next'.tr),
+                    style: titilliumBold.copyWith(
+                      fontSize: 16,
+                      color: Colors.white,
+                    ),
+                  ),
+                );
+              }),
+            ),
+          ],
+        ),
       ),
     );
   }

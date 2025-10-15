@@ -4,7 +4,7 @@ import 'package:istoreto/featured/vendor/analytics/vendor_analytics_controller.d
 
 /// Widget to display vendor summary analytics
 class VendorSummaryCard extends StatelessWidget {
-  const VendorSummaryCard({Key? key}) : super(key: key);
+  const VendorSummaryCard({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -86,7 +86,7 @@ class VendorSummaryCard extends StatelessWidget {
 
 /// Widget to display top performing products
 class TopPerformingProductsList extends StatelessWidget {
-  const TopPerformingProductsList({Key? key}) : super(key: key);
+  const TopPerformingProductsList({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -141,7 +141,7 @@ class TopPerformingProductsList extends StatelessWidget {
 
 /// Widget to display products needing attention
 class ProductsNeedingAttentionList extends StatelessWidget {
-  const ProductsNeedingAttentionList({Key? key}) : super(key: key);
+  const ProductsNeedingAttentionList({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -192,7 +192,7 @@ class ProductsNeedingAttentionList extends StatelessWidget {
 
 /// Widget to display recent activity
 class RecentActivityList extends StatelessWidget {
-  const RecentActivityList({Key? key}) : super(key: key);
+  const RecentActivityList({super.key});
 
   @override
   Widget build(BuildContext context) {

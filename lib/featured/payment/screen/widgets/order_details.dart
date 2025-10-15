@@ -44,7 +44,7 @@ class OrderDetailsScreen extends StatelessWidget {
                     child: Padding(
                       padding: const EdgeInsets.all(10.0),
                       child: Text(
-                        "${OrderController.instance.getOrderState(order)}",
+                        OrderController.instance.getOrderState(order),
                         style: titilliumBold.copyWith(
                           color: OrderController.instance.getColorByState(
                             order.state,
@@ -91,7 +91,7 @@ class OrderDetailsScreen extends StatelessWidget {
                 title: Text(order.fullAddress!),
                 subtitle: Text(order.buildingNumber!),
                 trailing:
-                    order.locationLat != null && order.locationLat != ""
+                    order.locationLat != null
                         ? TRoundedContainer(
                           radius: BorderRadius.circular(100),
                           enableShadow: true,
@@ -154,176 +154,5 @@ class OrderDetailsScreen extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  Widget _buildEditSection(BuildContext context) {
-    // التحقق من إمكانية التعديل بناءً على حالة الطلب
-    bool canEditAddress =
-        order.state == '0' || order.state == '1'; // غير معروف أو تم الدفع
-    bool canEditPhone = true; // يمكن تعديل رقم الهاتف دائماً
-    bool canEditPayment =
-        order.state == '0'; // يمكن تعديل أسلوب الدفع فقط في حالة غير معروف
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'order.edit_order'.tr,
-          style: titilliumBold.copyWith(fontSize: 18),
-        ),
-        const SizedBox(height: 16),
-
-        // تعديل العنوان
-        _buildEditButton(
-          context: context,
-          icon: Icons.location_on,
-          title: 'order.edit_address'.tr,
-          subtitle: order.fullAddress!,
-          enabled: canEditAddress,
-          onTap: canEditAddress ? () => _editAddress(context) : null,
-          disabledMessage: 'لا يمكن تعديل العنوان بعد بدء التحضير',
-        ),
-
-        const SizedBox(height: 12),
-
-        // تعديل رقم الهاتف
-        _buildEditButton(
-          context: context,
-          icon: Icons.phone,
-          title: 'order.edit_phone'.tr,
-          subtitle: order.phoneNumber!,
-          enabled: canEditPhone,
-          onTap: canEditPhone ? () => _editPhone(context) : null,
-        ),
-
-        const SizedBox(height: 12),
-
-        // تعديل أسلوب الدفع
-        _buildEditButton(
-          context: context,
-          icon: Icons.payment,
-          title: 'order.edit_payment'.tr,
-          subtitle: order.paymentMethod,
-          enabled: canEditPayment,
-          onTap: canEditPayment ? () => _editPaymentMethod(context) : null,
-          disabledMessage: 'لا يمكن تعديل أسلوب الدفع بعد الدفع',
-        ),
-      ],
-    );
-  }
-
-  Widget _buildEditButton({
-    required BuildContext context,
-    required IconData icon,
-    required String title,
-    required String subtitle,
-    required bool enabled,
-    VoidCallback? onTap,
-    String? disabledMessage,
-  }) {
-    return Container(
-      decoration: BoxDecoration(
-        border: Border.all(
-          color: enabled ? Colors.grey.shade300 : Colors.grey.shade200,
-        ),
-        borderRadius: BorderRadius.circular(12),
-        color: enabled ? Colors.white : Colors.grey.shade50,
-      ),
-      child: InkWell(
-        onTap:
-            enabled
-                ? onTap
-                : () => _showDisabledMessage(context, disabledMessage),
-        borderRadius: BorderRadius.circular(12),
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Row(
-            children: [
-              Icon(
-                icon,
-                color: enabled ? TColors.primary : Colors.grey.shade400,
-                size: 24,
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      title,
-                      style: titilliumBold.copyWith(
-                        fontSize: 16,
-                        color: enabled ? Colors.black : Colors.grey.shade600,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      subtitle,
-                      style: titilliumRegular.copyWith(
-                        fontSize: 14,
-                        color:
-                            enabled
-                                ? Colors.grey.shade700
-                                : Colors.grey.shade500,
-                      ),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ],
-                ),
-              ),
-              Icon(
-                enabled ? Icons.edit : Icons.lock,
-                color: enabled ? TColors.primary : Colors.grey.shade400,
-                size: 20,
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  void _editAddress(BuildContext context) {
-    // TODO: تنفيذ تعديل العنوان
-    Get.snackbar(
-      'تعديل العنوان',
-      'سيتم إضافة هذه الميزة قريباً',
-      snackPosition: SnackPosition.BOTTOM,
-    );
-  }
-
-  void _editPhone(BuildContext context) {
-    // TODO: تنفيذ تعديل رقم الهاتف
-    Get.snackbar(
-      'تعديل رقم الهاتف',
-      'سيتم إضافة هذه الميزة قريباً',
-      snackPosition: SnackPosition.BOTTOM,
-    );
-  }
-
-  void _editPaymentMethod(BuildContext context) {
-    // TODO: تنفيذ تعديل أسلوب الدفع
-    Get.snackbar(
-      'تعديل أسلوب الدفع',
-      'سيتم إضافة هذه الميزة قريباً',
-      snackPosition: SnackPosition.BOTTOM,
-    );
-  }
-
-  void _showDisabledMessage(BuildContext context, String? message) {
-    if (message != null) {
-      Get.snackbar(
-        'تنبيه',
-        message,
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.orange.shade100,
-        colorText: Colors.orange.shade800,
-        duration: const Duration(seconds: 3),
-        margin: const EdgeInsets.all(16),
-        borderRadius: 8,
-        icon: Icon(Icons.warning_amber_rounded, color: Colors.orange.shade800),
-      );
-    }
   }
 }

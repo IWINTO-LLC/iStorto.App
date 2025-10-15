@@ -8,7 +8,9 @@ class TMapController extends GetxController {
   Future<void> setCurrentLocation() async {
     final permission = await Geolocator.requestPermission();
     if (permission == LocationPermission.denied ||
-        permission == LocationPermission.deniedForever) return;
+        permission == LocationPermission.deniedForever) {
+      return;
+    }
 
     final position = await Geolocator.getCurrentPosition();
     selectedLocation.value = LatLng(position.latitude, position.longitude);

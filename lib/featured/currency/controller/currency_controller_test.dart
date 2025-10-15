@@ -29,20 +29,6 @@ void main() {
 
     test('should fetch all currencies successfully', () async {
       // Mock currencies data
-      final mockCurrencies = [
-        CurrencyModel(
-          id: '1',
-          name: 'US Dollar',
-          iso: 'USD',
-          usdToCoinExchangeRate: 1.0,
-        ),
-        CurrencyModel(
-          id: '2',
-          name: 'Euro',
-          iso: 'EUR',
-          usdToCoinExchangeRate: 0.85,
-        ),
-      ];
 
       // Mock the repository response
       // Note: In a real test, you would mock the repository
@@ -288,8 +274,6 @@ class MockCurrencyRepository {
 
 // Test helper functions
 void testCurrencyControllerWithMockData() {
-  print('🧪 Testing CurrencyController with Mock Data...');
-
   // Create controller instance
   final controller = CurrencyController();
 
@@ -325,45 +309,4 @@ void testCurrencyControllerWithMockData() {
   for (var currency in mockCurrencies) {
     controller.currencies[currency.iso] = currency;
   }
-
-  print('✅ Currencies loaded: ${controller.currencies.length}');
-
-  // Test conversions
-  print('\n🔄 Testing Currency Conversions:');
-
-  // USD to EUR
-  final usdToEur = controller.convert(100, 'USD', 'EUR');
-  print('100 USD = $usdToEur EUR');
-
-  // EUR to GBP
-  final eurToGbp = controller.convert(100, 'EUR', 'GBP');
-  print('100 EUR = ${eurToGbp.toStringAsFixed(2)} GBP');
-
-  // GBP to JPY
-  final gbpToJpy = controller.convert(100, 'GBP', 'JPY');
-  print('100 GBP = ${gbpToJpy.toStringAsFixed(2)} JPY');
-
-  // Test availability
-  print('\n🔍 Testing Currency Availability:');
-  print('USD available: ${controller.isCurrencyAvailable("USD")}');
-  print('EUR available: ${controller.isCurrencyAvailable("EUR")}');
-  print('INVALID available: ${controller.isCurrencyAvailable("INVALID")}');
-
-  // Test currency retrieval
-  print('\n📋 Testing Currency Retrieval:');
-  final usdCurrency = controller.getCurrency('USD');
-  print('USD Currency: ${usdCurrency?.name} (${usdCurrency?.iso})');
-
-  final eurCurrency = controller.getCurrency('EUR');
-  print('EUR Currency: ${eurCurrency?.name} (${eurCurrency?.iso})');
-
-  // Test default currency conversion
-  print('\n👤 Testing Default Currency:');
-  controller.userCurrency.value = 'EUR';
-  final defaultConversion = controller.convertToDefaultCurrency(100);
-  print(
-    '100 USD to default currency (EUR): ${defaultConversion.toStringAsFixed(2)} EUR',
-  );
-
-  print('\n✅ All CurrencyController tests completed successfully!');
 }

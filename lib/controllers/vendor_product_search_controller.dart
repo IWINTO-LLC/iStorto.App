@@ -146,7 +146,7 @@ class VendorProductSearchController extends GetxController {
     if (searchQuery.value.isNotEmpty) {
       results =
           results.where((product) {
-            final title = product.title?.toLowerCase() ?? '';
+            final title = product.title.toLowerCase();
             final description = product.description?.toLowerCase() ?? '';
             return title.contains(searchQuery.value) ||
                 description.contains(searchQuery.value);

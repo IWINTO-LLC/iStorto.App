@@ -567,8 +567,9 @@ class AuthController extends GetxController {
       if (username != null) updates['username'] = username;
       if (bio != null) updates['bio'] = bio;
       if (phoneNumber != null) updates['phone_number'] = phoneNumber;
-      if (defaultCurrency != null)
+      if (defaultCurrency != null) {
         updates['default_currency'] = defaultCurrency;
+      }
 
       final updatedUser = await _userRepository.updateUser(
         currentUser.value!.id,
@@ -755,7 +756,7 @@ class AuthController extends GetxController {
       print('Guest login error: $e');
       Get.snackbar(
         'error'.tr,
-        'guest_login_failed'.tr + ': ${e.toString()}',
+        '${'guest_login_failed'.tr}: ${e.toString()}',
         snackPosition: SnackPosition.TOP,
         backgroundColor: Colors.red,
         colorText: Colors.white,

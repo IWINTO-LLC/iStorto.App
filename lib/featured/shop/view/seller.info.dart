@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:istoreto/featured/shop/view/policy_webview_page.dart';
 import 'package:istoreto/featured/shop/controller/policy_controller.dart';
-import 'package:istoreto/featured/shop/view/policy_page.dart';
 import 'package:istoreto/featured/product/cashed_network_image_free.dart';
 import 'package:readmore/readmore.dart';
 
@@ -18,7 +15,7 @@ import 'package:istoreto/utils/loader/loader_widget.dart';
 class PolicyDisplayPage extends StatelessWidget {
   final String vendorId;
 
-  PolicyDisplayPage({required this.vendorId});
+  const PolicyDisplayPage({super.key, required this.vendorId});
 
   // دالة لفتح الرابط في WebView
   void _openWebView(BuildContext context, String url, String title) {
@@ -388,7 +385,7 @@ class PolicyDisplayPage extends StatelessWidget {
                                   SizedBox(height: 20),
                                 ],
                               );
-                            }).toList(),
+                            }),
                           ],
 
                           // رسالة إذا لم تكن هناك سياسات
@@ -567,7 +564,7 @@ class PolicyDisplayPage extends StatelessWidget {
                   ],
                 ),
                 SizedBox(height: 12),
-                Container(
+                SizedBox(
                   height: 120,
                   child: ListView.builder(
                     scrollDirection: Axis.horizontal,
@@ -712,7 +709,7 @@ class ImageGalleryPage extends StatefulWidget {
   final List<String> images;
   final int initialIndex;
 
-  ImageGalleryPage({required this.images, required this.initialIndex});
+  const ImageGalleryPage({super.key, required this.images, required this.initialIndex});
 
   @override
   _ImageGalleryPageState createState() => _ImageGalleryPageState();
@@ -808,7 +805,7 @@ class PDFViewerPage extends StatelessWidget {
   final String pdfUrl;
   final String title;
 
-  PDFViewerPage({required this.pdfUrl, required this.title});
+  const PDFViewerPage({super.key, required this.pdfUrl, required this.title});
 
   @override
   Widget build(BuildContext context) {

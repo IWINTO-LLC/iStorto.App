@@ -69,11 +69,14 @@ dependencies:
   http: ^1.1.0
   
 
+  collection: any
+  latlong2: any
+  intl: any
+  url_launcher: any
+  logger: any
 dev_dependencies:
   flutter_test:
     sdk: flutter
-
-
   flutter_lints: ^5.0.0
 
 # For information on the generic Dart part of this file, see the

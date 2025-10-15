@@ -28,10 +28,7 @@ class ProductImagesGalleryPage extends StatelessWidget {
     }
 
     return Scaffold(
-      appBar: CustomAppBar(
-        title: vendorId != null ? 'صور المنتجات' : 'معرض صور المنتجات'.tr,
-        isBackButtonExist: true,
-      ),
+      appBar: CustomAppBar(title: 'تصفح المنتجات', isBackButtonExist: true),
       body: Column(
         children: [
           // شريط البحث
@@ -201,7 +198,7 @@ class ProductImagesGalleryPage extends StatelessWidget {
                             Padding(
                               padding: const EdgeInsets.only(right: 8),
                               child: Text(
-                                '${image.productOldPrice!.toStringAsFixed(2)}',
+                                image.productOldPrice!.toStringAsFixed(2),
                                 style: TextStyle(
                                   fontSize: 11,
                                   color: Colors.grey,

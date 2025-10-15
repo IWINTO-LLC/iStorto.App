@@ -3,12 +3,12 @@ import 'package:flutter/material.dart';
 
 class TGridLayout extends StatelessWidget {
   const TGridLayout({
-    Key? key,
+    super.key,
     this.crossColumn = 2,
     required this.itemCount,
     this.maxAxisExtent = 320,
     required this.itemBuilder,
-  }) : super(key: key);
+  });
   final int itemCount;
   final int crossColumn;
   final double? maxAxisExtent;

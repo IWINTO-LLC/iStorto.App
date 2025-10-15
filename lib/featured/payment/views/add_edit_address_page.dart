@@ -193,18 +193,14 @@ class _AddEditAddressPageState extends State<AddEditAddressPage> {
             // رقم الهاتف
             _buildSectionTitle('contact_info'.tr),
             const SizedBox(height: 8),
-            _buildTextField(
+            TextField(
               controller: phoneNumberController,
-              label: 'phone_number'.tr,
-              hint: 'phone_number_hint'.tr,
-              icon: Icons.phone,
+              decoration: InputDecoration(
+                labelText: 'phone_number'.tr,
+                hintText: 'phone_number_hint'.tr,
+                prefixIcon: Icon(Icons.phone),
+              ),
               keyboardType: TextInputType.phone,
-              validator: (value) {
-                if (value == null || value.trim().isEmpty) {
-                  return 'phone_number_required'.tr;
-                }
-                return null;
-              },
             ),
 
             const SizedBox(height: 24),
@@ -423,7 +419,7 @@ class _AddEditAddressPageState extends State<AddEditAddressPage> {
       if (userId == null) {
         throw Exception('User not authenticated');
       }
-
+      print("uuuuuusssssssser $userId");
       final address = AddressModel(
         id: widget.address?.id,
         userId: userId,

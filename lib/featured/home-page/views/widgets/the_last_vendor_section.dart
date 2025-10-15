@@ -96,7 +96,7 @@ class _LastVendorCard extends StatelessWidget {
       if (kDebugMode) {
         print('Error fetching last vendor: $e');
       }
-      throw e;
+      rethrow;
     }
   }
 

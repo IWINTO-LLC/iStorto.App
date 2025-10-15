@@ -371,7 +371,7 @@ class _CheckoutStepperScreenSimpleState
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               child: VendorCartBlock(vendorId: entry.key, items: entry.value),
             );
-          }).toList(),
+          }),
           const SizedBox(height: 100), // مساحة للزر السفلي
         ];
 
@@ -464,7 +464,7 @@ class _CheckoutStepperScreenSimpleState
               ),
             ),
           );
-        }).toList(),
+        }),
         if (selectedAddress != null)
           Card(
             child: Padding(

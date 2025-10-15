@@ -12,7 +12,6 @@ import 'package:istoreto/utils/common/widgets/custom_shapes/containers/rounded_c
 import 'package:istoreto/utils/constants/color.dart';
 import 'package:istoreto/utils/constants/image_strings.dart';
 import 'package:istoreto/utils/constants/sizes.dart';
-import 'package:istoreto/utils/dialog/reusable_dialog.dart';
 
 class TProductImageSliderMini extends StatelessWidget {
   const TProductImageSliderMini({
@@ -36,7 +35,7 @@ class TProductImageSliderMini extends StatelessWidget {
   Widget build(BuildContext context) {
     RxInt selectdindex = 0.obs;
     final PageController pageController = PageController(viewportFraction: 1);
-    final images = product.images!;
+    final images = product.images;
 
     if (images.length > 1) {
       var items =

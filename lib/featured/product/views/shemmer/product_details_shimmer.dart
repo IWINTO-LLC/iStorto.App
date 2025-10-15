@@ -5,7 +5,7 @@ import 'package:istoreto/utils/constants/color.dart';
 import 'package:istoreto/utils/constants/sizes.dart';
 
 class ProductDetailsShimmer extends StatelessWidget {
-  const ProductDetailsShimmer({Key? key}) : super(key: key);
+  const ProductDetailsShimmer({super.key});
 
   @override
   Widget build(BuildContext context) {

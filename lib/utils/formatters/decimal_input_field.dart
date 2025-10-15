@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class DecimalInputField extends StatefulWidget {
+  const DecimalInputField({super.key});
+
   @override
   _DecimalInputFieldState createState() => _DecimalInputFieldState();
 }

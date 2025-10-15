@@ -191,35 +191,6 @@ class _VendorSalesScreenState extends State<VendorSalesScreen> {
     );
   }
 
-  Widget _buildFilterButton(FilterItem item) {
-    final selected = selectedFilter.value.key == item.key;
-    return GestureDetector(
-      onTap: () => selectedFilter.value = item,
-      child: Padding(
-        padding: const EdgeInsets.only(bottom: 10.0),
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-          decoration: BoxDecoration(
-            border: Border(
-              bottom: BorderSide(
-                color: selected ? Colors.black : Colors.transparent,
-                width: 2,
-              ),
-            ),
-          ),
-          child: Text(
-            item.label,
-            style: titilliumBold.copyWith(
-              color: Colors.black87,
-              fontSize: 17,
-              fontWeight: selected ? FontWeight.bold : FontWeight.normal,
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
   List<OrderModel> _applyFilter(List<OrderModel> orders, FilterItem active) {
     if (active.key == 'all') return orders;
 

@@ -11,11 +11,10 @@ import 'package:istoreto/featured/product/cashed_network_image.dart';
 import 'package:istoreto/featured/product/controllers/floating_button_vendor_controller.dart';
 import 'package:istoreto/featured/product/controllers/product_controller.dart';
 import 'package:istoreto/featured/product/data/product_model.dart';
-import 'package:istoreto/featured/product/views/add/add_product.dart';
 import 'package:istoreto/featured/product/views/widgets/product_details.dart';
 import 'package:istoreto/featured/sector/controller/sector_controller.dart';
-import 'package:istoreto/featured/sector/model/sector_model.dart';
 import 'package:istoreto/featured/sector/view/build_sector_title.dart';
+import 'package:istoreto/views/vendor/add_product_page.dart';
 
 import 'package:istoreto/utils/actions.dart';
 import 'package:istoreto/utils/common/styles/styles.dart';
@@ -27,7 +26,7 @@ import 'package:istoreto/utils/constants/color.dart';
 import 'package:istoreto/utils/constants/sizes.dart';
 
 class GridBuilder extends StatefulWidget {
-  GridBuilder({super.key, required this.vendorId, required this.editMode});
+  const GridBuilder({super.key, required this.vendorId, required this.editMode});
 
   final String vendorId;
   final bool editMode;
@@ -157,16 +156,9 @@ class _GridBuilderState extends State<GridBuilder> {
                                         context,
                                         MaterialPageRoute(
                                           builder:
-                                              (context) => CreateProduct(
+                                              (context) => AddProductPage(
                                                 vendorId: widget.vendorId,
-                                                type: 'newArrival',
-                                                initialList: spotList,
-                                                sectionId: 'all',
-                                                sectorTitle: SectorModel(
-                                                  name: 'newArrival',
-                                                  englishName: 'New Arrival',
-                                                  vendorId: '',
-                                                ),
+                                                initialSection: 'newArrival',
                                               ),
                                         ),
                                       );
@@ -255,17 +247,9 @@ class _GridBuilderState extends State<GridBuilder> {
                                               context,
                                               MaterialPageRoute(
                                                 builder:
-                                                    (context) => CreateProduct(
+                                                    (context) => AddProductPage(
                                                       vendorId: widget.vendorId,
-                                                      type: 'mixlin1',
-                                                      sectorTitle: SectorModel(
-                                                        name: 'newArrival',
-                                                        englishName:
-                                                            'New Arrival',
-                                                        vendorId: '',
-                                                      ),
-                                                      initialList: spotList,
-                                                      sectionId: 'all',
+                                                      initialSection: 'mixlin1',
                                                     ),
                                               ),
                                             );
@@ -290,17 +274,9 @@ class _GridBuilderState extends State<GridBuilder> {
                                               context,
                                               MaterialPageRoute(
                                                 builder:
-                                                    (context) => CreateProduct(
-                                                      sectorTitle: SectorModel(
-                                                        name: 'newArrival',
-                                                        englishName:
-                                                            'New Arrival',
-                                                        vendorId: '',
-                                                      ),
-                                                      initialList: spotList,
+                                                    (context) => AddProductPage(
                                                       vendorId: widget.vendorId,
-                                                      type: 'mixlin1',
-                                                      sectionId: 'all',
+                                                      initialSection: 'mixlin1',
                                                     ),
                                               ),
                                             );
@@ -333,7 +309,7 @@ class _GridBuilderState extends State<GridBuilder> {
                                             url:
                                                 spotList
                                                     .sublist(0, 12)[index]
-                                                    .images!
+                                                    .images
                                                     .first,
                                           ),
                                         ),
@@ -431,17 +407,10 @@ class _GridBuilderState extends State<GridBuilder> {
                                               context,
                                               MaterialPageRoute(
                                                 builder:
-                                                    (context) => CreateProduct(
-                                                      sectorTitle: SectorModel(
-                                                        name: 'newArrival',
-                                                        englishName:
-                                                            'New Arrival',
-                                                        vendorId: '',
-                                                      ),
-                                                      initialList: spotList,
+                                                    (context) => AddProductPage(
                                                       vendorId: widget.vendorId,
-                                                      type: 'newArrival',
-                                                      sectionId: 'all',
+                                                      initialSection:
+                                                          'newArrival',
                                                     ),
                                               ),
                                             );
@@ -467,7 +436,7 @@ class _GridBuilderState extends State<GridBuilder> {
                                             height: cardHeight,
                                             enableShadow: false,
                                             raduis: BorderRadius.circular(0),
-                                            url: spotList[index].images!.first,
+                                            url: spotList[index].images.first,
                                           ),
                                         ),
                                         () {
@@ -547,16 +516,9 @@ class _GridBuilderState extends State<GridBuilder> {
                                   context,
                                   MaterialPageRoute(
                                     builder:
-                                        (context) => CreateProduct(
+                                        (context) => AddProductPage(
                                           vendorId: widget.vendorId,
-                                          sectorTitle: SectorModel(
-                                            name: 'newArrival',
-                                            englishName: 'New Arrival',
-                                            vendorId: '',
-                                          ),
-                                          initialList: spotList,
-                                          type: 'newArrival',
-                                          sectionId: 'all',
+                                          initialSection: 'newArrival',
                                         ),
                                   ),
                                 );

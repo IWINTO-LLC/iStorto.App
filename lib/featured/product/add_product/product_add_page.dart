@@ -13,7 +13,9 @@ import 'product_add_controller.dart';
 import 'package:istoreto/data/models/category_model.dart';
 
 class ProductAddPage extends StatelessWidget {
-  final controller = Get.put(ProductAddController());
+  final ProductAddController controller = Get.put(ProductAddController());
+
+  ProductAddPage({super.key});
   @override
   Widget build(BuildContext context) {
     var addCat = CategoryModel(title: "menu.add_category");

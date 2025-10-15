@@ -17,7 +17,7 @@ import 'package:istoreto/featured/shop/controllers/vendor_categories_controller.
 import 'image_uploader.dart';
 
 class CreateCategoryForm extends StatelessWidget {
-  CreateCategoryForm({super.key, required this.vendorId});
+  const CreateCategoryForm({super.key, required this.vendorId});
   final String vendorId;
 
   /// حساب النسبة المئوية للتقدم بناءً على رسالة الحالة
@@ -352,7 +352,7 @@ class CreateCategoryForm extends StatelessWidget {
                                   // عرض رسالة خطأ للمستخدم
                                   Get.snackbar(
                                     'error'.tr,
-                                    'category_creation_error'.tr + ': $e',
+                                    '${'category_creation_error'.tr}: $e',
                                     snackPosition: SnackPosition.BOTTOM,
                                     backgroundColor: Colors.red,
                                     colorText: Colors.white,

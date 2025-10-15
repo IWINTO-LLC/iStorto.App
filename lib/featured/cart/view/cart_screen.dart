@@ -43,8 +43,8 @@ class CartScrollController extends GetxController {
   }
 }
 
-class CartScreen extends StatelessWidget {
-  const CartScreen({super.key});
+class CartsScreen extends StatelessWidget {
+  const CartsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -149,7 +149,7 @@ class CartScreen extends StatelessWidget {
                       padding: const EdgeInsets.only(bottom: 16),
                       child: VendorCartBlock(vendorId: vendorId, items: items),
                     );
-                  }).toList(),
+                  }),
                 ],
               ),
             );

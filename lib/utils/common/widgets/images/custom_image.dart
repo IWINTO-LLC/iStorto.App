@@ -9,13 +9,13 @@ class CustomImage extends StatelessWidget {
   final BoxFit? fit;
   final String? placeholder;
   const CustomImage({
-    Key? key,
+    super.key,
     required this.image,
     this.height,
     this.width,
     this.fit = BoxFit.cover,
     this.placeholder = TImages.imagePlaceholder,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

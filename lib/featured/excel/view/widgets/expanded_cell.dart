@@ -5,7 +5,7 @@ class AutoResizeTextField extends StatefulWidget {
   final String initialText;
   final Function(String) onChanged;
 
-  AutoResizeTextField({required this.initialText, required this.onChanged});
+  const AutoResizeTextField({super.key, required this.initialText, required this.onChanged});
 
   @override
   _AutoResizeTextFieldState createState() => _AutoResizeTextFieldState();

@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 import 'package:istoreto/controllers/auth_controller.dart';
 
 class TestAppleSignIn extends StatelessWidget {
-  const TestAppleSignIn({Key? key}) : super(key: key);
+  const TestAppleSignIn({super.key});
 
   @override
   Widget build(BuildContext context) {

@@ -1,3 +1,5 @@
+import 'package:uuid/uuid.dart';
+
 class AddressModel {
   final String? id;
   final String userId;
@@ -31,7 +33,7 @@ class AddressModel {
 
   Map<String, dynamic> toMap() {
     return {
-      'id': id,
+      'id': Uuid().v4(),
       'user_id': userId,
       'title': title,
       'full_address': fullAddress,
@@ -130,11 +132,12 @@ class AddressModel {
     List<String> parts = [];
     if (street != null && street!.isNotEmpty) parts.add(street!);
     if (city != null && city!.isNotEmpty) parts.add(city!);
-    if (buildingNumber != null && buildingNumber!.isNotEmpty)
+    if (buildingNumber != null && buildingNumber!.isNotEmpty) {
       parts.add('Building ${buildingNumber!}');
+    }
 
     if (parts.isEmpty) return fullAddress;
-    return '${fullAddress}, ${parts.join(', ')}';
+    return '$fullAddress, ${parts.join(', ')}';
   }
 
   // Get short address for display

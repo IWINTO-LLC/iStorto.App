@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-
 import 'package:istoreto/featured/cart/controller/cart_controller.dart';
-import 'package:istoreto/featured/cart/view/cart_screen.dart';
+import 'package:istoreto/featured/cart/view/checkout_stepper_screen.dart';
 import 'package:istoreto/featured/product/data/product_model.dart';
 import 'package:istoreto/utils/common/styles/styles.dart';
 import 'package:istoreto/utils/common/widgets/custom_shapes/containers/rounded_container.dart';
@@ -27,7 +26,10 @@ class AddToCartButton extends StatelessWidget {
         onTap: () {
           if (quantity > 0) {
             // إذا كان المنتج موجود، افتح صفحة السلة
-            Get.to(() => const CartScreen(), transition: Transition.cupertino);
+            Get.to(
+              () => const CheckoutStepperScreen(),
+              transition: Transition.cupertino,
+            );
           } else {
             // إضافة المنتج للسلة
             cartController.addToCart(product);

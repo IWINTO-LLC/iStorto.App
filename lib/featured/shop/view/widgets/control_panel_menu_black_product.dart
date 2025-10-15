@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -11,11 +10,9 @@ import 'package:istoreto/featured/product/controllers/product_controller.dart';
 
 import 'package:istoreto/featured/product/data/product_model.dart';
 import 'package:istoreto/featured/product/views/edit/edit_product.dart';
-import 'package:istoreto/utils/common/widgets/custom_shapes/containers/rounded_container.dart';
-import 'package:istoreto/utils/constants/color.dart';
 
 class ControlPanelBlackProduct extends StatelessWidget {
-  ControlPanelBlackProduct({
+  const ControlPanelBlackProduct({
     super.key,
     required this.vendorId,
     required this.product,
@@ -25,9 +22,9 @@ class ControlPanelBlackProduct extends StatelessWidget {
   });
   final String vendorId;
   final bool editMode;
-  Color iconColor;
+  final Color iconColor;
   final ProductModel product;
-  bool withCircle;
+  final bool withCircle;
 
   @override
   Widget build(BuildContext context) {

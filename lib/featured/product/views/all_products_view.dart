@@ -336,7 +336,7 @@ class _AppBarContent extends StatelessWidget {
                   ),
                 if (viewController.categories.isNotEmpty)
                   Flexible(
-                    child: Container(
+                    child: SizedBox(
                       height: 40,
                       child: ListView.builder(
                         scrollDirection: Axis.horizontal,

@@ -139,22 +139,18 @@ class DisplayImageFullController extends GetxController {
         title: 'Winto Image',
       );
 
-      if (result != null) {
-        Get.snackbar(
-          'common_success'.tr,
-          'image_save_image_saved_success'.tr,
+      Get.snackbar(
+        'common_success'.tr,
+        'image_save_image_saved_success'.tr,
 
-          snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.green,
-          colorText: Colors.white,
-          duration: Duration(seconds: 2),
-          margin: EdgeInsets.only(bottom: 20, left: 20, right: 20),
-          borderRadius: 12,
-        );
-      } else {
-        throw Exception('image_save_save_failed'.tr);
-      }
-    } catch (e) {
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.green,
+        colorText: Colors.white,
+        duration: Duration(seconds: 2),
+        margin: EdgeInsets.only(bottom: 20, left: 20, right: 20),
+        borderRadius: 12,
+      );
+        } catch (e) {
       Get.snackbar(
         'common_error'.tr,
         'image_save_save_error'.tr,

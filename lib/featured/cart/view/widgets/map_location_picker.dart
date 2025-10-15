@@ -11,7 +11,7 @@ import 'package:istoreto/utils/constants/color.dart';
 
 class MapLocationPicker extends StatefulWidget {
   final LatLng? initialLocation;
-  const MapLocationPicker({Key? key, this.initialLocation}) : super(key: key);
+  const MapLocationPicker({super.key, this.initialLocation});
 
   @override
   State<MapLocationPicker> createState() => _MapLocationPickerState();

@@ -141,7 +141,7 @@ class _AddressScreenState extends State<AddressScreen> {
                         context: context,
                         isScrollControlled: true,
                         builder:
-                            (context) => Container(
+                            (context) => SizedBox(
                               height: MediaQuery.of(context).size.height * 0.7,
                               child: AddressSelector(
                                 onAddressSelected: (address) {
@@ -259,7 +259,7 @@ class _AddressScreenState extends State<AddressScreen> {
                 controller.addressDetailsController.text.isNotEmpty;
 
             return hasAddressData && selectedAddress == null
-                ? Container(
+                ? SizedBox(
                   width: double.infinity,
                   child: ElevatedButton.icon(
                     onPressed: () async {

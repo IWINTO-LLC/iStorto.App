@@ -7,7 +7,7 @@ class FavoriteVendors extends StatelessWidget {
   final String userId;
   final FollowController controller = Get.put(FollowController());
 
-  FavoriteVendors({required this.userId});
+  FavoriteVendors({super.key, required this.userId});
 
   @override
   Widget build(BuildContext context) {

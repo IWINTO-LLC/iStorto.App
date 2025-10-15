@@ -326,7 +326,7 @@ class VendorSettingsPage extends StatelessWidget {
                   ),
                   child:
                       controller.isUpdate.value
-                          ? Container(
+                          ? SizedBox(
                             width: 20,
                             height: 20,
                             child: CircularProgressIndicator(

@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -10,8 +9,6 @@ import 'package:istoreto/featured/product/controllers/edit_product_controller.da
 import 'package:istoreto/featured/product/controllers/product_controller.dart';
 import 'package:istoreto/featured/product/data/product_model.dart';
 import 'package:istoreto/featured/product/views/edit/edit_product.dart';
-import 'package:istoreto/utils/common/widgets/custom_shapes/containers/rounded_container.dart';
-import 'package:istoreto/main.dart';
 
 class ControlPanelProduct extends StatelessWidget {
   ControlPanelProduct({

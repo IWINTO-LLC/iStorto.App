@@ -6,8 +6,7 @@ import 'package:istoreto/featured/vendor/analytics/widgets/vendor_analytics_widg
 class VendorAnalyticsPage extends StatefulWidget {
   final String vendorId;
 
-  const VendorAnalyticsPage({Key? key, required this.vendorId})
-    : super(key: key);
+  const VendorAnalyticsPage({super.key, required this.vendorId});
 
   @override
   State<VendorAnalyticsPage> createState() => _VendorAnalyticsPageState();
@@ -164,7 +163,7 @@ class _VendorAnalyticsPageState extends State<VendorAnalyticsPage>
                     child: _QuickStatItem(
                       title: 'معدل التفاعل',
                       value:
-                          '${analyticsController.averageEngagementScore.toStringAsFixed(1)}',
+                          analyticsController.averageEngagementScore.toStringAsFixed(1),
                       subtitle: 'نقاط التفاعل',
                       color: Colors.purple,
                     ),

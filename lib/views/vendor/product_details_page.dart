@@ -2,12 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:istoreto/featured/home-page/views/widgets/cart_white.dart';
 import 'package:istoreto/featured/product/data/product_model.dart';
 import 'package:istoreto/featured/cart/controller/cart_controller.dart';
-import 'package:istoreto/featured/cart/view/cart_screen.dart';
 import 'package:istoreto/utils/common/styles/styles.dart';
 import 'package:istoreto/utils/common/widgets/appbar/appbar.dart';
-import 'package:istoreto/utils/constants/sizes.dart';
 
 /// صفحة تفاصيل المنتج
 ///
@@ -41,10 +40,7 @@ class ProductDetailsPage extends StatelessWidget {
           // أيقونة السلة
           IconButton(
             onPressed: () {
-              Get.to(
-                () => const CartScreen(),
-                transition: Transition.cupertino,
-              );
+              Get.to(() => const CartWhite(), transition: Transition.cupertino);
             },
             icon: Obx(() {
               final total = cartController.total.value;

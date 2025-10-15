@@ -8,7 +8,7 @@ import 'package:istoreto/utils/device/device_utility.dart';
 
 class TAppBar extends StatelessWidget implements PreferredSizeWidget {
   const TAppBar({
-    Key? key,
+    super.key,
     this.title,
     this.backgroundColor,
     this.showBackArrow = false,
@@ -17,7 +17,7 @@ class TAppBar extends StatelessWidget implements PreferredSizeWidget {
     this.centerTitle = false,
     this.leadingOnPress,
     this.onbackPress,
-  }) : super(key: key);
+  });
 
   final Widget? title;
   final Color? backgroundColor;

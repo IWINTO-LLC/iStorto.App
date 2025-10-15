@@ -97,7 +97,7 @@ class MajorCategoryRepository {
         }
       }
 
-      final major_categories =
+      final majorCategories =
           response.map<MajorCategoryModel>((json) {
             print(
               '🔄 [MajorCategoryRepository] Parsing category: ${json['name']} (ID: ${json['id']})',
@@ -106,9 +106,9 @@ class MajorCategoryRepository {
           }).toList();
 
       print(
-        '✅ [MajorCategoryRepository] Successfully parsed ${major_categories.length} major_categories',
+        '✅ [MajorCategoryRepository] Successfully parsed ${majorCategories.length} major_categories',
       );
-      for (var category in major_categories) {
+      for (var category in majorCategories) {
         if (kDebugMode) {
           print(
             '📝 [MajorCategoryRepository] Category: ${category.name} | Arabic: ${category.arabicName} | Featured: ${category.isFeature} | Status: ${category.status}',
@@ -116,7 +116,7 @@ class MajorCategoryRepository {
         }
       }
 
-      return major_categories;
+      return majorCategories;
     } catch (e) {
       print('❌ [MajorCategoryRepository] Error fetching major_categories: $e');
       throw Exception('Failed to fetch major_categories: $e');
@@ -160,7 +160,7 @@ class MajorCategoryRepository {
       );
       print('📋 [MajorCategoryRepository] Root data: $response');
 
-      final major_categories =
+      final majorCategories =
           response.map<MajorCategoryModel>((json) {
             print(
               '🔄 [MajorCategoryRepository] Parsing root category: ${json['name']}',
@@ -169,15 +169,15 @@ class MajorCategoryRepository {
           }).toList();
 
       print(
-        '✅ [MajorCategoryRepository] Successfully parsed ${major_categories.length} root major_categories',
+        '✅ [MajorCategoryRepository] Successfully parsed ${majorCategories.length} root major_categories',
       );
-      for (var category in major_categories) {
+      for (var category in majorCategories) {
         print(
           '🌳 [MajorCategoryRepository] Root: ${category.name} | Parent: ${category.parentId}',
         );
       }
 
-      return major_categories;
+      return majorCategories;
     } catch (e) {
       print(
         '❌ [MajorCategoryRepository] Error fetching root major_categories: $e',
@@ -224,7 +224,7 @@ class MajorCategoryRepository {
       );
       print('📋 [MajorCategoryRepository] Featured data: $response');
 
-      final major_categories =
+      final majorCategories =
           response.map<MajorCategoryModel>((json) {
             print(
               '🔄 [MajorCategoryRepository] Parsing featured category: ${json['name']}',
@@ -233,15 +233,15 @@ class MajorCategoryRepository {
           }).toList();
 
       print(
-        '✅ [MajorCategoryRepository] Successfully parsed ${major_categories.length} featured major_categories',
+        '✅ [MajorCategoryRepository] Successfully parsed ${majorCategories.length} featured major_categories',
       );
-      for (var category in major_categories) {
+      for (var category in majorCategories) {
         print(
           '⭐ [MajorCategoryRepository] Featured: ${category.name} | Status: ${category.status}',
         );
       }
 
-      return major_categories;
+      return majorCategories;
     } catch (e) {
       print(
         '❌ [MajorCategoryRepository] Error fetching featured major_categories: $e',
@@ -387,7 +387,7 @@ class MajorCategoryRepository {
       );
       print('📋 [MajorCategoryRepository] Search data: $response');
 
-      final major_categories =
+      final majorCategories =
           response.map<MajorCategoryModel>((json) {
             print(
               '🔄 [MajorCategoryRepository] Parsing search result: ${json['name']}',
@@ -396,15 +396,15 @@ class MajorCategoryRepository {
           }).toList();
 
       print(
-        '✅ [MajorCategoryRepository] Search completed: ${major_categories.length} major_categories found',
+        '✅ [MajorCategoryRepository] Search completed: ${majorCategories.length} major_categories found',
       );
-      for (var category in major_categories) {
+      for (var category in majorCategories) {
         print(
           '🔍 [MajorCategoryRepository] Search result: ${category.name} | Arabic: ${category.arabicName}',
         );
       }
 
-      return major_categories;
+      return majorCategories;
     } catch (e) {
       print('❌ [MajorCategoryRepository] Error searching major_categories: $e');
       throw Exception('Failed to search major_categories: $e');

@@ -2,7 +2,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:istoreto/featured/home-page/views/widgets/discover_product.dart';
-import 'package:istoreto/featured/product/cashed_network_image.dart';
 import 'package:istoreto/featured/product/controllers/product_controller.dart';
 import 'package:istoreto/featured/product/data/product_model.dart';
 import 'package:istoreto/featured/product/views/widgets/product_widget_medium.dart';
@@ -437,30 +436,6 @@ class _ProductsListGrid extends StatelessWidget {
           withTitle: true,
         ),
       ],
-    );
-  }
-}
-
-/// بطاقة المنتج الفردية
-/// Individual product card
-class _ProductCard extends StatelessWidget {
-  final dynamic product;
-  final double cardWidth;
-
-  const _ProductCard({required this.product, required this.cardWidth});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: cardWidth,
-      margin: const EdgeInsets.only(right: 16),
-      child: ProductWidgetMedium(
-        product: product,
-        vendorId: product.vendorId ?? '',
-        editMode: false,
-        prefferHeight: 250,
-        prefferWidth: cardWidth,
-      ),
     );
   }
 }

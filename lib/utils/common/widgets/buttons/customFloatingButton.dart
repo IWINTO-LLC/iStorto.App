@@ -4,7 +4,7 @@ import 'package:istoreto/utils/common/widgets/custom_shapes/containers/rounded_c
 import 'package:istoreto/utils/constants/color.dart';
 
 class CustomFloatActionButton extends StatelessWidget {
-  CustomFloatActionButton({
+  const CustomFloatActionButton({
     super.key,
     required this.onTap,
     this.icon = CupertinoIcons.add,

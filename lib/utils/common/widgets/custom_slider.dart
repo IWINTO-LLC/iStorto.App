@@ -1,19 +1,8 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_speed_dial/flutter_speed_dial.dart';
-import 'package:get/get.dart';
-import 'package:sizer/sizer.dart';
 
-import 'package:istoreto/featured/banner/controller/banner_controller.dart';
-import 'package:istoreto/featured/banner/view/all/all_banners.dart';
 import 'package:istoreto/featured/product/cashed_network_image.dart';
-import 'package:istoreto/utils/common/widgets/buttons/customFloatingButton.dart';
-import 'package:istoreto/utils/common/widgets/buttons/custom_button.dart';
-import 'package:istoreto/utils/common/widgets/custom_shapes/containers/rounded_container.dart';
-import 'package:istoreto/utils/constants/color.dart';
-import 'package:istoreto/utils/constants/image_strings.dart';
-import 'package:istoreto/utils/loader/loader_widget.dart';
 
 class CustomSlider extends StatelessWidget {
   CustomSlider({

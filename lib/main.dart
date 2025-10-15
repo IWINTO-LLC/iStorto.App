@@ -29,21 +29,16 @@ void main() async {
     overlays: [SystemUiOverlay.top, SystemUiOverlay.bottom],
   );
 
-  // إعداد شريط الحالة بشكل عام (شفاف مع أيقونات داكنة)
-  // يناسب معظم الصفحات البيضاء في التطبيق
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
-      statusBarColor: Colors.white, // شفاف ليظهر خلف المحتوى
-      statusBarIconBrightness:
-          Brightness.dark, // أيقونات داكنة (للخلفيات الفاتحة)
-      statusBarBrightness: Brightness.light, // للـ iOS
-      systemNavigationBarColor: Colors.black, // شريط التنقل السفلي أبيض
-      systemNavigationBarIconBrightness:
-          Brightness.light, // أيقونات التنقل داكنة
+      statusBarColor: Colors.white,
+      statusBarIconBrightness: Brightness.dark,
+      statusBarBrightness: Brightness.light,
+      systemNavigationBarColor: Colors.black,
+      systemNavigationBarIconBrightness: Brightness.light,
     ),
   );
 
-  // Initialize Hive (قبل أي استخدام)
   await Hive.initFlutter();
 
   // Initialize Supabase
@@ -124,6 +119,14 @@ class MyApp extends StatelessWidget {
 
           // Routes
           getPages: appRoutes,
+
+          builder: (context, child) {
+            return SafeArea(
+              bottom: true,
+              top: false,
+              child: child ?? const SizedBox.shrink(),
+            );
+          },
 
           // Home page
           home: const SplashScreen(),

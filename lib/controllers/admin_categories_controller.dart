@@ -227,7 +227,7 @@ class AdminCategoriesController extends GetxController {
                         TextFormField(
                           controller: nameController,
                           decoration: InputDecoration(
-                            labelText: 'category_name_en'.tr + ' *',
+                            labelText: '${'category_name_en'.tr} *',
                             hintText: 'enter_category_name_en'.tr,
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12),

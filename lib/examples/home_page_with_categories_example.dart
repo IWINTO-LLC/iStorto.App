@@ -1,10 +1,10 @@
 // lib/examples/home_page_with_categories_example.dart
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:istoreto/featured/home-page/views/widgets/category_section.dart';
 import 'package:istoreto/utils/constants/sizes.dart';
-import '../featured/home-page/views/widgets/major_category_section.dart';
+
 import '../controllers/major_category_controller.dart';
+import '../featured/home-page/views/widgets/major_category_section.dart';
 
 class HomePageWithCategoriesExample extends StatelessWidget {
   const HomePageWithCategoriesExample({super.key});

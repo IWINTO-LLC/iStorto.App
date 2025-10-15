@@ -25,7 +25,7 @@ class NestedScrollViewForHome extends GetView<VendorController> {
   final bool editMode;
   final String vendorId;
 
-  NestedScrollViewForHome({
+  const NestedScrollViewForHome({
     super.key,
     required this.editMode,
     required this.vendorId,

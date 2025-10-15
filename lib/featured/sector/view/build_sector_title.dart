@@ -17,8 +17,9 @@ class BuildSectorTitle extends StatelessWidget {
   final String name;
   @override
   Widget build(BuildContext context) {
-    var initial = initialSector.where((e) => e.name == name).first;
-    var controller = SectorController.instance;
+    final initial = initialSector.where((e) => e.name == name).first;
+    final controller = SectorController.instance;
+
     return FutureBuilder(
       future: controller.fetchSectors(),
       builder: (context, snapshot) {
@@ -32,41 +33,41 @@ class BuildSectorTitle extends StatelessWidget {
             ),
           );
         } else {
-          var sector = controller.sectors.firstWhere(
-            (e) => e.name == name,
-            orElse: () => initial,
-          );
+          // استخدام Obx لمراقبة التغييرات في sectors
+          return Obx(() {
+            // الحصول على القسم المحدث داخل Obx
+            final sector = controller.sectors.firstWhere(
+              (e) => e.name == name,
+              orElse: () => initial,
+            );
 
-          return Obx(
-            () =>
-                TranslateController.instance.enableTranslateProductDetails.value
-                    ? FutureBuilder<String>(
-                      future: TranslateController.instance.getTranslatedText(
-                        text: sector.englishName,
-                        targetLangCode:
-                            Localizations.localeOf(context).languageCode,
-                      ),
-                      builder: (context, snapshot) {
-                        final displayText =
-                            snapshot.connectionState == ConnectionState.done &&
-                                    snapshot.hasData
-                                ? snapshot.data!
-                                : sector.englishName;
-                        return Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                          child: Flexible(
-                            child: TCustomWidgets.buildTitle(displayText),
-                          ),
-                        );
-                      },
-                    )
-                    : Padding(
+            return TranslateController
+                    .instance
+                    .enableTranslateProductDetails
+                    .value
+                ? FutureBuilder<String>(
+                  future: TranslateController.instance.getTranslatedText(
+                    text: sector.englishName,
+                    targetLangCode:
+                        Localizations.localeOf(context).languageCode,
+                  ),
+                  builder: (context, snapshot) {
+                    final displayText =
+                        snapshot.connectionState == ConnectionState.done &&
+                                snapshot.hasData
+                            ? snapshot.data!
+                            : sector.englishName;
+                    return Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                      child: Flexible(
-                        child: TCustomWidgets.buildTitle(sector.englishName),
-                      ),
-                    ),
-          );
+                      child: TCustomWidgets.buildTitle(displayText),
+                    );
+                  },
+                )
+                : Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  child: TCustomWidgets.buildTitle(sector.englishName),
+                );
+          });
         }
         //  else {
         //   return TCustomWidgets.buildTitle(

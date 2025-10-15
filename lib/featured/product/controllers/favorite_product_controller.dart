@@ -14,7 +14,7 @@ class FavoriteProductsController extends GetxController {
   RxSet<String> favoriteProductIds = <String>{}.obs;
 
   // متغيرات لتتبع حالة التحميل لكل منتج
-  RxMap<String, bool> _processingProducts = <String, bool>{}.obs;
+  final RxMap<String, bool> _processingProducts = <String, bool>{}.obs;
 
   // متغيرات البحث وطريقة العرض
   final TextEditingController searchController = TextEditingController();
@@ -25,8 +25,8 @@ class FavoriteProductsController extends GetxController {
   final RxList<ProductModel> filteredProducts = <ProductModel>[].obs;
 
   // متغيرات حالة التهيئة والمصادقة
-  RxBool _isInitializing = true.obs;
-  RxBool _isUserAuthenticated = false.obs;
+  final RxBool _isInitializing = true.obs;
+  final RxBool _isUserAuthenticated = false.obs;
 
   bool get isInitializing => _isInitializing.value;
   bool get isUserAuthenticated => _isUserAuthenticated.value;

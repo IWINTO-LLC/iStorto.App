@@ -29,7 +29,7 @@ class TCategoryProductGrid extends StatelessWidget {
   final bool editMode;
   final String userId;
 
-  Rx<CategoryModel> selectedCategory = CategoryModel.empty().obs;
+  final Rx<CategoryModel> selectedCategory = CategoryModel.empty().obs;
   @override
   Widget build(BuildContext context) {
     if (product.category == null) {

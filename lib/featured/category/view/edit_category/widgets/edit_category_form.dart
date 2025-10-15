@@ -14,7 +14,7 @@ import 'package:istoreto/utils/validators/validator.dart';
 import 'package:simple_loading_dialog/simple_loading_dialog.dart';
 
 class EditCategoryForm extends StatelessWidget {
-  EditCategoryForm({super.key, required this.category});
+  const EditCategoryForm({super.key, required this.category});
   final CategoryModel category;
 
   @override

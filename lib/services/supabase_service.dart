@@ -532,7 +532,7 @@ class SupabaseService {
           .eq('id', vendorId);
     } catch (e) {
       print('Error updating vendor categories: $e');
-      throw e;
+      rethrow;
     }
   }
 }

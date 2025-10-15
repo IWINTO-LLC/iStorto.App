@@ -244,11 +244,13 @@ class CreateProductForm extends StatelessWidget {
                     keyboardType: TextInputType.number,
                     inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                     validator: (value) {
-                      if (value == null || value.isEmpty)
+                      if (value == null || value.isEmpty) {
                         return 'validation.required'.tr;
+                      }
                       final n = int.tryParse(value);
-                      if (n == null || n < 1)
+                      if (n == null || n < 1) {
                         return 'validation.minimum_one'.tr;
+                      }
                       return null;
                     },
                   ),

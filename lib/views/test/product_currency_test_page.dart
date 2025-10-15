@@ -244,7 +244,7 @@ class _ProductCurrencyTestPageState extends State<ProductCurrencyTestPage> {
                           ],
                         ),
                       );
-                    }).toList(),
+                    }),
                   ],
                 ),
               ),

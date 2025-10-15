@@ -283,11 +283,13 @@ class _EditProductFormState extends State<EditProductForm> {
                           FilteringTextInputFormatter.digitsOnly,
                         ],
                         validator: (value) {
-                          if (value == null || value.isEmpty)
+                          if (value == null || value.isEmpty) {
                             return 'common.required'.tr;
+                          }
                           final n = int.tryParse(value);
-                          if (n == null || n < 1)
+                          if (n == null || n < 1) {
                             return 'product.min_quantity_validation'.tr;
+                          }
                           return null;
                         },
                       ),

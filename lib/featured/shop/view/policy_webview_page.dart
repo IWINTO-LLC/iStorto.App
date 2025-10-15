@@ -8,8 +8,7 @@ class PolicyWebViewPage extends StatefulWidget {
   final String url;
   final String title;
 
-  const PolicyWebViewPage({Key? key, required this.url, required this.title})
-    : super(key: key);
+  const PolicyWebViewPage({super.key, required this.url, required this.title});
 
   @override
   State<PolicyWebViewPage> createState() => _PolicyWebViewPageState();

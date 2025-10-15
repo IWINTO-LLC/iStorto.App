@@ -3,13 +3,13 @@ import 'package:istoreto/utils/constants/sizes.dart';
 
 class TAnimationLoaderWidget extends StatelessWidget {
   const TAnimationLoaderWidget({
-    Key? key,
+    super.key,
     required this.text,
     required this.animation,
     this.showAction = false,
     this.actionText,
     this.onActionPressed,
-  }) : super(key: key);
+  });
 
   final String text;
   final String animation;

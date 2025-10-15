@@ -6,7 +6,6 @@ import 'package:readmore/readmore.dart';
 import 'package:sizer/sizer.dart';
 
 import 'package:istoreto/controllers/translate_controller.dart';
-import 'package:istoreto/featured/cart/view/cart_widget.dart';
 import 'package:istoreto/featured/product/controllers/product_controller.dart';
 import 'package:istoreto/featured/product/data/product_model.dart';
 import 'package:istoreto/featured/product/views/widgets/favorite_widget.dart';

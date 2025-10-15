@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:istoreto/utils/common/styles/styles.dart';
 import 'package:istoreto/utils/constants/color.dart';
-import 'package:istoreto/utils/helpers/helper_functions.dart';
 
 class TTabbar extends StatelessWidget implements PreferredSizeWidget {
-  const TTabbar({Key? key, required this.tabs}) : super(key: key);
+  const TTabbar({super.key, required this.tabs});
 
   final List<Widget> tabs;
   @override

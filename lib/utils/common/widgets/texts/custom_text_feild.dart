@@ -39,7 +39,7 @@ class CustomTextField extends StatefulWidget {
   final bool variant;
 
   const CustomTextField({
-    Key? key,
+    super.key,
     this.controller,
     this.hintText,
     this.textInputType,
@@ -63,7 +63,7 @@ class CustomTextField extends StatefulWidget {
     this.isPos = false,
     this.maxSize,
     this.variant = false,
-  }) : super(key: key);
+  });
 
   @override
   State<CustomTextField> createState() => _CustomTextFieldState();

@@ -6,10 +6,10 @@ import 'package:get/get.dart';
 import 'package:istoreto/featured/album/screens/gallery_tab.dart';
 import 'package:istoreto/featured/banner/view/all/all_banners.dart';
 import 'package:istoreto/featured/category/view/all_category/all_categories.dart';
+import 'package:istoreto/featured/chat/views/vendor_chat_list_screen.dart';
 import 'package:istoreto/featured/payment/screen/vendor_sales.dart';
 import 'package:istoreto/featured/product/views/all_products_list.dart';
 import 'package:istoreto/featured/shop/data/menu_model.dart';
-import 'package:istoreto/featured/shop/view/market_place_view.dart';
 import 'package:istoreto/featured/shop/view/policy_page.dart';
 import 'package:istoreto/featured/shop/view/store_settings.dart';
 import 'package:istoreto/navigation_menu.dart';
@@ -73,6 +73,17 @@ class ControlPanelMenu extends StatelessWidget {
     String vendorId,
   ) {
     return [
+      // البريد الوارد (Inbox)
+      MenuItemData(
+        icon: Icons.inbox_rounded,
+        title: 'inbox'.tr,
+        onTap: () => Get.to(
+          () => VendorChatListScreen(vendorId: vendorId),
+          duration: const Duration(milliseconds: 300),
+          transition: Transition.cupertino,
+        ),
+      ),
+      
       MenuItemData(
         icon: LineIcons.magic,
         title: 'settings'.tr,

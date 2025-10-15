@@ -8,7 +8,7 @@ import 'package:istoreto/utils/common/widgets/appbar/custom_app_bar.dart';
 import 'widgets/edit_category_form.dart';
 
 class EditCategory extends StatelessWidget {
-  EditCategory({super.key, required this.category});
+  const EditCategory({super.key, required this.category});
   final CategoryModel category;
 
   @override

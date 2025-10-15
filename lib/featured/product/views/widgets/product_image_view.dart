@@ -46,7 +46,7 @@ class ProductImageView extends StatelessWidget {
                     height: MediaQuery.of(context).size.width,
                     child: PageView.builder(
                       controller: slideController.pageController,
-                      itemCount: images?.length,
+                      itemCount: images.length,
                       itemBuilder: (context, index) {
                         return ClipRRect(
                           borderRadius: BorderRadius.circular(
@@ -55,7 +55,7 @@ class ProductImageView extends StatelessWidget {
                           child: CustomImage(
                             height: MediaQuery.of(context).size.width,
                             width: MediaQuery.of(context).size.width,
-                            image: images![index],
+                            image: images[index],
                           ),
                         );
                       },
@@ -92,7 +92,7 @@ class ProductImageView extends StatelessWidget {
                               padding: EdgeInsets.all(8),
                               child: Center(
                                 child: Text(
-                                  '${slideController.imageSliderIndex.value + 1}/${images!.length.toString()}',
+                                  '${slideController.imageSliderIndex.value + 1}/${images.length.toString()}',
                                   style: titilliumBold.copyWith(
                                     color: Colors.white,
                                     fontSize: 16,

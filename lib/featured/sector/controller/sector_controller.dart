@@ -1,15 +1,15 @@
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:istoreto/featured/sector/model/sector_model.dart';
-import 'package:istoreto/featured/sector/model/sector_repository.dart';
+import 'package:istoreto/featured/sector/repository/sector_repository.dart';
 import 'package:istoreto/utils/constants/constant.dart';
-import 'package:istoreto/utils/loader/loaders.dart';
 import 'package:istoreto/utils/logging/logger.dart';
 
 class SectorController extends GetxController {
   static SectorController get instance => Get.find();
   SectorController(this.vendorId);
   late String vendorId;
+
   @override
   void onInit() {
     super.onInit();
@@ -21,47 +21,59 @@ class SectorController extends GetxController {
   var isLoading = false.obs;
   var errorMessage = ''.obs;
 
-  // Controller state
-  final repository = Get.put(SectorRepository());
+  // Repository
+  final SectorRepository _repository = SectorRepository();
 
   // Cache management
   String? lastFetchedUserId;
 
-  /// Initialize sectors collection for a vendor
-  Future<void> initialSectors(String vendorId) async {
+  /// إنشاء الأقسام الافتراضية لتاجر جديد
+  Future<void> createDefaultSections(String vendorId) async {
     try {
       isLoading.value = true;
-      await repository.initializeSectorCollection(vendorId);
-      TLoggerHelper.info(
-        "Sectors collection initialized for vendor: $vendorId",
-      );
+      final success = await _repository.createDefaultSections(vendorId);
+
+      if (success) {
+        TLoggerHelper.info("Default sections created for vendor: $vendorId");
+        await fetchSectors(); // إعادة تحميل الأقسام
+      }
     } catch (e) {
-      errorMessage.value = "Failed to initialize sectors: $e";
-      TLoggerHelper.error("Error initializing sectors: $e");
+      errorMessage.value = "Failed to create default sections: $e";
+      TLoggerHelper.error("Error creating default sections: $e");
     } finally {
       isLoading.value = false;
     }
   }
 
-  /// Fetch sectors for a vendor with caching
+  /// جلب أقسام التاجر من قاعدة البيانات
   Future<void> fetchSectors() async {
-    // if (lastFetchedUserId == vendorId && sectors.isNotEmpty) {
-    //   TLoggerHelper.info("Sectors already fetched for vendor: $vendorId");
-    //   return;
-    // }
-
     try {
       isLoading.value = true;
       errorMessage.value = '';
 
-      var fetchedSectors = await repository.getAllSectors(vendorId);
+      var fetchedSectors = await _repository.getVendorSections(vendorId);
 
       if (fetchedSectors.isEmpty) {
-        sectors.value = initialSector;
-        TLoggerHelper.info("No sectors found, using initial sectors");
+        // محاولة إنشاء الأقسام الافتراضية
+        print('📋 No sections found, creating default sections...');
+        await _repository.createDefaultSections(vendorId);
+        fetchedSectors = await _repository.getVendorSections(vendorId);
+
+        if (fetchedSectors.isEmpty) {
+          // استخدام الأقسام الافتراضية من الكود
+          sectors.value = initialSector;
+          TLoggerHelper.info("Using hardcoded initial sectors");
+        } else {
+          sectors.value = fetchedSectors;
+          TLoggerHelper.info(
+            "Fetched ${fetchedSectors.length} default sections",
+          );
+        }
       } else {
         sectors.value = fetchedSectors;
-        TLoggerHelper.info("Fetched ${fetchedSectors.length} sectors");
+        TLoggerHelper.info(
+          "Fetched ${fetchedSectors.length} sectors from database",
+        );
       }
 
       lastFetchedUserId = vendorId;
@@ -74,83 +86,232 @@ class SectorController extends GetxController {
     }
   }
 
-  /// Update sector name using copyWith for immutability
-  Future<void> updateSectorName(SectorModel sector) async {
+  /// تحديث قسم
+  Future<void> updateSection(SectorModel sector) async {
     try {
-      TLoader.progressSnackBar(title: "تحديث", message: "جاري تحديث القطاع...");
+      // Update in database
+      final updated = await _repository.updateSection(sector);
 
-      // Update in repository
-      // await repository.updateSectorByName(sector);
+      if (updated != null) {
+        // Update in local list
+        final index = sectors.indexWhere((s) => s.id == sector.id);
+        if (index != -1) {
+          sectors[index] = updated;
+          sectors.refresh();
+        }
 
-      // Update in local list using copyWith
-      final index = sectors.indexWhere((s) => s.id == sector.id);
-      if (index != -1) {
-        sectors[index] = sector.copyWith(); // Create a new instance
-        sectors.refresh(); // Trigger UI update using GetX
+        TLoggerHelper.info("Section updated successfully: ${sector.id}");
       }
-
-      TLoader.stopProgress();
-
-      // استخدام GetX snackbar بدلاً من TLoader
-      Get.snackbar(
-        "نجح",
-        "تم تحديث القطاع بنجاح",
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.green,
-        colorText: Colors.white,
-        duration: const Duration(seconds: 3),
-      );
-
-      TLoggerHelper.info("Sector updated successfully: ${sector.id}");
     } catch (e) {
-      TLoader.stopProgress();
-      errorMessage.value = "Failed to update sector: $e";
+      errorMessage.value = "Failed to update section: $e";
+      TLoggerHelper.error("Error updating section: $e");
 
-      // استخدام GetX snackbar للخطأ
+      // رسالة خطأ فقط
       Get.snackbar(
-        "خطأ",
-        "فشل في تحديث القطاع: $e",
+        "error".tr,
+        "فشل في تحديث القسم: $e",
         snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
+        backgroundColor: Colors.red.shade100,
+        colorText: Colors.red.shade800,
         duration: const Duration(seconds: 3),
       );
-
-      TLoggerHelper.error("Error updating sector: $e");
     }
   }
 
-  /// Add new sector to Firestore
-  Future<void> addSector(SectorModel sector) async {}
+  /// تحديث اسم القسم فقط
+  Future<void> updateSectionDisplayName({
+    required String sectionId,
+    required String displayName,
+    String? arabicName,
+  }) async {
+    try {
+      final success = await _repository.updateSectionDisplayName(
+        sectionId: sectionId,
+        displayName: displayName,
+        arabicName: arabicName,
+      );
 
-  /// Delete sector from Firestore
-  Future<void> deleteSector(String sectorId) async {
-    // try {
-    //   isLoading.value = true;
+      if (success) {
+        // Update in local list
+        final index = sectors.indexWhere((s) => s.id == sectionId);
+        if (index != -1) {
+          sectors[index] = sectors[index].copyWith(
+            englishName: displayName,
+            arabicName: arabicName,
+          );
+          sectors.refresh();
+        }
 
-    //   // Delete from Firestore
-    //   await firestore
-    //       .collection('users')
-    //       .doc(vendorId)
-    //       .collection('organization')
-    //       .doc('1')
-    //       .collection('sectors')
-    //       .doc(sectorId)
-    //       .delete();
+        Get.snackbar(
+          "success".tr,
+          "تم تحديث اسم القسم بنجاح",
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.green.shade100,
+          colorText: Colors.green.shade800,
+        );
+      }
+    } catch (e) {
+      Get.snackbar(
+        "error".tr,
+        "فشل في تحديث اسم القسم",
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red.shade100,
+        colorText: Colors.red.shade800,
+      );
+    }
+  }
 
-    //   // Remove from local list
-    //   sectors.removeWhere((sector) => sector.id == sectorId);
+  /// تحديث طريقة العرض
+  Future<void> updateSectionDisplayType({
+    required String sectionId,
+    required String displayType,
+    double? cardWidth,
+    double? cardHeight,
+    int? itemsPerRow,
+  }) async {
+    try {
+      final success = await _repository.updateSectionDisplayType(
+        sectionId: sectionId,
+        displayType: displayType,
+        cardWidth: cardWidth,
+        cardHeight: cardHeight,
+        itemsPerRow: itemsPerRow,
+      );
 
-    //   TLoader.successSnackBar(title: "نجح", message: "تم حذف القطاع بنجاح");
+      if (success) {
+        // Update in local list
+        final index = sectors.indexWhere((s) => s.id == sectionId);
+        if (index != -1) {
+          sectors[index] = sectors[index].copyWith(
+            displayType: displayType,
+            cardWidth: cardWidth,
+            cardHeight: cardHeight,
+            itemsPerRow: itemsPerRow,
+          );
+          sectors.refresh();
+        }
 
-    //   TLoggerHelper.info("Sector deleted successfully: $sectorId");
-    // } catch (e) {
-    //   errorMessage.value = "Failed to delete sector: $e";
-    //   TLoader.warningSnackBar(title: "خطأ", message: "فشل في حذف القطاع: $e");
-    //   TLoggerHelper.error("Error deleting sector: $e");
-    // } finally {
-    //   isLoading.value = false;
-    // }
+        Get.snackbar(
+          "success".tr,
+          "تم تحديث طريقة العرض بنجاح",
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.green.shade100,
+          colorText: Colors.green.shade800,
+        );
+      }
+    } catch (e) {
+      Get.snackbar(
+        "error".tr,
+        "فشل في تحديث طريقة العرض",
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red.shade100,
+        colorText: Colors.red.shade800,
+      );
+    }
+  }
+
+  /// إضافة قسم جديد
+  Future<void> addSection(SectorModel sector) async {
+    try {
+      isLoading.value = true;
+      final created = await _repository.createSection(sector);
+
+      if (created != null) {
+        sectors.add(created);
+        Get.snackbar(
+          "success".tr,
+          "تم إضافة القسم بنجاح",
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.green.shade100,
+          colorText: Colors.green.shade800,
+        );
+      }
+    } catch (e) {
+      Get.snackbar(
+        "error".tr,
+        "فشل في إضافة القسم",
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red.shade100,
+        colorText: Colors.red.shade800,
+      );
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  /// حذف قسم
+  Future<void> deleteSection(String sectionId) async {
+    try {
+      isLoading.value = true;
+      final success = await _repository.deleteSection(sectionId);
+
+      if (success) {
+        sectors.removeWhere((s) => s.id == sectionId);
+        Get.snackbar(
+          "success".tr,
+          "تم حذف القسم بنجاح",
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.green.shade100,
+          colorText: Colors.green.shade800,
+        );
+      }
+    } catch (e) {
+      Get.snackbar(
+        "error".tr,
+        "فشل في حذف القسم",
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red.shade100,
+        colorText: Colors.red.shade800,
+      );
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  /// تبديل حالة القسم
+  Future<void> toggleSectionActive(String sectionId, bool isActive) async {
+    try {
+      final success = await _repository.toggleSectionActive(
+        sectionId,
+        isActive,
+      );
+
+      if (success) {
+        final index = sectors.indexWhere((s) => s.id == sectionId);
+        if (index != -1) {
+          sectors[index] = sectors[index].copyWith(isActive: isActive);
+          sectors.refresh();
+        }
+      }
+    } catch (e) {
+      print('Error toggling section active: $e');
+    }
+  }
+
+  /// تحديث ترتيب الأقسام
+  Future<void> updateSectionsOrder(List<SectorModel> reorderedSections) async {
+    try {
+      final success = await _repository.updateSectionsOrder(reorderedSections);
+
+      if (success) {
+        sectors.value = reorderedSections;
+        Get.snackbar(
+          "success".tr,
+          "تم تحديث ترتيب الأقسام بنجاح",
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.green.shade100,
+          colorText: Colors.green.shade800,
+        );
+      }
+    } catch (e) {
+      Get.snackbar(
+        "error".tr,
+        "فشل في تحديث ترتيب الأقسام",
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red.shade100,
+        colorText: Colors.red.shade800,
+      );
+    }
   }
 
   /// Get sector by ID

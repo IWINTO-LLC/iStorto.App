@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sizer/sizer.dart';
-import 'package:istoreto/featured/shop/view/widgets/market_header_organization.dart';
 import 'package:istoreto/utils/common/widgets/custom_widgets.dart';
 
 class MovableButton extends StatefulWidget {
   final String vendorId;
-  const MovableButton({required this.vendorId});
+  const MovableButton({super.key, required this.vendorId});
 
   @override
   _MovableButtonState createState() => _MovableButtonState();

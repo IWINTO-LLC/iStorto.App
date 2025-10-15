@@ -304,6 +304,7 @@ class SavedController extends GetxController {
   }
 
   /// Refresh saved items
+  @override
   Future<void> refresh() async {
     await _loadSavedItems();
     await _loadSavedProductIds();

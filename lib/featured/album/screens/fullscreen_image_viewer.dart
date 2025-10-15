@@ -70,18 +70,18 @@ class FullscreenImageViewer extends StatefulWidget {
 class _FullscreenImageViewerState extends State<FullscreenImageViewer> {
   late PageController _pageController;
   late int _currentIndex;
-  bool _showControls = true;
+  final bool _showControls = true;
   bool _isProcessing = false;
   PhotoViewController? _photoViewController;
   double _currentRotation = 0.0; // زاوية التدوير الحالية للصورة المعروضة
   int _rotationStep = 0; // خطوة التدوير (0, 1, 2, 3) تمثل 0°, 90°, 180°, 270°
-  Map<int, File> _processedImages = {}; // تخزين الصور المعدلة
+  final Map<int, File> _processedImages = {}; // تخزين الصور المعدلة
 
   // متغيرات الرسم والكتابة
   bool _isDrawingMode = false;
   bool _isTextMode = false;
-  List<DrawingPoint> _drawingPoints = [];
-  List<TextElement> _textElements = [];
+  final List<DrawingPoint> _drawingPoints = [];
+  final List<TextElement> _textElements = [];
   Color _selectedColor = Colors.red;
   double _strokeWidth = 3.0;
   String _textInput = '';
@@ -92,8 +92,8 @@ class _FullscreenImageViewerState extends State<FullscreenImageViewer> {
   bool _isDraggingText = false;
 
   // متغيرات التراجع
-  Map<int, List<File>> _undoStack = {}; // مكدس التراجع لكل صورة
-  Map<int, List<File>> _redoStack = {}; // مكدس إعادة التنفيذ لكل صورة
+  final Map<int, List<File>> _undoStack = {}; // مكدس التراجع لكل صورة
+  final Map<int, List<File>> _redoStack = {}; // مكدس إعادة التنفيذ لكل صورة
 
   // متغير لتتبع حالة تصغير لوحة التحكم
   bool _isControlPanelMinimized = false;

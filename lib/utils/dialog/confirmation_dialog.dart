@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import 'package:istoreto/utils/common/styles/styles.dart';
-import 'package:istoreto/utils/constants/color.dart';
 import 'package:istoreto/utils/constants/sizes.dart';
 
 class ConfirmationDialog extends StatelessWidget {

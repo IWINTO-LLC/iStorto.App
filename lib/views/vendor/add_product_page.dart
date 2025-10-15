@@ -10,6 +10,7 @@ import 'package:istoreto/featured/album/screens/fullscreen_image_viewer.dart';
 import 'package:istoreto/featured/category/view/create_category/create_category.dart';
 import 'package:istoreto/featured/product/controllers/product_controller.dart';
 import 'package:istoreto/featured/sector/model/sector_model.dart';
+import 'package:istoreto/featured/sector/controller/sector_controller.dart';
 import 'package:istoreto/services/image_upload_service.dart';
 import 'package:istoreto/services/supabase_service.dart';
 import 'package:istoreto/utils/common/styles/styles.dart';
@@ -20,8 +21,13 @@ import 'dart:io';
 /// صفحة إضافة منتج جديد - تصميم حديث
 class AddProductPage extends StatefulWidget {
   final String vendorId;
+  final String? initialSection; // القسم المبدئي (اختياري)
 
-  const AddProductPage({super.key, required this.vendorId});
+  const AddProductPage({
+    super.key,
+    required this.vendorId,
+    this.initialSection,
+  });
 
   @override
   State<AddProductPage> createState() => _AddProductPageState();
@@ -126,11 +132,37 @@ class _AddProductPageState extends State<AddProductPage> {
     }
   }
 
-  /// تحميل الأقسام (Sections)
+  /// تحميل الأقسام (Sections) من قاعدة البيانات
   Future<void> _loadSections() async {
     try {
-      // هنا يمكن جلب الأقسام من قاعدة البيانات
-      // أو استخدام قائمة افتراضية
+      // تسجيل SectorController إذا لم يكن موجوداً
+      if (!Get.isRegistered<SectorController>()) {
+        Get.put(SectorController(widget.vendorId));
+      }
+
+      final sectorController = SectorController.instance;
+
+      // الانتظار حتى يتم تحميل الأقسام
+      await sectorController.fetchSectors();
+
+      // الحصول على الأقسام من Controller
+      _sections.value = sectorController.sectors.toList();
+
+      debugPrint('✅ Loaded ${_sections.length} sections from database');
+
+      // تعيين القسم المبدئي إذا تم تمريره
+      if (widget.initialSection != null && widget.initialSection!.isNotEmpty) {
+        final initialSector = _sections.firstWhereOrNull(
+          (s) => s.name == widget.initialSection,
+        );
+        if (initialSector != null) {
+          _selectedSection.value = initialSector;
+          debugPrint('✅ Initial section set to: ${initialSector.name}');
+        }
+      }
+    } catch (e) {
+      debugPrint('❌ Error loading sections: $e');
+      // استخدام الأقسام الافتراضية في حالة الخطأ
       _sections.value = [
         SectorModel(
           name: 'all',
@@ -147,19 +179,7 @@ class _AddProductPageState extends State<AddProductPage> {
           englishName: 'Sales',
           vendorId: widget.vendorId,
         ),
-        SectorModel(
-          name: 'newArrival',
-          englishName: 'New Arrival',
-          vendorId: widget.vendorId,
-        ),
-        SectorModel(
-          name: 'featured',
-          englishName: 'Featured',
-          vendorId: widget.vendorId,
-        ),
       ];
-    } catch (e) {
-      debugPrint('Error loading sections: $e');
     }
   }
 
@@ -499,8 +519,9 @@ class _AddProductPageState extends State<AddProductPage> {
               ),
             ),
             validator: (value) {
-              if (value == null || value.isEmpty)
+              if (value == null || value.isEmpty) {
                 return 'product.price_required'.tr;
+              }
               return null;
             },
             onChanged: (value) => _calculateDiscount(),
@@ -1054,7 +1075,7 @@ class _AddProductPageState extends State<AddProductPage> {
                       Navigator.pop(context);
                     },
                   );
-                }).toList(),
+                }),
               ],
             ),
           ),
@@ -1174,7 +1195,7 @@ class _AddProductPageState extends State<AddProductPage> {
         try {
           debugPrint('Uploading image ${i + 1}/${_selectedImages.length}');
           _uploadStatus.value =
-              'uploading_image'.tr + ' ${i + 1}/${_selectedImages.length}';
+              '${'uploading_image'.tr} ${i + 1}/${_selectedImages.length}';
 
           // تحويل XFile إلى File
           final File imageFile = File(_selectedImages[i].path);
@@ -1251,7 +1272,7 @@ class _AddProductPageState extends State<AddProductPage> {
 
       Get.snackbar(
         'error'.tr,
-        'failed_to_create_product'.tr + ': $e',
+        '${'failed_to_create_product'.tr}: $e',
         snackPosition: SnackPosition.BOTTOM,
         backgroundColor: Colors.red.shade100,
         colorText: Colors.red.shade800,

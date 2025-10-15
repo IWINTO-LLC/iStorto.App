@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:istoreto/featured/cart/controller/cart_controller.dart';
-import 'package:istoreto/featured/cart/view/cart_screen.dart';
+import 'package:istoreto/featured/cart/view/checkout_stepper_screen.dart';
 import 'package:istoreto/utils/common/widgets/custom_shapes/containers/rounded_container.dart';
 
 class CartWidget extends StatelessWidget {
@@ -13,9 +13,10 @@ class CartWidget extends StatelessWidget {
     if (!Get.isRegistered<CartController>()) {
       return GestureDetector(
         onTap:
-            () => Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => CartScreen()),
+            () => Get.to(
+              () => CheckoutStepperScreen(),
+              transition: Transition.cupertino,
+              duration: const Duration(milliseconds: 900),
             ),
         child: Padding(
           padding: const EdgeInsets.all(8.0),
@@ -36,9 +37,10 @@ class CartWidget extends StatelessWidget {
 
     return GestureDetector(
       onTap:
-          () => Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => CartScreen()),
+          () => Get.to(
+            () => CheckoutStepperScreen(),
+            transition: Transition.cupertino,
+            duration: const Duration(milliseconds: 900),
           ),
       child: Stack(
         //   key: CartController.instance.globalKeyCartIcon,

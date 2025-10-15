@@ -213,8 +213,9 @@ class OrderController extends GetxController {
   Future<void> setCurrentLocation() async {
     final permission = await Geolocator.requestPermission();
     if (permission == LocationPermission.denied ||
-        permission == LocationPermission.deniedForever)
+        permission == LocationPermission.deniedForever) {
       return;
+    }
 
     final position = await Geolocator.getCurrentPosition();
     latitude.value = position.latitude;

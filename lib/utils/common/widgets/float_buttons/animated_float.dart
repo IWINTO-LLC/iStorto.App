@@ -47,7 +47,7 @@ class ScrollingFabAnimated extends StatefulWidget {
   final double? radius;
 
   const ScrollingFabAnimated({
-    Key? key,
+    super.key,
     required this.icon,
     required this.text,
     required this.onPress,
@@ -62,7 +62,7 @@ class ScrollingFabAnimated extends StatefulWidget {
     this.animateIcon = true,
     this.inverted = false,
     this.radius,
-  }) : super(key: key);
+  });
 
   @override
   ScrollingFabAnimatedState createState() => ScrollingFabAnimatedState();

@@ -15,7 +15,7 @@ class ImageController extends GetxController {
 
 class CropRotateImage extends StatelessWidget {
   final String imagePath;
-  CropRotateImage({required this.imagePath});
+  CropRotateImage({super.key, required this.imagePath});
 
   final ImageController controller = Get.put(ImageController());
 
